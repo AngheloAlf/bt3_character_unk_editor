@@ -20,12 +20,9 @@
 #     print packages.__package__
 #     print packages.__test__
 import threading
-import os
 
-from TransformClass import TransformClass
-from .CharacterUnkParser import CharacterUnkParser
-from LanguageManager import LanguageManager
-from GuiManager import GuiManager
+from CharacterUnkParser import CharacterUnkParser
+import GuiManager
 from UnkEditorGui import *
 
 
@@ -34,7 +31,6 @@ from UnkEditorGui import *
 class CharacterData:
     def __init__(self):
         self.data = None
-
 
 
 def comboTransUpdate(event, languageFile="spanish.db"):
@@ -272,7 +268,6 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
                         comboboxs["dragonballIcon"][i][j].current(len(comboboxs["dragonballIcon"][i][j]["value"])-1)
                         comboboxs["dragonballIcon"][i][j]["state"] = "disabled"
 
-
                     k, k0 = 0, 0
                     statsInesperados = False
                     for stat in submenu.stats:
@@ -372,7 +367,7 @@ def saveAsUnkFile(fileName, **kwargs):
 #         print "\t", unicode(j[1], "UTF-16")
 
 character = CharacterData()
-gui = GuiManager("BT3 Character 'unk' Editor")
+gui = GuiManager.GuiManager("BT3 Character 'unk' Editor")
 
 def main():
     while True:
@@ -382,7 +377,7 @@ def main():
         menuGuardarComo = lambda: gui.saveFile("Guardar archivo", fileTypes, saveAsUnkFile)
         menuMuchos = lambda: gui.openMultiplesFiles("Seleccionar archivos", fileTypes)
         menuCarpeta = lambda: gui.selectFolder("Selecciona carpeta de archivos 'unk' de personajes.")
-        menuAcercaDe = lambda: gui.popUp("Acerca de", "Informacion", "Ok")
+        menuAcercaDe = lambda: GuiManager.popUp("Acerca de", "Informacion", "Ok")
 
         print 3
         gui.addMenu(["Archivo", "Opciones", "Ayuda"], 

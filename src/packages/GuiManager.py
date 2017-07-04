@@ -3,8 +3,16 @@ import ttk
 import tkFileDialog
 import tkMessageBox
 
+
+def popUp(title, text, text2):
+    pop = Tkinter.Toplevel()
+    ttk.Label(pop, text=text).pack()
+    ttk.Button(pop, text=text2, command=pop.destroy).pack(side=Tkinter.BOTTOM)
+    return
+
+
 class GuiManager:
-    def __init__(self, title = "Tk"):  # , xOffset, yOffSet):
+    def __init__(self, title="Tk"):  # , xOffset, yOffSet):
         # type: (str) -> None
         self.gui = Tkinter.Tk()
         # self.gui.minsize(xOffset, yOffSet)
@@ -84,12 +92,9 @@ class GuiManager:
     #     self.panelsAmmount += 1
 
     #     return self
-    
-
 
     def addTab(self, tabName, tabCallback):
-        # type: (str, function) -> None
-        tab = ttk.Frame(self.tabs) #, width = self.tabsWidth, height = self.tabsHeight)
+        tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
         newX, newY = tabCallback(tab, self.comboboxs, self.entries, self.checkbuttons, self.buttons)
@@ -103,7 +108,6 @@ class GuiManager:
             self.tabsHeight = newY
         return
 
-
     def addMenu(self, cascadeNames, cascadeData):
         if len(cascadeNames) != len(cascadeData):
             return
@@ -113,10 +117,10 @@ class GuiManager:
         for i in range(len(cascadeNames)):
             subMenu = Tkinter.Menu(menubar, tearoff=0)
             for optionName, callback in cascadeData[i]:
-                if optionName == None:
+                if optionName is None:
                     subMenu.add_separator()
                 else:
-                    subMenu.add_command(label = optionName, command = callback)
+                    subMenu.add_command(label=optionName, command=callback)
             menubar.add_cascade(label=cascadeNames[i], menu=subMenu)
 
         self.gui.config(menu=menubar)
@@ -125,12 +129,12 @@ class GuiManager:
         # type: () -> dict
         return self.entries
 
-    def start(self, title = None):
+    def start(self, title=None):
         # (str) -> None
         if title:
             self.title = title
         self.gui.title(self.title)
-        #self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
+        # self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
@@ -151,42 +155,40 @@ class GuiManager:
         # type: () -> bool
         return not self.running
 
-    def openFile(self, title, fileTypes, callback = None):
-        archivo = tkFileDialog.askopenfilename(initialdir = "/", title = title, filetypes = fileTypes)
+    def openFile(self, title, fileTypes, callback=None):
+        archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
         print archivo
         if callback:
-            callback(archivo, comboboxs=self.comboboxs, entries=self.entries, checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
+                     checkbuttons=self.checkbuttons, buttons=self.buttons)
         return archivo
 
-    def saveFile(self, title, fileTypes, callback = None):
-        archivo = tkFileDialog.asksaveasfilename(initialdir = "/", title = title, filetypes = fileTypes)
+    def saveFile(self, title, fileTypes, callback=None):
+        archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
         print archivo
         if callback:
-            callback(archivo, comboboxs=self.comboboxs, entries=self.entries, checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
+                     checkbuttons=self.checkbuttons, buttons=self.buttons)
         return archivo
 
-    def openMultiplesFiles(self, title, fileTypes, callback = None):
-        archivos = tkFileDialog.askopenfilenames(initialdir = "/", title = title, filetypes = fileTypes)
+    def openMultiplesFiles(self, title, fileTypes, callback=None):
+        archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
         print archivos
         if callback:
-            callback(archivos, comboboxs=self.comboboxs, entries=self.entries, checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(archivos, comboboxs=self.comboboxs, entries=self.entries,
+                     checkbuttons=self.checkbuttons, buttons=self.buttons)
         return archivos
 
-    def selectFolder(self, title = None, callback = None):
-        carpeta = tkFileDialog.askdirectory(title = title)
+    def selectFolder(self, title=None, callback=None):
+        carpeta = tkFileDialog.askdirectory(title=title)
         print carpeta
         if callback:
-            callback(carpeta, comboboxs=self.comboboxs, entries=self.entries, checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(carpeta, comboboxs=self.comboboxs, entries=self.entries,
+                     checkbuttons=self.checkbuttons, buttons=self.buttons)
         return carpeta
 
-    def popUp(self, title, text, text2):
-        pop = Tkinter.Toplevel()
-        ttk.Label(pop, text = text).pack()
-        ttk.Button(pop, text=text2, command=pop.destroy).pack(side = Tkinter.BOTTOM)
-        return
-
     def putProgressBar(self, maxi):
-        pb = ttk.Progressbar(self.gui, orient="horizontal", length=self.tabsWidth, mode="determinate", maximum = maxi)
+        pb = ttk.Progressbar(self.gui, orient="horizontal", length=self.tabsWidth, mode="determinate", maximum=maxi)
         pb.grid(column=0, row=1)
         self.progressBar = [pb, maxi]
 
@@ -200,12 +202,14 @@ class GuiManager:
         if self.progressBar[0]["value"] > self.progressBar[1]:
             self.progressBar[0]["value"] = 0
         self.progressBar[0]["value"] += 1
-            
-    def showPopUp(self):
-        tkMessageBox.showinfo("Completado", "Operacion completada satisfactoriamente.")
 
     def isRestart(self):
         return self.restart
+
+
+def showPopUp():
+    tkMessageBox.showinfo("Completado", "Operacion completada satisfactoriamente.")
+
 
 def addMsgToText(txtWid, msg):
     # type: (Tkinter.Text, str) -> None
@@ -214,11 +218,12 @@ def addMsgToText(txtWid, msg):
     txtWid.see(Tkinter.END)
     txtWid["state"] = "disabled"
 
+
 class MyCheckButton(Tkinter.Checkbutton):
-    def __init__(self,*args,**kwargs):
-        self.var=kwargs.get('variable', Tkinter.IntVar())
-        kwargs['variable']=self.var
-        Tkinter.Checkbutton.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        self.var = kwargs.get('variable', Tkinter.IntVar())
+        kwargs['variable'] = self.var
+        Tkinter.Checkbutton.__init__(self, *args, **kwargs)
 
     def is_checked(self):
         return self.var.get()

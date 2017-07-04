@@ -1,6 +1,7 @@
 import sqlite3
 import os
 
+
 class LanguageManager:
     def __init__(self, dbname):
         self.dbname = dbname
@@ -94,7 +95,6 @@ class LanguageManager:
         ide = self.cursor.fetchone()[0]
         return ide
 
-
     def getFusionsTypes(self):
         self.cursor.execute("SELECT * FROM fusionsTypes")
         return self.cursor.fetchall()
@@ -134,7 +134,7 @@ class LanguageManager:
             try:
                 self.cursor.execute(command)
             except:
-                print "Command skipped: ",command
+                print "Command skipped: ", command
         self.connection.commit()
 
     def close(self):
@@ -142,10 +142,9 @@ class LanguageManager:
 
 if __name__ == "__main__":
     a = LanguageManager("spanish.db")
-    #a.executeScriptsFromFile("main.sql")
+    # a.executeScriptsFromFile("main.sql")
     print len(a.getCharactersNames())
     print len(a.getAnimations())
     print len(a.getAuras())
     print len(a.getR3Command())
     a.close()
-    
