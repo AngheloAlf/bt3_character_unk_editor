@@ -1,2 +1,2 @@
-from packages.func import main
-main()
+import packages.func
+packages.func.main()

@@ -20,6 +20,7 @@ def getFusionData(archivo, pointerFile):
     pointerFile += 24
     return FusionClass.FusionClass(line), pointerFile
 
+
 def getMenusData(archivo, pointerFile):
     # type: (str, int) -> (CharacterMenu.CharacterMenu, int)
     charMenuObj = None
