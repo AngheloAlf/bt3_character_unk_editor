@@ -19,10 +19,11 @@ BT3 character 'unk' editor
 
 ## Dependencies:
 
-* cython
-	* pip install Cython
+* [cython](http://cython.org/#download)
+	* `pip install cython`
 	
-* python-tk
+* [python-tk](https://wiki.python.org/moin/TkInter)
+    * Ubuntu: `apt-get install python-tk`
 
 ### Windows:
 
