@@ -2,27 +2,11 @@ import TransformClass
 import FusionClass
 import CharacterMenu
 import Constants
-
-
-def obtenerDiferencias(linea1, linea2):
-    i = 0
-    wea = []
-    largo = min(len(linea2), len(linea1))
-    while i < largo:
-        if linea1[i] != linea2[i]:
-            dif1 = ""
-            dif2 = ""
-            o = i
-            while linea1[i] != linea2[i]:
-                dif1 += linea1[i]
-                dif2 += linea2[i]
-                i += 1
-            wea.append([o, dif1, dif2])
-        i += 1
-    return wea
+import GuiManager
 
 
 def getTransformData(archivo, pointerFile):
+    # type: (str, int) -> (TransformClass.TransformClass, int)
     line1 = archivo[pointerFile:pointerFile + 16]
     pointerFile += 16
     line2 = archivo[pointerFile:pointerFile + 14]
@@ -31,19 +15,24 @@ def getTransformData(archivo, pointerFile):
 
 
 def getFusionData(archivo, pointerFile):
+    # type: (str, int) -> (FusionClass.FusionClass, int)
     line = archivo[pointerFile:pointerFile + 24]
     pointerFile += 24
     return FusionClass.FusionClass(line), pointerFile
 
-
-def getMenusData(archivo, lineaArchivo, pointerFile):
+def getMenusData(archivo, pointerFile):
+    # type: (str, int) -> (CharacterMenu.CharacterMenu, int)
     charMenuObj = None
     menu = ""
 
+    lineaArchivo = archivo[pointerFile-4:pointerFile]
+
+    endOfMenuFile = Constants.endOfMenuFile
+
     while lineaArchivo != "":
-        puntero = map(lambda x: ord(x), lineaArchivo)
+        puntero = map(ord, lineaArchivo)
         menu += lineaArchivo[0:2]
-        if puntero == Constants.Constants.endOfMenuFile:
+        if puntero == endOfMenuFile:
             menu += lineaArchivo[2:4]
             charMenuObj = CharacterMenu.CharacterMenu(menu)
             break
@@ -54,12 +43,14 @@ def getMenusData(archivo, lineaArchivo, pointerFile):
 
 
 def setTransformData(archivo, pointerFile, transLines):
+    # type: (str, int, list) -> (str, int)
     archivo = archivo[:pointerFile] + transLines[0] + transLines[1] + archivo[pointerFile + 30:]
     pointerFile += 16 + 14
     return archivo, pointerFile
 
 
 def setFusionData(archivo, pointerFile, fusionLine):
+    # type: (str, int, str) -> (str, int)
     archivo = archivo[:pointerFile] + fusionLine + archivo[pointerFile + 24:]
     pointerFile += 24
     return archivo, pointerFile
@@ -74,23 +65,20 @@ class CharacterUnkParser:
         self.menusList = None
         self.fullFile = ""
         self.fastMode = False
-        self.fastModeStart = 3.0 / 5
+        self.fastModeStart = 0.6
 
     def parse(self, gui=None):
+        # type: (GuiManager.GuiManager) -> CharacterUnkParser
         archivo = open(self.filename, "rb")
         self.fullFile = archivo.read()
         archivo.close()
 
-        # archivo = open(self.filename, "rb")
         fileSize = float(len(self.fullFile))
 
-        startOfMenuFile = Constants.Constants.startOfMenuFile
-        # endOfMenuFile = Constants.Constants.endOfMenuFile
-        transformCode = Constants.Constants.transformCode
+        startOfMenuFile = Constants.startOfMenuFile
+        transformCode = Constants.transformCode
 
-        # indice = 0
         self.menusList = []
-        # menu = ""
 
         if gui:
             gui.restartProgressBar()
@@ -113,13 +101,13 @@ class CharacterUnkParser:
         pointerFile += 4
 
         while lineaArchivo != "" and len(lineaArchivo) == 4:
-            puntero = map(lambda x: ord(x), lineaArchivo)
+            puntero = map(ord, lineaArchivo)
 
             if startOfMenuFile == puntero:
-                lineaArchivo = lineaArchivo[2:4]
-                lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
+                # lineaArchivo = lineaArchivo[2:4]
+                # lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
                 pointerFile += 2
-                charMenuObj, pointerFile = getMenusData(self.fullFile, lineaArchivo, pointerFile)
+                charMenuObj, pointerFile = getMenusData(self.fullFile, pointerFile)
                 self.menusList.append(charMenuObj)
 
             if not transFound and puntero == transformCode:
@@ -140,27 +128,15 @@ class CharacterUnkParser:
                 else:
                     print 100 * pointerFile / fileSize
 
-        pointerFile -= 2
-        # archivo.close()
-
-        # print pointerFile
-        # print pointerFile, fileSize
-        # print pointerFile == fileSize
-        # print os.path.getsize(self.filename) == pointerFile
+        # pointerFile -= 2
         return self
 
     def updateFileData(self, gui=None):
+        # type: (GuiManager.GuiManager) -> CharacterUnkParser
         fileSize = float(len(self.fullFile))
 
-        startOfMenuFile = Constants.Constants.startOfMenuFile
-        # endOfMenuFile = Constants.Constants.endOfMenuFile
-        transformCode = Constants.Constants.transformCode
-
-        # indice = 0
-        # menu = ""
-
-        # if not gui is None:
-        # gui.restartProgressBar()
+        startOfMenuFile = Constants.startOfMenuFile
+        transformCode = Constants.transformCode
 
         pointerFile = 0
         if self.fastMode:
@@ -180,11 +156,10 @@ class CharacterUnkParser:
         pointerFile += 2
 
         while lineaArchivo != "" and len(lineaArchivo) == 4:
-            puntero = map(lambda x: ord(x), lineaArchivo)
+            puntero = map(ord, lineaArchivo)
 
             if not transFound and puntero == transformCode:
                 # print "encontrado"
-                # self.transObj, pointerFile = getTransformData(self.fullFile, pointerFile)
                 pointerFile += 16 * 7 - 8
                 self.fullFile, pointerFile = setTransformData(self.fullFile, pointerFile, self.transObj.getAsLines())
                 self.fullFile, pointerFile = setFusionData(self.fullFile, pointerFile, self.fusionObj.getAsLines())
@@ -203,11 +178,9 @@ class CharacterUnkParser:
 
         pointerFile -= 2
 
-        # print "la wea de la wea weon qlo"
-
         porcentajeAnterior = -1
         startOfMenuFile = Constants.hexListToChar(startOfMenuFile)
-        endOfMenuFile = Constants.hexListToChar(Constants.Constants.endOfMenuFile)
+        endOfMenuFile = Constants.hexListToChar(Constants.endOfMenuFile)
         pointerFile = 0
         lineaArchivo = self.fullFile[pointerFile:pointerFile + 4]
         pointerFile += 2
@@ -222,11 +195,7 @@ class CharacterUnkParser:
 
                 lineaArchivo = lineaArchivo[2:4]
                 lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-                # print [self.fullFile[pointerFile]]
-                # print len(self.menusList), i
                 newFile += self.menusList[i].getAsLine()
-                # print [newFile[-4:]]
-                # print [lineaArchivo]
                 i += 1
             else:
                 newFile += lineaArchivo[:2]
@@ -244,8 +213,10 @@ class CharacterUnkParser:
 
         newFile += lineaArchivo[:2]
         self.fullFile = newFile
+        return self
 
     def saveFile(self, filename=None, gui=None):
+        # type: (str, GuiManager.GuiManager) -> CharacterUnkParser
         if not filename:
             filename = self.filename
 
@@ -257,4 +228,5 @@ class CharacterUnkParser:
         return self
 
     def __str__(self):
+        # type: () -> str
         return "CharacterUnkParser <" + self.filename + ">"

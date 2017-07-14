@@ -8,8 +8,8 @@ class CharacterMenu:
         self.subMenus = []
         self.unknow = False
 
-        menuNameCode = map(lambda x: chr(x), Constants.Constants.menuNameCode)
-        endOfFile = map(lambda x: chr(x), Constants.Constants.endOfFile)
+        menuNameCode = map(chr, Constants.menuNameCode)
+        endOfFile = map(chr, Constants.endOfFile)
 
         subMenu = ""
 
@@ -38,8 +38,8 @@ class CharacterMenu:
 
     def getAsLine(self):
         line = ""
-        startOfutf16Text = Constants.hexListToChar(Constants.Constants.startOfutf16Text)
-        endOfFile = Constants.hexListToChar(Constants.Constants.endOfFile)
+        startOfutf16Text = Constants.hexListToChar(Constants.startOfutf16Text)
+        endOfFile = Constants.hexListToChar(Constants.endOfFile)
         for i in self.subMenus:
             line += i.getAsLine()
         return startOfutf16Text + line + endOfFile

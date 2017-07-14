@@ -1,5 +1,6 @@
 class FusionClass:
     def __init__(self, datos):
+        # type: (str) -> None
         if len(datos) != 24:
             print 1 / 0
         self.barras = list(datos[0:3])
@@ -9,16 +10,17 @@ class FusionClass:
         self.compaEquipo = [list(datos[12:16]), list(datos[16:20]), list(datos[20:24])]
 
         print "Fusion:"
-        print "barras:", map(lambda x: ord(x), self.barras)
-        print "tipoFusion:", map(lambda x: ord(x), self.tipoFusion)
-        print "resultado:", map(lambda x: ord(x), self.resultado)
-        print "compaAni:", map(lambda x: ord(x), self.compaAni)
-        print "compaEquipo", map(lambda x: map(lambda y: ord(y), x), self.compaEquipo)
+        print "barras:", map(ord, self.barras)
+        print "tipoFusion:", map(ord, self.tipoFusion)
+        print "resultado:", map(ord, self.resultado)
+        print "compaAni:", map(ord, self.compaAni)
+        print "compaEquipo", map(lambda x: map(ord, x), self.compaEquipo)
         print "\n"
 
     def getFusionData(self, fusionNumb, asOrd=False):
+        # type: (int, bool) -> list
         if fusionNumb < 0 or fusionNumb > 2:
-            return None
+            return list()
 
         data = [self.barras[fusionNumb]]
         data += [self.tipoFusion[fusionNumb]]
@@ -44,7 +46,7 @@ class FusionClass:
                 return False
 
         if asOrd:
-            data = map(lambda x: chr(x), data)
+            data = map(chr, data)
 
         self.barras[fusionNumb] = data[0]
         self.tipoFusion[fusionNumb] = data[1]

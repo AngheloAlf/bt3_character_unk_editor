@@ -6,7 +6,7 @@ def getMenuName(submenuData, i):
     nameData = [submenuData[i:i + 2]]
     i += 2
     menuName = ""
-    while map(lambda x: ord(x), submenuData[i:i + 2]) != Constants.Constants.endOfLine:
+    while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
         menuName += submenuData[i]
         i += 1
     nameData.append(menuName)
@@ -17,13 +17,13 @@ def getStat(submenuData, i):
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
     statName = ""
-    while map(lambda x: ord(x), submenuData[i:i + 2]) != Constants.Constants.endOfLine:
+    while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
         statName += submenuData[i]
         i += 1
     i += 2
 
     statChars = []
-    while i + 7 < len(submenuData) and map(lambda x: ord(x), submenuData[i + 1:i + 7]) != Constants.Constants.statCode:
+    while i + 7 < len(submenuData) and map(ord, submenuData[i + 1:i + 7]) != Constants.statCode:
         if ord(submenuData[i]) == 0x0:
             i += 1
 
@@ -31,7 +31,7 @@ def getStat(submenuData, i):
         i += 6
 
         description = ""
-        while map(lambda x: ord(x), submenuData[i:i + 2]) != Constants.Constants.endOfLine:
+        while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
             description += submenuData[i]
             i += 1
 
@@ -50,12 +50,12 @@ class SubMenu:
         while i < len(submenuData):
             if i + 5 < len(submenuData):
                 # Nombre del menu
-                if map(lambda x: ord(x), submenuData[i:i + 6]) == Constants.Constants.menuNameCode:
+                if map(ord, submenuData[i:i + 6]) == Constants.menuNameCode:
                     i += 6
                     self.menuName, i = getMenuName(submenuData, i)
 
                 # Cada stat
-                if map(lambda x: ord(x), submenuData[i:i + 6]) == Constants.Constants.statCode:
+                if map(ord, submenuData[i:i + 6]) == Constants.statCode:
                     i += 6
                     newStat, i = getStat(submenuData, i)
                     self.stats.append(newStat)
@@ -81,8 +81,8 @@ class SubMenu:
         return
 
     def getAsLine(self):
-        menuNameCode = Constants.hexListToChar(Constants.Constants.menuNameCode)
-        endOfLine = Constants.hexListToChar(Constants.Constants.endOfLine)
+        menuNameCode = Constants.hexListToChar(Constants.menuNameCode)
+        endOfLine = Constants.hexListToChar(Constants.endOfLine)
         line = ""
         if len(self.menuName) >= 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine

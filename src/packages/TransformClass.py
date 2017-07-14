@@ -11,23 +11,23 @@ class TransformClass:
         self.command = line2[12]
         self.bonus = line2[13]
         print "Transform:"
-        print "unknowFirst:", map(lambda x: ord(x), list(self.unknowFirst))
-        print "trans:", map(lambda x: ord(x), self.trans)
-        print "barras:", map(lambda x: ord(x), self.barras)
-        print "ani:", map(lambda x: ord(x), self.aniCam)
-        print "abs:", map(lambda x: ord(x), self.abs)
+        print "unknowFirst:", map(ord, list(self.unknowFirst))
+        print "trans:", map(ord, self.trans)
+        print "barras:", map(ord, self.barras)
+        print "ani:", map(ord, self.aniCam)
+        print "abs:", map(ord, self.abs)
         print "r3command:", [ord(self.command)]
         print "bonus:", [ord(self.bonus)]
         print "\n"
 
     def getR3Command(self, asOrd=False):
-        # type: () -> int
+        # type: (bool) -> int|str
         if asOrd:
             return ord(self.command)
         return self.command
 
     def setR3Command(self, command, asOrd=False):
-        # type: (int) -> bool
+        # type: (int|str, bool) -> bool
         if asOrd and (command < 0 or command > 255):
             return False
 
@@ -42,15 +42,15 @@ class TransformClass:
         return True
 
     def getTransformData(self, charNumb, asOrd=False):
-        # type: (int) -> list
+        # type: (int, bool) -> list
         if charNumb < 0 or charNumb > 3:
-            return None
+            return list()
 
         data = [self.trans[charNumb]] + [self.barras[charNumb]] + [self.aniCam[charNumb]] + [self.aura[charNumb]] + [
             self.abs[charNumb]]
 
         if asOrd:
-            return map(lambda x: ord(x), data)
+            return map(ord, data)
 
         return data
 
@@ -67,7 +67,7 @@ class TransformClass:
                 return False
 
         if asOrd:
-            data = map(lambda x: chr(x), data)
+            data = map(chr, data)
 
         self.trans[charNumb] = data[0]
         self.barras[charNumb] = data[1]
@@ -78,11 +78,13 @@ class TransformClass:
         return True
 
     def getBonus(self, asOrd=False):
+        # type: (bool) -> int|str
         if asOrd:
             return ord(self.bonus)
         return self.bonus
 
     def setBonus(self, bonus, asOrd=False):
+        # type: (int|str, bool) -> bool
         if asOrd and (bonus < 0 or bonus > 255):
             return False
 
@@ -93,6 +95,7 @@ class TransformClass:
             bonus = chr(bonus)
 
         self.bonus = bonus
+        return True
 
     def getAsLines(self):
         # type: () -> list
