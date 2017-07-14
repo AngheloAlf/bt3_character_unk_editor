@@ -76,7 +76,7 @@ def comboTransUpdate(event=None, languageFile="spanish.db"):
         e = gui.comboboxs["absor"][i].get()
         e = language.getCharactersNamesID(e)
 
-        character.data.transObj.setTransformData(i, [a, b, c, d, e], True)        
+        character.data.transObj.setTransformData(i, [a, b, c, d, e], True)
 
         if gui.comboboxs["ani"][i].current() == 3:
             gui.comboboxs["absor"][i]["state"] = "readonly"
@@ -345,6 +345,22 @@ def updateScrollbar(canvas, event, width=200, height=100):
     canvas.configure(scrollregion=canvas.bbox("all"), width=width, height=height)
 
 
+def onActiveRowClick(button, pos, comboboxs, entries, checkbuttons, buttons):
+    i, j, k = pos
+    if button.is_checked():
+        entries["nombreStat"][i][j][k]["state"] = "normal"
+        checkbuttons["maxPower"][i][j][k]["state"] = "normal"
+        comboboxs["barrasKiMenus"][i][j][k]["state"] = "readonly"
+        comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
+        buttons["showData"][i][j][k]["state"] = "normal"
+    else:
+        entries["nombreStat"][i][j][k]["state"] = "disabled"
+        checkbuttons["maxPower"][i][j][k]["state"] = "disabled"
+        comboboxs["barrasKiMenus"][i][j][k]["state"] = "disabled"
+        comboboxs["reservaKi"][i][j][k]["state"] = "disabled"
+        buttons["showData"][i][j][k]["state"] = "disabled"
+
+
 def addMenusTab(tab, comboboxs, entries, checkbuttons, buttons, languageFile="spanish.db"):
     newTabs = ttk.Notebook(tab)
 
@@ -453,11 +469,11 @@ def addMenusTab(tab, comboboxs, entries, checkbuttons, buttons, languageFile="sp
                 checkbuttons["addStat"][-1][-1].append(checkbutton)
 
                 nombreStat = ttk.Entry(frame, state="disabled")
-                ##fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
+                # fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
                 # nombreStat.pack()
                 # nombreStat.place(x = xPoss[1], y = yPoss[2] + k*23, width = 150)
                 nombreStat.grid(row=k + 1, column=1)
-                ##comboboxs["fusBarras"].append(fusBarras)
+                # comboboxs["fusBarras"].append(fusBarras)
                 entries["nombreStat"][-1][-1].append(nombreStat)
 
                 maxPower = GuiManager.MyCheckButton(frame, onvalue=1, offvalue=0, state="disabled")
@@ -491,10 +507,6 @@ def addMenusTab(tab, comboboxs, entries, checkbuttons, buttons, languageFile="sp
     return (900, yPoss[-1] + 60)
 
 
-
-
-
-
 def parseUnkFile(fileName, comboboxs=None, entries=None, checkbuttons=None, buttons=None, languageFile="spanish.db"):
     if not fileName:
         return
@@ -510,7 +522,7 @@ def parseUnkFile(fileName, comboboxs=None, entries=None, checkbuttons=None, butt
         # fus.start()
         # men.start()
         # threading.Thread(target=threadsStop, args=[trans, fus, men]).start()
-    
+
 def threadsStop(*args):
     while True:
         a = 0
@@ -521,7 +533,9 @@ def threadsStop(*args):
             break
     print "ready"
 
+
 def popData(data):
+    # type: (list) -> None
     pop = Tkinter.Toplevel()
     for i in range(7):
 
@@ -551,15 +565,15 @@ def updateTransformations(comboboxs, entries, checkbuttons, buttons, languageFil
 
         comboboxs["barras"][i].current(transformData[1])
         comboboxs["barras"][i]["state"] = "readonly"
-        
+
         ani = language.getAnimationsPos(transformData[2])
         comboboxs["ani"][i].current(ani)
         comboboxs["ani"][i]["state"] = "readonly"
-        
+
         aura = language.getAurasPos(transformData[3])
         comboboxs["aura"][i].current(aura)
         comboboxs["aura"][i]["state"] = "readonly"
-        
+
         absor = language.getCharactersNamesPos(transformData[4])
         comboboxs["absor"][i].current(absor)
         if transformData[2] == 3:
@@ -610,7 +624,6 @@ def updateFusions(comboboxs, entries, checkbuttons, buttons, languageFile="spani
 
 def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish.db"):
     language = LanguageManager.LanguageManager(languageFile)
-    # debug = dict()
     i = 0
     for menu in character.data.menusList:
         if menu.isKnow():
@@ -637,12 +650,13 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
                     entries["nombreMenu"][i][j].insert("end", menuName)
                     #entries["nombreMenu"][i][j]["state"] = "disabled"
 
-                    if menuNum<7:
-                        comboboxs["dragonballIcon"][i][j].current(menuNum)
-                    else:
-                        comboboxs["dragonballIcon"][i][j]["value"] = list(comboboxs["dragonballIcon"][i][j]["value"]) + [menuNum]
-                        comboboxs["dragonballIcon"][i][j].current(len(comboboxs["dragonballIcon"][i][j]["value"])-1)
-                        comboboxs["dragonballIcon"][i][j]["state"] = "disabled"
+                    # if menuNum < 7:
+                    #     comboboxs["dragonballIcon"][i][j].current(menuNum)
+                    # else:
+                    #     comboboxs["dragonballIcon"][i][j]["value"] = list(
+                    #         comboboxs["dragonballIcon"][i][j]["value"]) + [menuNum]
+                    #     comboboxs["dragonballIcon"][i][j].current(len(comboboxs["dragonballIcon"][i][j]["value"]) - 1)
+                    #     comboboxs["dragonballIcon"][i][j]["state"] = "disabled"
 
                     k, k0 = 0, 0
                     statsInesperados = False
@@ -661,6 +675,7 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
                         #entries["nombreStat"][i][j][k]["state"] = "disabled"
 
                         checkbuttons["addStat"][i][j][k].select()
+                        checkbuttons["addStat"][i][j][k]["state"] = "normal"
 
                         if int(stat.getMaxPower()):
                             checkbuttons["maxPower"][i][j][k].select()
@@ -677,21 +692,25 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
 
                         buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
                         buttons["showData"][i][j][k]["state"] = "normal"
-                        #for debugeando in stat.getStatChars():
+                        # for debugeando in stat.getStatChars():
                         #    if debugeando[0] not in debug:
                         #        debug[debugeando[0]] = set()
                         #    debug[debugeando[0]].add(debugeando[1][0])
-                        #print len(stat.getStatChars())
-                        #if len(stat.getStatChars())>5:
+                        # print len(stat.getStatChars())
+                        # if len(stat.getStatChars())>5:
                         #    print "WEA"
 
 
                         k += 1
                         k0 += 1
                     while k0 < 24:
-                        checkbuttons["addStat"][i][j][k].deselect()
-                        checkbuttons["maxPower"][i][j][k].deselect()
-                        buttons["showData"][i][j][k]["state"] = "disabled"
+                        checkbuttons["addStat"][i][j][k0]["state"] = "normal"
+                        checkbuttons["addStat"][i][j][k0].deselect()
+                        checkbuttons["maxPower"][i][j][k0].deselect()
+                        buttons["showData"][i][j][k0]["state"] = "disabled"
+                        checkbuttons["maxPower"][i][j][k0]["state"] = "disabled"
+                        buttons["showData"][i][j][k0]["command"] = functools.partial(popData, list())
+                        buttons["showData"][i][j][k0]["state"] = "disabled"
                         k0 += 1
                     if statsInesperados:
                         print "Error: Mas stats que los esperados:", k
@@ -699,6 +718,7 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
             i += 1
     language.close()
     print "menus ready"
+
 
 def updateGui(comboboxs, entries, checkbuttons, buttons, languageFile="spanish.db"):
     character.data.parse(gui)
@@ -721,6 +741,7 @@ def saveFile():
 
 
 def saveAsUnkFile(fileName, **kwargs):
+    # type: (str, **kwargs) -> None
     if not fileName:
         return
     comboTransUpdate()
@@ -731,9 +752,11 @@ def saveAsUnkFile(fileName, **kwargs):
 character = CharacterData()
 gui = GuiManager.GuiManager("BT3 Character 'unk' Editor")
 
+
+
 def main():
     while True:
-        fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos",  "*,*"))
+        fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos", "*,*"))
         menuAbrir = lambda: gui.openFile("Abrir archivo", fileTypes, parseUnkFile)
         menuGuardar = lambda: saveFile()
         menuGuardarComo = lambda: gui.saveFile("Guardar archivo", fileTypes, saveAsUnkFile)
