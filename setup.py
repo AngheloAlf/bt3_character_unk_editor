@@ -11,10 +11,15 @@ def runProcess(proc, showCommand=False):
     # type: (list, bool) -> int
     if showCommand:
         print " ".join(proc)
-    process = Popen(proc, stdout=PIPE)
-    # process = Popen(proc)
-    (output, err) = process.communicate()
-    return process.wait()
+    try:
+        process = Popen(proc, stdout=PIPE)
+        # process = Popen(proc)
+        (output, err) = process.communicate()
+        return process.wait()
+    except WindowsError, err:
+        print "\tFatal error", err.errno, ": " + proc[0] + "not found"
+        exit(err.errno)
+    # TODO: que tipo de error ocurre en linux
 
 
 def getPythonIncludeFolder():
@@ -319,19 +324,25 @@ def cleanAll(arguments):
     return exit_code
 
 
+def main():
+    args = argv()
+
+    if 'make' in args:
+        makeAll(args)
+
+    if 'clean' in args:
+        clean(args)
+
+    if 'cleanAll' in args:
+        cleanAll(args)
+
+    if 'make' not in args and 'clean' not in args and 'cleanAll' not in args:
+        print "\tmake\n\tclean\n\tcleanAll\n"
+
+    print "\n\tREADY"
+
 finalName = "bt3_character_unk_editor"
-args = argv()
 
-if 'make' in args:
-    makeAll(args)
+if __name__ == "__main__":
+    main()
 
-if 'clean' in args:
-    clean(args)
-
-if 'cleanAll' in args:
-    cleanAll(args)
-
-if 'make' not in args and 'clean' not in args and 'cleanAll' not in args:
-    print "\tmake\n\tclean\n\tcleanAll\n"
-
-print "\n\tREADY"
