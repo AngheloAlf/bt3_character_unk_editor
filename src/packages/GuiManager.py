@@ -157,7 +157,10 @@ class GuiManager:
 
     def openFile(self, title, fileTypes, callback=None):
         archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
-        print archivo
+        try:
+            print archivo
+        except UnicodeEncodeError:
+            pass
         if callback:
             callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
@@ -165,7 +168,10 @@ class GuiManager:
 
     def saveFile(self, title, fileTypes, callback=None):
         archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
-        print archivo
+        try:
+            print archivo
+        except UnicodeEncodeError:
+            pass
         if callback:
             callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
@@ -173,7 +179,10 @@ class GuiManager:
 
     def openMultiplesFiles(self, title, fileTypes, callback=None):
         archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
-        print archivos
+        try:
+            print archivos
+        except UnicodeEncodeError:
+            pass
         if callback:
             callback(archivos, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
@@ -205,6 +214,9 @@ class GuiManager:
 
     def isRestart(self):
         return self.restart
+
+    def quit(self):
+        self.gui.quit()
 
 
 def showPopUp():

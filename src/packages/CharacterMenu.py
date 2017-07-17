@@ -8,20 +8,18 @@ class CharacterMenu:
         self.subMenus = []
         self.unknow = False
 
-        menuNameCode = map(chr, Constants.menuNameCode)
-        endOfFile = map(chr, Constants.endOfFile)
+        menuNameCode = Constants.hexListToChar(Constants.menuNameCode)
 
         subMenu = ""
 
         for i in range(len(menuData)):
             byte = menuData[i]
             if i + 5 < len(menuData):
-                line = list(menuData[i:i + 6])
+                line = menuData[i:i + 6]
                 # if line == menuNameCode or line == endOfFile:
                 if line == menuNameCode:
                     # if line == endOfFile:
-                    # print unicode(subMenu, "utf-16")
-                    if len(subMenu) != 0:
+                    if len(subMenu) > 4:
                         self.subMenus.append(SubMenu.SubMenu(subMenu))
                         subMenu = ""
             subMenu += byte

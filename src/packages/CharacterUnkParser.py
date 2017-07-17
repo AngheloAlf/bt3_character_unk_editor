@@ -2,7 +2,6 @@ import TransformClass
 import FusionClass
 import CharacterMenu
 import Constants
-import GuiManager
 
 
 def getTransformData(archivo, pointerFile):
@@ -26,7 +25,7 @@ def getMenusData(archivo, pointerFile):
     charMenuObj = None
     menu = ""
 
-    lineaArchivo = archivo[pointerFile-4:pointerFile]
+    lineaArchivo = archivo[pointerFile - 4:pointerFile]
 
     endOfMenuFile = Constants.endOfMenuFile
 
@@ -57,176 +56,99 @@ def setFusionData(archivo, pointerFile, fusionLine):
     return archivo, pointerFile
 
 
+def findDataPos(archivo, data, maxi):
+    # type: (str, str, int) -> list
+    i = 0
+    l = list()
+    pos = 0
+    while i < maxi:
+        finded = archivo.find(data, pos)
+        if finded == -1:
+            break
+        l.append(finded)
+        i += 1
+        pos = finded+1
+    return l
+
+
 class CharacterUnkParser:
     def __init__(self, name):
         # type: (str) -> None
         self.filename = name
         self.transObj = None
         self.fusionObj = None
-        self.menusList = None
-        self.fullFile = ""
-        self.fastMode = False
-        self.fastModeStart = 0.6
+        self.menusList = list()
 
-    def parse(self, gui=None):
-        # type: (GuiManager.GuiManager) -> CharacterUnkParser
         archivo = open(self.filename, "rb")
         self.fullFile = archivo.read()
         archivo.close()
 
-        fileSize = float(len(self.fullFile))
+    def parse(self):
+        # type: () -> None
+        transformCode = Constants.hexListToChar(Constants.transformCode)
+        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
+        print pointerFile
+        self.transObj, pointerFile = getTransformData(self.fullFile, pointerFile)
+        self.fusionObj, pointerFile = getFusionData(self.fullFile, pointerFile)
 
-        startOfMenuFile = Constants.startOfMenuFile
-        transformCode = Constants.transformCode
+        startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
+        starts = findDataPos(self.fullFile, startOfMenuFile, 8)
+        pointer = 0
+        while pointer < 8:
+            charMenuObj, pointerFile = getMenusData(self.fullFile, starts[pointer]+2)
+            self.menusList.append(charMenuObj)
+            pointer += 1
 
-        self.menusList = []
+        return
 
-        if gui:
-            gui.restartProgressBar()
+    def updateFileData(self, src):
+        # type: (CharacterUnkParser) -> None
+        transformCode = Constants.hexListToChar(Constants.transformCode)
+        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
+        
+        if src:
+            transLines = src.transObj.getAsLines()
+            fusionLine = src.self.fusionObj.getAsLines()
+        else:
+            transLines = self.transObj.getAsLines()
+            fusionLine = self.fusionObj.getAsLines()
+        
+        self.fullFile, pointerFile = setTransformData(self.fullFile, pointerFile, transLines)
+        self.fullFile, pointerFile = setFusionData(self.fullFile, pointerFile, fusionLine)
 
-        pointerFile = 0
-        if self.fastMode:
-            pointerFile = int(fileSize * self.fastModeStart)
-            while pointerFile % 4 != 0:
-                pointerFile += 1
-            pointerFile += 4
-            if gui is not None:
-                for i in range(int(20 * self.fastModeStart)):
-                    gui.updateProgressBar()
-
-        porcentajeAnterior = -1
-
-        transFound = False
-
-        lineaArchivo = self.fullFile[pointerFile:4 + pointerFile]
-        pointerFile += 4
-
-        while lineaArchivo != "" and len(lineaArchivo) == 4:
-            puntero = map(ord, lineaArchivo)
-
-            if startOfMenuFile == puntero:
-                # lineaArchivo = lineaArchivo[2:4]
-                # lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-                pointerFile += 2
-                charMenuObj, pointerFile = getMenusData(self.fullFile, pointerFile)
-                self.menusList.append(charMenuObj)
-
-            if not transFound and puntero == transformCode:
-                # print "encontrado"
-                pointerFile += 16 * 7 - 8
-                self.transObj, pointerFile = getTransformData(self.fullFile, pointerFile)
-                self.fusionObj, pointerFile = getFusionData(self.fullFile, pointerFile)
-                transFound = True
-
-            lineaArchivo = lineaArchivo[2:4]
-            lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-            pointerFile += 2
-
-            if int(pointerFile / fileSize * 20) > porcentajeAnterior:
-                porcentajeAnterior = int(pointerFile / fileSize * 20)
-                if gui is not None:
-                    gui.updateProgressBar()
-                else:
-                    print 100 * pointerFile / fileSize
-
-        # pointerFile -= 2
-        return self
-
-    def updateFileData(self, gui=None):
-        # type: (GuiManager.GuiManager) -> CharacterUnkParser
-        fileSize = float(len(self.fullFile))
-
-        startOfMenuFile = Constants.startOfMenuFile
-        transformCode = Constants.transformCode
-
-        pointerFile = 0
-        if self.fastMode:
-            pointerFile = int(fileSize * self.fastModeStart)
-            while pointerFile % 4 != 0:
-                pointerFile += 1
-            pointerFile += 4
-            if gui is not None:
-                for i in range(int(10 * self.fastModeStart)):
-                    gui.updateProgressBar()
-
-        porcentajeAnterior = -1
-
-        transFound = False
-
-        lineaArchivo = self.fullFile[pointerFile:4 + pointerFile]
-        pointerFile += 2
-
-        while lineaArchivo != "" and len(lineaArchivo) == 4:
-            puntero = map(ord, lineaArchivo)
-
-            if not transFound and puntero == transformCode:
-                # print "encontrado"
-                pointerFile += 16 * 7 - 8
-                self.fullFile, pointerFile = setTransformData(self.fullFile, pointerFile, self.transObj.getAsLines())
-                self.fullFile, pointerFile = setFusionData(self.fullFile, pointerFile, self.fusionObj.getAsLines())
-                transFound = True
-
-            lineaArchivo = lineaArchivo[2:4]
-            lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-            pointerFile += 2
-
-            if int(pointerFile / fileSize * 10) > porcentajeAnterior:
-                porcentajeAnterior = int(pointerFile / fileSize * 10)
-                if gui is not None:
-                    gui.updateProgressBar()
-                else:
-                    print 100 * pointerFile / fileSize
-
-        pointerFile -= 2
-
-        porcentajeAnterior = -1
-        startOfMenuFile = Constants.hexListToChar(startOfMenuFile)
+        startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
         endOfMenuFile = Constants.hexListToChar(Constants.endOfMenuFile)
-        pointerFile = 0
-        lineaArchivo = self.fullFile[pointerFile:pointerFile + 4]
-        pointerFile += 2
-        newFile = ""
-        i = 0
-        while pointerFile < int(fileSize):
-            if lineaArchivo == startOfMenuFile:
-                while lineaArchivo != endOfMenuFile:
-                    lineaArchivo = lineaArchivo[2:4]
-                    lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-                    pointerFile += 2
+        starts = findDataPos(self.fullFile, startOfMenuFile, 8)
+        ends = findDataPos(self.fullFile, endOfMenuFile, 8)
 
-                lineaArchivo = lineaArchivo[2:4]
-                lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-                newFile += self.menusList[i].getAsLine()
-                i += 1
+        newFile = self.fullFile[:starts[0]]
+        pointer = 0
+        while pointer < 7:
+            if src:
+                newMenu = src.menusList[pointer].getAsLine()
             else:
-                newFile += lineaArchivo[:2]
+                newMenu = self.menusList[pointer].getAsLine()
+            newFile += newMenu + self.fullFile[ends[pointer]+4:starts[pointer+1]]
+            pointer += 1
+        if src:
+            newMenu = src.menusList[pointer].getAsLine()
+        else:
+            newMenu = self.menusList[pointer].getAsLine()
+        newFile += newMenu + self.fullFile[ends[pointer]+4:]
 
-            pointerFile += 2
-            lineaArchivo = lineaArchivo[2:4]
-            lineaArchivo += self.fullFile[pointerFile:pointerFile + 2]
-
-            if int(pointerFile / fileSize * 10) > porcentajeAnterior:
-                porcentajeAnterior = int(pointerFile / fileSize * 10)
-                if gui is not None:
-                    gui.updateProgressBar()
-                else:
-                    print 100 * pointerFile / fileSize
-
-        newFile += lineaArchivo[:2]
         self.fullFile = newFile
-        return self
+        return
 
-    def saveFile(self, filename=None, gui=None):
-        # type: (str, GuiManager.GuiManager) -> CharacterUnkParser
+    def saveFile(self, filename=None, src=None):
+        # type: (unicode, CharacterUnkParser) -> None
         if not filename:
             filename = self.filename
 
-        self.updateFileData(gui)
+        self.updateFileData(src)
 
         archivo = open(filename, "wb")
         archivo.write(self.fullFile)
         archivo.close()
-        return self
 
     def __str__(self):
         # type: () -> str

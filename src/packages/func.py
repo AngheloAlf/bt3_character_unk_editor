@@ -134,20 +134,20 @@ def menusUpdate(event=None, languageFile="spanish.db"):
             subMenuLoop = character.data.menusList[i].subMenus
             if j < len(subMenuLoop):
                 if not subMenuLoop[j].isNone():
-                    subMenuLoop[j].setMenuName(gui.entries["nombreMenu"][i][j].get())
-            for k in range(24):
-                if gui.checkbuttons["addStat"][i][j][k].is_checked():
-                    a = gui.entries["nombreStat"][i][j][k].get()
-                    subMenuLoop[j].stats[k].setName(unicode(a))
+                    subMenuLoop[j].setMenuName(unicode(gui.entries["nombreMenu"][i][j].get()))
+                    for k in range(24):
+                        if gui.checkbuttons["addStat"][i][j][k].is_checked():
+                            a = gui.entries["nombreStat"][i][j][k].get()
+                            subMenuLoop[j].stats[k].setName(unicode(a))
 
-                    maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
-                    subMenuLoop[j].stats[k].setMaxPower(maxPower)
+                            maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
+                            subMenuLoop[j].stats[k].setMaxPower(maxPower)
 
-                    barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
-                    subMenuLoop[j].stats[k].setBarrasKi(barrasKi)
+                            barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
+                            subMenuLoop[j].stats[k].setBarrasKi(barrasKi)
 
-                    reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
-                    subMenuLoop[j].stats[k].setReservaKi(reservaKi)
+                            reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
+                            subMenuLoop[j].stats[k].setReservaKi(reservaKi)
     language.close()
     return
 
@@ -583,7 +583,7 @@ def updateTransformations(comboboxs, entries, checkbuttons, buttons, languageFil
             comboboxs["absor"][i]["state"] = "disabled"
 
     r3 = character.data.transObj.getR3Command(True)
-    r3 = language.getTransformationBonusPos(r3)
+    r3 = language.getR3CommandPos(r3)
     comboboxs["R3"].current(r3)
     comboboxs["R3"]["state"] = "readonly"
 
@@ -719,7 +719,7 @@ def updateMenus(comboboxs, entries, checkbuttons, buttons, languageFile="spanish
 
 
 def updateGui(comboboxs, entries, checkbuttons, buttons, languageFile="spanish.db"):
-    character.data.parse(gui)
+    character.data.parse()
     trans = threading.Thread(target=updateTransformations, args=[comboboxs, entries, checkbuttons, buttons])
     fus = threading.Thread(target=updateFusions, args=[comboboxs, entries, checkbuttons, buttons])
     men = threading.Thread(target=updateMenus, args=[comboboxs, entries, checkbuttons, buttons])
@@ -735,17 +735,19 @@ def saveFile():
     comboTransUpdate()
     comboFusUpdate()
     menusUpdate()
-    threading.Thread(target=lambda: character.data.saveFile(gui=gui), args=[]).start()
+    threading.Thread(character.data.saveFile, args=[]).start()
 
 
 def saveAsUnkFile(fileName, **kwargs):
     # type: (str, **kwargs) -> None
     if not fileName:
         return
+    if not fileName.lower().endswith(".unk"):
+        fileName = fileName + ".unk"
     comboTransUpdate()
     comboFusUpdate()
     menusUpdate()
-    threading.Thread(target=character.data.saveFile, args=[fileName, gui]).start()
+    threading.Thread(target=character.data.saveFile, args=[fileName]).start()
 
 character = CharacterData()
 gui = GuiManager.GuiManager("BT3 Character 'unk' Editor")
@@ -755,7 +757,6 @@ def main():
     while True:
         fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos", "*,*"))
         menuAbrir = lambda: gui.openFile("Abrir archivo", fileTypes, parseUnkFile)
-        menuGuardar = lambda: saveFile()
         menuGuardarComo = lambda: gui.saveFile("Guardar archivo", fileTypes, saveAsUnkFile)
         menuMuchos = lambda: gui.openMultiplesFiles("Seleccionar archivos", fileTypes)
         menuCarpeta = lambda: gui.selectFolder("Selecciona carpeta de archivos 'unk' de personajes.")
@@ -764,7 +765,7 @@ def main():
         print 3
         gui.addMenu(["Archivo", "Opciones", "Ayuda"], 
             [
-            [("Abrir", menuAbrir), ("Guardar", menuGuardar), ("Guardar como...", menuGuardarComo), ("[WIP]Actualizar muchos", menuMuchos), ("[WIP]Actualizar en capeta", menuCarpeta), (None, None), ("Salir", gui.gui.quit)], 
+            [("Abrir", menuAbrir), ("Guardar", saveFile), ("Guardar como...", menuGuardarComo), ("[WIP]Actualizar muchos", menuMuchos), ("[WIP]Actualizar en capeta", menuCarpeta), (None, None), ("Salir", gui.quit)], 
             [("[WIP]Idioma", lambda: None)],
             [("Acerca de", menuAcercaDe)]
             ])
@@ -773,7 +774,7 @@ def main():
         gui.addTab("Transformaciones", addTrans)
         gui.addTab("Fusiones", addFusion)
         gui.addTab("Menus", addMenusTab)
-        gui.putProgressBar(20)
+        # gui.putProgressBar(20)
         print 5
         gui.start()
 

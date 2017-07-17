@@ -1,8 +1,9 @@
-import StatMenu
 import Constants
+import StatMenu
 
 
 def getMenuName(submenuData, i):
+    # type: (str, int) -> (list, int)
     nameData = [submenuData[i:i + 2]]
     i += 2
     menuName = ""
@@ -14,6 +15,7 @@ def getMenuName(submenuData, i):
 
 
 def getStat(submenuData, i):
+    # type: (str, int) -> (StatMenu.StatMenu, int)
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
     statName = ""
@@ -74,6 +76,7 @@ class SubMenu:
         return unicode(self.menuName[1], "utf-16")
 
     def setMenuName(self, name):
+        # type: (unicode) -> None
         if self.menuName[1] != name.encode("utf-16")[2:]:
             print "Cambiando:"
             print "\t", self.menuName[1], "->", name.encode("utf-16")[2:]
@@ -81,10 +84,11 @@ class SubMenu:
         return
 
     def getAsLine(self):
+        # type: () -> str
         menuNameCode = Constants.hexListToChar(Constants.menuNameCode)
         endOfLine = Constants.hexListToChar(Constants.endOfLine)
         line = ""
-        if len(self.menuName) >= 2:
+        if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
         else:
             print self.menuName
