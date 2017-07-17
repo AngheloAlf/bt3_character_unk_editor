@@ -5,10 +5,25 @@ import tkMessageBox
 
 
 def popUp(title, text, text2):
+    # type: (str, str, str) -> None
     pop = Tkinter.Toplevel()
+    pop.title(title)
     ttk.Label(pop, text=text).pack()
     ttk.Button(pop, text=text2, command=pop.destroy).pack(side=Tkinter.BOTTOM)
     return
+
+
+def showPopUp(text1, text2):
+    # type: (str, str) -> None
+    tkMessageBox.showinfo(text1, text2)
+
+
+def addMsgToText(txtWid, msg):
+    # type: (Tkinter.Text, str) -> None
+    txtWid["state"] = "normal"
+    txtWid.insert(Tkinter.END, msg + "\n")
+    txtWid.see(Tkinter.END)
+    txtWid["state"] = "disabled"
 
 
 class GuiManager:
@@ -20,7 +35,6 @@ class GuiManager:
         # self.yOffset = yOffSet
         self.tabsWidth = 900
         self.tabsHeight = 0
-        self.entries = dict()
         self.panelsAmmount = 0
         self.height = 0
         self.width = 210
@@ -32,7 +46,7 @@ class GuiManager:
         self.entries = dict()
         self.checkbuttons = dict()
         self.buttons = dict()
-        self.progressBar = None
+        self.progressBar = list()
         self.restart = False
 
     # def addPanel(self, frameName, labels, inputs, button):
@@ -94,6 +108,7 @@ class GuiManager:
     #     return self
 
     def addTab(self, tabName, tabCallback):
+        # type: (str, (ttk.Frame, dict, dict, dict, dict)) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
@@ -109,6 +124,7 @@ class GuiManager:
         return
 
     def addMenu(self, cascadeNames, cascadeData):
+        # type: (list, list) -> None
         if len(cascadeNames) != len(cascadeData):
             return
         
@@ -130,9 +146,9 @@ class GuiManager:
         return self.entries
 
     def start(self, title=None):
-        # (str) -> None
-        if title:
-            self.title = title
+        # type: (str) -> None
+        # if title:
+            # self.title = title
         self.gui.title(self.title)
         # self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
@@ -142,9 +158,9 @@ class GuiManager:
         self.gui.mainloop()
 
     def stop(self):
-        # () -> None
+        # type: () -> None
         self.gui.destroy()
-        del self.gui
+        # del self.gui
         self.entries = dict()
         self.panelsAmmount = 0
         self.height = 0
@@ -156,6 +172,7 @@ class GuiManager:
         return not self.running
 
     def openFile(self, title, fileTypes, callback=None):
+        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
         archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivo
@@ -164,9 +181,10 @@ class GuiManager:
         if callback:
             callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
-        return archivo
+        return unicode(archivo)
 
     def saveFile(self, title, fileTypes, callback=None):
+        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
         archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivo
@@ -175,9 +193,10 @@ class GuiManager:
         if callback:
             callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
-        return archivo
+        return unicode(archivo)
 
     def openMultiplesFiles(self, title, fileTypes, callback=None):
+        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
         archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivos
@@ -186,26 +205,30 @@ class GuiManager:
         if callback:
             callback(archivos, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
-        return archivos
+        return unicode(archivos)
 
     def selectFolder(self, title=None, callback=None):
+        # type: (str, (unicode, dict, dict, dict, dict)) -> unicode
         carpeta = tkFileDialog.askdirectory(title=title)
         print carpeta
         if callback:
             callback(carpeta, comboboxs=self.comboboxs, entries=self.entries,
                      checkbuttons=self.checkbuttons, buttons=self.buttons)
-        return carpeta
+        return unicode(carpeta)
 
     def putProgressBar(self, maxi):
+        # type: (int) -> None
         pb = ttk.Progressbar(self.gui, orient="horizontal", length=self.tabsWidth, mode="determinate", maximum=maxi)
         pb.grid(column=0, row=1)
         self.progressBar = [pb, maxi]
 
     def restartProgressBar(self):
+        # type: () -> None
         if self.progressBar:
             self.progressBar[0]["value"] = 0
 
     def updateProgressBar(self):
+        # type: () -> None
         if self.progressBar is None:
             return
         if self.progressBar[0]["value"] > self.progressBar[1]:
@@ -213,22 +236,12 @@ class GuiManager:
         self.progressBar[0]["value"] += 1
 
     def isRestart(self):
+        # type: () -> bool
         return self.restart
 
     def quit(self):
+        # type: () -> None
         self.gui.quit()
-
-
-def showPopUp():
-    tkMessageBox.showinfo("Completado", "Operacion completada satisfactoriamente.")
-
-
-def addMsgToText(txtWid, msg):
-    # type: (Tkinter.Text, str) -> None
-    txtWid["state"] = "normal"
-    txtWid.insert(Tkinter.END, msg + "\n")
-    txtWid.see(Tkinter.END)
-    txtWid["state"] = "disabled"
 
 
 class MyCheckButton(Tkinter.Checkbutton):
