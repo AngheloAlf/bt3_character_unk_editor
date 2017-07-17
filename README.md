@@ -29,5 +29,8 @@ BT3 character 'unk' editor
 
 * gcc
      * [mingw32](http://www.mingw.org/)
+
+* make
+     * [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm)
      
 * [win32process](http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/)
