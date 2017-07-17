@@ -10,6 +10,15 @@ BT3 character 'unk' editor
 * Flag `-Wall` is passed to `gcc`
 
 
+## Execution:
+
+`python setup.py exec`
+
+* Executes the compiled file
+
+* Can be combined with `make` flag to compile and exec  the result:
+    * `python setup.py make exec`
+
 ## clean:
 
 * `python setup.py clean`
@@ -29,8 +38,10 @@ BT3 character 'unk' editor
 
 * gcc
      * [mingw32](http://www.mingw.org/)
+     * [cygwin](https://cygwin.com/install.html)
 
 * make
      * [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm)
+     * [cygwin](https://cygwin.com/install.html)
      
 * [win32process](http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/)

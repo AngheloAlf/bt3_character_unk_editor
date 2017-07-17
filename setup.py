@@ -223,6 +223,7 @@ def argv():
     #        l.append('--compiler=mingw32')
 
     returned += parseArg("make")
+    returned += parseArg("exec")
     returned += parseArg("clean")
     returned += parseArg("cleanAll")
     returned += parseArg("-a")
@@ -288,6 +289,15 @@ def makeAll(arguments):
     print "\tfiles copied\n\n"
 
 
+def execBulid(arguments):
+    program = os.path.join(os.getcwd(), 'out', finalName)
+    if sys.platform == "win32":
+        program += ".exe"
+    exit_code = runProcess([program], True)
+    if exit_code:
+        print "error executing:", program
+        exit(exit_code)
+
 def clean(arguments):
     rmMain = ["rm", os.path.join("src", "main.c")]
     exit_code = runProcess(rmMain, True)
@@ -330,6 +340,9 @@ def main():
     if 'make' in args:
         makeAll(args)
 
+    if 'exec' in args:
+        execBulid(args)
+
     if 'clean' in args:
         clean(args)
 
@@ -337,7 +350,7 @@ def main():
         cleanAll(args)
 
     if 'make' not in args and 'clean' not in args and 'cleanAll' not in args:
-        print "\tmake\n\tclean\n\tcleanAll\n"
+        print "\tmake\n\texec\n\tclean\n\tcleanAll\n"
 
     print "\n\tREADY"
 
