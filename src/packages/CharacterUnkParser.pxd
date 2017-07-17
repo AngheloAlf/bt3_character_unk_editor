@@ -1,6 +1,6 @@
 cimport TransformClass
 cimport FusionClass
-# cimport CharacterMenu
+cimport CharacterMenu
 # cimport Constants
 
 cdef tuple getTransformData(str archivo, int pointerFile)
@@ -9,9 +9,8 @@ cdef tuple getTransformData(str archivo, int pointerFile)
 cdef tuple getFusionData(str archivo, int pointerFile)
     # type: (str, int) -> (FusionClass.FusionClass, int)
 
-#TODO: remove tuple
-cdef tuple getMenusData(str archivo, int pointerFile)
-    # type: (str, int) -> (CharacterMenu.CharacterMenu, int)
+cdef CharacterMenu.CharacterMenu getMenusData(str archivo, int pointerFile)
+    # type: (str, int) -> CharacterMenu.CharacterMenu
 
 cdef tuple setTransformData(str archivo, int pointerFile, list transLines)
     # type: (str, int, list) -> (str, int)

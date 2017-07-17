@@ -21,7 +21,7 @@ def getFusionData(archivo, pointerFile):
 
 
 def getMenusData(archivo, pointerFile):
-    # type: (str, int) -> (CharacterMenu.CharacterMenu, int)
+    # type: (str, int) -> CharacterMenu.CharacterMenu
     charMenuObj = None
     menu = ""
 
@@ -39,7 +39,7 @@ def getMenusData(archivo, pointerFile):
         lineaArchivo = lineaArchivo[2:4]
         lineaArchivo += archivo[pointerFile:pointerFile + 2]
         pointerFile += 2
-    return charMenuObj, pointerFile
+    return charMenuObj
 
 
 def setTransformData(archivo, pointerFile, transLines):
@@ -95,7 +95,7 @@ class CharacterUnkParser:
         starts = findDataPos(self.fullFile, startOfMenuFile, 8)
         pointer = 0
         while pointer < 8:
-            charMenuObj, pointerFile = getMenusData(self.fullFile, starts[pointer]+2)
+            charMenuObj = getMenusData(self.fullFile, starts[pointer]+2)
             self.menusList.append(charMenuObj)
             pointer += 1
 

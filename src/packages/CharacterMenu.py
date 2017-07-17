@@ -32,9 +32,11 @@ class CharacterMenu:
         # print "\n", self
 
     def isKnow(self):
+        # type: () -> bool
         return not self.unknow
 
     def getAsLine(self):
+        # type: () -> str
         line = ""
         startOfutf16Text = Constants.hexListToChar(Constants.startOfutf16Text)
         endOfFile = Constants.hexListToChar(Constants.endOfFile)
