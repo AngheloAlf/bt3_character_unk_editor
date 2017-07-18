@@ -819,7 +819,7 @@ def updateMultiplesUnkFiles(archivos):
 
 
 character = CharacterData()
-gui = GuiManager.GuiManager("BT3 Character 'unk' Editor", icon=os.path.join("resources", "icon.ico"))
+gui = GuiManager.GuiManager("BT3 Character 'unk' Editor v0.1 Alpha", icon=os.path.join("resources", "icon.ico"))
 
 
 def main():
@@ -830,7 +830,8 @@ def main():
         menuMuchos = functools.partial(gui.selectMultiplesFiles, "Seleccionar archivos", fileTypes,
                                        updateMultiplesUnkFiles)
         menuCarpeta = functools.partial(gui.selectFolder, "Selecciona carpeta de archivos 'unk' de personajes.")
-        menuAcercaDe = functools.partial(GuiManager.showPopUp, "Acerca de", "Informacion")
+        menuAcercaDe = functools.partial(GuiManager.showPopUp, "Acerca de",
+                                         "BT3 Character 'unk' Editor v0.1 Alpha.\nCreado por AngheloAlf")
 
         print 3
         gui.addMenu(["Archivo", "Opciones", "Ayuda"],

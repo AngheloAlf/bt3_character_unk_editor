@@ -12,7 +12,7 @@ BEGIN
       VALUE "FileDescription", "'.unk' character file editor for DBZ BT3"
       VALUE "FileVersion", "0.1 Alpha"
       VALUE "InternalName", "bt3_character_unk_editor"
-      VALUE "LegalCopyright", "Arufu"
+      VALUE "LegalCopyright", "AngheloAlf"
       VALUE "OriginalFilename", "bt3_character_unk_editor.exe"
       VALUE "ProductName", "BT3 Character Unk Editor"
       VALUE "ProductVersion", "0.1 Alpha"
