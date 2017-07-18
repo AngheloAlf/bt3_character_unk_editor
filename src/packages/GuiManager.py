@@ -27,8 +27,8 @@ def addMsgToText(txtWid, msg):
 
 
 class GuiManager:
-    def __init__(self, title="Tk"):  # , xOffset, yOffSet):
-        # type: (str) -> None
+    def __init__(self, title="Tk", languageFile="spanish.db"):  # , xOffset, yOffSet):
+        # type: (str, str) -> None
         self.gui = Tkinter.Tk()
         # self.gui.minsize(xOffset, yOffSet)
         # self.xOffset = xOffset
@@ -48,6 +48,7 @@ class GuiManager:
         self.buttons = dict()
         self.progressBar = list()
         self.restart = False
+        self.languageFile = languageFile
 
     # def addPanel(self, frameName, labels, inputs, button):
     #     # type: (str, list, list, list) -> GuiManager
@@ -108,11 +109,11 @@ class GuiManager:
     #     return self
 
     def addTab(self, tabName, tabCallback):
-        # type: (str, (ttk.Frame, dict, dict, dict, dict)) -> None
+        # type: (str, (ttk.Frame, )) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
-        newX, newY = tabCallback(tab, self.comboboxs, self.entries, self.checkbuttons, self.buttons)
+        newX, newY = tabCallback(tab)
 
         tab["width"] = newX
         tab["height"] = newY
@@ -128,18 +129,21 @@ class GuiManager:
         if len(cascadeNames) != len(cascadeData):
             return
         
-        menubar = Tkinter.Menu(self.gui)
+        menuVar = Tkinter.Menu(self.gui)
 
         for i in range(len(cascadeNames)):
-            subMenu = Tkinter.Menu(menubar, tearoff=0)
+            subMenu = Tkinter.Menu(menuVar, tearoff=0)
             for optionName, callback in cascadeData[i]:
                 if optionName is None:
                     subMenu.add_separator()
                 else:
-                    subMenu.add_command(label=optionName, command=callback)
-            menubar.add_cascade(label=cascadeNames[i], menu=subMenu)
+                    if callback:
+                        subMenu.add_command(label=optionName, command=callback)
+                    else:
+                        subMenu.add_command(label=optionName)
+            menuVar.add_cascade(label=cascadeNames[i], menu=subMenu)
 
-        self.gui.config(menu=menubar)
+        self.gui.config(menu=menuVar)
 
     def getEntries(self):
         # type: () -> dict
@@ -147,8 +151,8 @@ class GuiManager:
 
     def start(self, title=None):
         # type: (str) -> None
-        # if title:
-            # self.title = title
+        if title:
+            self.title = title
         self.gui.title(self.title)
         # self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
@@ -172,48 +176,48 @@ class GuiManager:
         return not self.running
 
     def openFile(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+        # type: (str, tuple, (unicode, )) -> unicode
         archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivo
         except UnicodeEncodeError:
             pass
         if callback:
-            callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
-                     checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(archivo)
         return unicode(archivo)
 
     def saveFile(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+        # type: (str, tuple, (unicode, )) -> unicode
         archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivo
         except UnicodeEncodeError:
             pass
         if callback:
-            callback(archivo, comboboxs=self.comboboxs, entries=self.entries,
-                     checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(archivo)
         return unicode(archivo)
 
-    def openMultiplesFiles(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+    def selectMultiplesFiles(self, title, fileTypes, callback=None):
+        # type: (str, tuple, (unicode, )) -> tuple
         archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
         try:
             print archivos
         except UnicodeEncodeError:
             pass
         if callback:
-            callback(archivos, comboboxs=self.comboboxs, entries=self.entries,
-                     checkbuttons=self.checkbuttons, buttons=self.buttons)
-        return unicode(archivos)
+            callback(archivos)
+        if type(archivos) != tuple:
+            print type(archivos)
+            print archivos
+            return tuple()
+        return archivos
 
     def selectFolder(self, title=None, callback=None):
-        # type: (str, (unicode, dict, dict, dict, dict)) -> unicode
+        # type: (str, (unicode, )) -> unicode
         carpeta = tkFileDialog.askdirectory(title=title)
         print carpeta
         if callback:
-            callback(carpeta, comboboxs=self.comboboxs, entries=self.entries,
-                     checkbuttons=self.checkbuttons, buttons=self.buttons)
+            callback(carpeta)
         return unicode(carpeta)
 
     def putProgressBar(self, maxi):

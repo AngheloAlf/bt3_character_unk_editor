@@ -12,7 +12,6 @@ cdef class GuiManager:
     # gui = Tkinter.Tk()
     cdef int tabsWidth
     cdef int tabsHeight
-    cpdef dict entries
     cdef int panelsAmmount
     cdef int height
     cdef int width
@@ -21,11 +20,13 @@ cdef class GuiManager:
     cdef tabs
     # tabs = ttk.Notebook(self.gui)
     cdef dict tabsData
-    cdef dict comboboxs
-    cdef dict checkbuttons
-    cdef dict buttons
+    cpdef public dict entries
+    cpdef public dict comboboxs
+    cpdef public dict checkbuttons
+    cpdef public dict buttons
     cdef list progressBar
     cdef bint restart
+    cpdef public languageFile
 
     cpdef addTab(self, str  tabName, tabCallback)
         # type: (str, (ttk.Frame, dict, dict, dict, dict)) -> None
@@ -51,8 +52,8 @@ cdef class GuiManager:
     cpdef unicode saveFile(self, str title, tuple fileTypes, callback=*)
         # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
 
-    cpdef unicode openMultiplesFiles(self, str title, tuple fileTypes, callback=*)
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+    cpdef tuple selectMultiplesFiles(self, str title, tuple fileTypes, callback=*)
+        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> tuple
 
     cpdef unicode selectFolder(self, str title=*, callback=*)
         # type: (str, (unicode, dict, dict, dict, dict)) -> unicode

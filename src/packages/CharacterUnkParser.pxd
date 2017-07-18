@@ -3,20 +3,21 @@ cimport FusionClass
 cimport CharacterMenu
 # cimport Constants
 
-cdef tuple getTransformData(str archivo, int pointerFile)
-    # type: (str, int) -> (TransformClass.TransformClass, int)
 
-cdef tuple getFusionData(str archivo, int pointerFile)
-    # type: (str, int) -> (FusionClass.FusionClass, int)
+cdef TransformClass.TransformClass getTransformData(str archivo, int pointerFile, bint printData)
+    # type: (str, int, bool) -> TransformClass.TransformClass
+
+cdef FusionClass.FusionClass getFusionData(str archivo, int pointerFile, bint printData)
+    # type: (str, int, bool) -> FusionClass.FusionClass
 
 cdef CharacterMenu.CharacterMenu getMenusData(str archivo, int pointerFile)
     # type: (str, int) -> CharacterMenu.CharacterMenu
 
-cdef tuple setTransformData(str archivo, int pointerFile, list transLines)
-    # type: (str, int, list) -> (str, int)
+cdef str setTransformData(str archivo, int pointerFile, list transLines)
+    # type: (str, int, list) -> str
 
-cdef tuple setFusionData(str archivo, int pointerFile, str fusionLine)
-    # type: (str, int, str) -> (str, int)
+cdef str setFusionData(str archivo, int pointerFile, str fusionLine)
+    # type: (str, int, str) -> str
 
 cdef list findDataPos(str archivo, str data, int maxi)
     # type: (str, str, int) -> list
@@ -29,6 +30,7 @@ cdef class CharacterUnkParser:
     cdef public list menusList
     cdef public TransformClass.TransformClass transObj
     cdef public FusionClass.FusionClass fusionObj
+    cdef bint printData
 
     cpdef parse(self)
         # type: () -> None

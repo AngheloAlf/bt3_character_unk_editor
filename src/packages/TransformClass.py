@@ -1,6 +1,6 @@
 class TransformClass:
-    def __init__(self, line1, line2):
-        # type: (str, str) -> None
+    def __init__(self, line1, line2, printData=False):
+        # type: (str, str, bool) -> None
         self.unknowFirst = line1[:8]
         self.trans = list(line1[8:12])
         self.barras = list(line1[12:])
@@ -10,15 +10,16 @@ class TransformClass:
         self.abs = list(line2[8:12])
         self.command = line2[12]
         self.bonus = line2[13]
-        print "Transform:"
-        print "unknowFirst:", map(ord, list(self.unknowFirst))
-        print "trans:", map(ord, self.trans)
-        print "barras:", map(ord, self.barras)
-        print "ani:", map(ord, self.aniCam)
-        print "abs:", map(ord, self.abs)
-        print "r3command:", [ord(self.command)]
-        print "bonus:", [ord(self.bonus)]
-        print "\n"
+        if printData:
+            print "Transform:"
+            print "unknowFirst:", map(ord, list(self.unknowFirst))
+            print "trans:", map(ord, self.trans)
+            print "barras:", map(ord, self.barras)
+            print "ani:", map(ord, self.aniCam)
+            print "abs:", map(ord, self.abs)
+            print "r3command:", [ord(self.command)]
+            print "bonus:", [ord(self.bonus)]
+            print "\n"
 
     def getR3Command(self, asOrd=False):
         # type: (bool) -> int|str

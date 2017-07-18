@@ -4,20 +4,17 @@ import CharacterMenu
 import Constants
 
 
-def getTransformData(archivo, pointerFile):
-    # type: (str, int) -> (TransformClass.TransformClass, int)
+def getTransformData(archivo, pointerFile, printData):
+    # type: (str, int, bool) -> TransformClass.TransformClass
     line1 = archivo[pointerFile:pointerFile + 16]
     pointerFile += 16
     line2 = archivo[pointerFile:pointerFile + 14]
-    pointerFile += 14
-    return TransformClass.TransformClass(line1, line2), pointerFile
+    return TransformClass.TransformClass(line1, line2, printData)
 
 
-def getFusionData(archivo, pointerFile):
-    # type: (str, int) -> (FusionClass.FusionClass, int)
-    line = archivo[pointerFile:pointerFile + 24]
-    pointerFile += 24
-    return FusionClass.FusionClass(line), pointerFile
+def getFusionData(archivo, pointerFile, printData):
+    # type: (str, int, bool) -> FusionClass.FusionClass
+    return FusionClass.FusionClass(archivo[pointerFile:pointerFile + 24], printData)
 
 
 def getMenusData(archivo, pointerFile):
@@ -43,17 +40,15 @@ def getMenusData(archivo, pointerFile):
 
 
 def setTransformData(archivo, pointerFile, transLines):
-    # type: (str, int, list) -> (str, int)
+    # type: (str, int, list) -> str
     archivo = archivo[:pointerFile] + transLines[0] + transLines[1] + archivo[pointerFile + 30:]
-    pointerFile += 16 + 14
-    return archivo, pointerFile
+    return archivo
 
 
 def setFusionData(archivo, pointerFile, fusionLine):
-    # type: (str, int, str) -> (str, int)
+    # type: (str, int, str) -> str
     archivo = archivo[:pointerFile] + fusionLine + archivo[pointerFile + 24:]
-    pointerFile += 24
-    return archivo, pointerFile
+    return archivo
 
 
 def findDataPos(archivo, data, maxi):
@@ -72,12 +67,13 @@ def findDataPos(archivo, data, maxi):
 
 
 class CharacterUnkParser:
-    def __init__(self, name):
-        # type: (str) -> None
+    def __init__(self, name, printData=False):
+        # type: (unicode, bool) -> None
         self.filename = name
         self.transObj = None
         self.fusionObj = None
         self.menusList = list()
+        self.printData = printData
 
         archivo = open(self.filename, "rb")
         self.fullFile = archivo.read()
@@ -88,13 +84,13 @@ class CharacterUnkParser:
         transformCode = Constants.hexListToChar(Constants.transformCode)
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
         print pointerFile
-        self.transObj, pointerFile = getTransformData(self.fullFile, pointerFile)
-        self.fusionObj, pointerFile = getFusionData(self.fullFile, pointerFile)
+        self.transObj = getTransformData(self.fullFile, pointerFile, self.printData)
+        self.fusionObj = getFusionData(self.fullFile, pointerFile+30, self.printData)
 
         startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
         starts = findDataPos(self.fullFile, startOfMenuFile, 8)
         pointer = 0
-        while pointer < 8:
+        while pointer < len(starts):
             charMenuObj = getMenusData(self.fullFile, starts[pointer]+2)
             self.menusList.append(charMenuObj)
             pointer += 1
@@ -108,13 +104,13 @@ class CharacterUnkParser:
         
         if src:
             transLines = src.transObj.getAsLines()
-            fusionLine = src.self.fusionObj.getAsLines()
+            fusionLine = src.fusionObj.getAsLines()
         else:
             transLines = self.transObj.getAsLines()
             fusionLine = self.fusionObj.getAsLines()
         
-        self.fullFile, pointerFile = setTransformData(self.fullFile, pointerFile, transLines)
-        self.fullFile, pointerFile = setFusionData(self.fullFile, pointerFile, fusionLine)
+        self.fullFile = setTransformData(self.fullFile, pointerFile, transLines)
+        self.fullFile = setFusionData(self.fullFile, pointerFile+30, fusionLine)
 
         startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
         endOfMenuFile = Constants.hexListToChar(Constants.endOfMenuFile)
@@ -123,7 +119,7 @@ class CharacterUnkParser:
 
         newFile = self.fullFile[:starts[0]]
         pointer = 0
-        while pointer < 7:
+        while pointer < len(starts)-1:
             if src:
                 newMenu = src.menusList[pointer].getAsLine()
             else:
@@ -152,4 +148,4 @@ class CharacterUnkParser:
 
     def __str__(self):
         # type: () -> str
-        return "CharacterUnkParser <" + self.filename + ">"
+        return str("CharacterUnkParser <" + self.filename + ">")

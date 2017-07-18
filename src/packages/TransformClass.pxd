@@ -3,9 +3,6 @@ cdef class TransformClass:
     cdef list trans, barras, aniCam, aura, abs
     cdef str command, bonus
 
-    # cpdef __init__(self, str line1, str line2)
-        # type: (str, str) -> None
-
     # def getR3Command(self, asOrd=False):
         # type: (bool) -> int|str
 

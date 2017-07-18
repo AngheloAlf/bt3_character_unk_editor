@@ -28,23 +28,23 @@ cdef class LanguageManager:
         # type: () -> list
 
 
-    cpdef int getCharactersNamesID(self, str name)
-        # type: (str) -> int
+    cpdef int getCharactersNamesID(self, unicode name)
+        # type: (unicode) -> int
 
-    cpdef int getAnimationsID(self, str name)
-        # type: (str) -> int
+    cpdef int getAnimationsID(self, unicode name)
+        # type: (unicode) -> int
 
-    cpdef int getAurasID(self, str name)
-        # type: (str) -> int
+    cpdef int getAurasID(self, unicode name)
+        # type: (unicode) -> int
 
-    cpdef int getR3CommandID(self, str name)
-        # type: (str) -> int
+    cpdef int getR3CommandID(self, unicode name)
+        # type: (unicode) -> int
 
-    cpdef int getTransformationBonusID(self, str name)
-        # type: (str) -> int
+    cpdef int getTransformationBonusID(self, unicode name)
+        # type: (unicode) -> int
 
-    cpdef int getFusionsTypesID(self, str name)
-        # type: (str) -> int
+    cpdef int getFusionsTypesID(self, unicode name)
+        # type: (unicode) -> int
 
 
     cpdef int getCharactersNamesPos(self, int ide)
