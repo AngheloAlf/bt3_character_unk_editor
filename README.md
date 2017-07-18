@@ -9,6 +9,8 @@ BT3 character 'unk' editor
 
 * Flag `-Wall` is passed to `gcc`
 
+* Flag `-nosite` removes the python dependencie on `nosite.py`
+
 
 ## Execution:
 

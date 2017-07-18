@@ -189,10 +189,34 @@ def compilePyPackages(arguments):
 
 
 def mainPyToC(arguments):
-    cythonizeCommand = ["cython", "--embed", "-o", "src/main.c", "src/main.py"]
-    if "-a" in arguments:
-        cythonizeCommand.append("-a")
-    return runProcess(cythonizeCommand, True)
+    # type: (list) -> int
+    main = os.path.join("src", "main")
+    if "-nosite" in arguments:
+        arch = open(main+".py")
+        mainData = ""
+        for line in arch:
+            mainData += line.strip()+";"
+        arch.close()
+
+        arch = open(main+".c", "w")
+        arch.write('#include <Python.h>\n')
+        arch.write('\n')
+        arch.write('int main(int argc, char *argv[]){\n')
+        arch.write('    Py_NoSiteFlag = 1;\n')
+        arch.write('    Py_Initialize();\n')
+        arch.write('    Py_SetProgramName(argv[0]);\n')
+        arch.write('    PySys_SetArgv(argc, argv);\n')
+        arch.write('    PyRun_SimpleString("'+mainData+'");\n')
+        arch.write('    Py_Finalize();')
+        arch.write('    return 0;\n')
+        arch.write('}\n')
+        arch.close()
+        return 0
+    else:
+        cythonizeCommand = ["cython", "--embed", "-o", main+".c", main+".py"]
+        if "-a" in arguments:
+            cythonizeCommand.append("-a")
+        return runProcess(cythonizeCommand, True)
 
 
 def cToBinary(arguments):
@@ -249,6 +273,7 @@ def argv():
     returned += parseArg("cleanAll")
     returned += parseArg("-a")
     returned += parseArg("-Wall")
+    returned += parseArg("-nosite")
 
     # sys.argv = [sys.argv[0]] + l + sys.argv[1:]
     return returned
@@ -270,9 +295,12 @@ def copyFiles():
 
     if isWindows():
         dlls = getPythonDll()
+        exit2 = 0
         for dll in dlls:
             copy = ["cp", dll, "out/"]
-            exit_code += runProcess(copy, True)
+            exit2 += runProcess(copy, True)
+        if exit2:
+            print "error copying python dlls"
 
     return exit_code
 
