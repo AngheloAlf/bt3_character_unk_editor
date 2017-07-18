@@ -1,8 +1,8 @@
 cpdef popUp(str title, str text, str text2)
     # type: (str, str, str) -> None
 
-cpdef showPopUp(str text1, str text2)
-    # type: (str, str) -> None
+cpdef showPopUp(unicode text1, unicode text2)
+    # type: (unicode, unicode) -> None
 
 cpdef addMsgToText(txtWid, str msg)
     # type: (Tkinter.Text, str) -> None
