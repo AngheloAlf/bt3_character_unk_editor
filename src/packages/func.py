@@ -125,7 +125,7 @@ def comboFusUpdate(event=None):
             gui.comboboxs["fusEquipo"][i][0].current(gui.comboboxs["fusCompa"][i].current())
 
         for j in gui.comboboxs["fusEquipo"][i]:
-            fusionData.append(unicode(language.getCharactersNamesID(j.get())))
+            fusionData.append(language.getCharactersNamesID(unicode(j.get())))
 
         character.data.fusionObj.setFusionData(i, fusionData, True)
 
@@ -429,16 +429,16 @@ def addMenusTab(tab):
             # comboboxs["fusBarras"].append(fusBarras)
             gui.entries["nombreMenu"][-1].append(nombreMenu)
 
-            label = ttk.Label(nameTab, text="Icono esfera dragon")
-            label.pack()
-            label.place(x=xPoss[2], y=yPoss[0])
+            # label = ttk.Label(nameTab, text="Icono esfera dragon")
+            # label.pack()
+            # label.place(x=xPoss[2], y=yPoss[0])
 
-            dragonballIcon = ttk.Combobox(nameTab, state="disabled")
-            dragonballIcon["values"] = range(7)
+            # dragonballIcon = ttk.Combobox(nameTab, state="disabled")
+            # dragonballIcon["values"] = range(7)
             # fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
-            dragonballIcon.pack()
-            dragonballIcon.place(x=xPoss[2], y=yPoss[1], width=150)
-            gui.comboboxs["dragonballIcon"][-1].append(dragonballIcon)
+            # dragonballIcon.pack()
+            # dragonballIcon.place(x=xPoss[2], y=yPoss[1], width=150)
+            # gui.comboboxs["dragonballIcon"][-1].append(dragonballIcon)
 
             gui.entries["nombreStat"][-1].append(list())
             gui.checkbuttons["addStat"][-1].append(list())
@@ -789,7 +789,7 @@ def saveAsUnkFile(fileName):
     menusUpdate()
     try:
         character.data.saveFile(fileName)
-        GuiManager.showPopUp("Accion completada", "Archivo " + fileName + " guardado satisfactoriamente")
+        GuiManager.showPopUp(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
     except Exception as err:
         print ""
         GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")

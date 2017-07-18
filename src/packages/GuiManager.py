@@ -15,7 +15,7 @@ def popUp(title, text, text2):
 
 
 def showPopUp(text1, text2):
-    # type: (str, str) -> None
+    # type: (unicode, unicodev) -> None
     tkMessageBox.showinfo(text1, text2)
 
 
