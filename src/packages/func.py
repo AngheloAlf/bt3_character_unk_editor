@@ -476,7 +476,7 @@ def addMenusTab(tab):
                 checkbutton.grid(row=k + 1, column=0)
                 gui.checkbuttons["addStat"][-1][-1].append(checkbutton)
 
-                nombreStat = ttk.Entry(frame, state="disabled", width=150)
+                nombreStat = ttk.Entry(frame, state="disabled", width=50)
                 # fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
                 # nombreStat.pack()
                 # nombreStat.place(x = xPoss[1], y = yPoss[2] + k*23, width = 150)
