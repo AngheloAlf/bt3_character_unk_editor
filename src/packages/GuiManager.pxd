@@ -27,6 +27,7 @@ cdef class GuiManager:
     cdef list progressBar
     cdef bint restart
     cpdef public languageFile
+    cdef str icon
 
     cpdef addTab(self, str  tabName, tabCallback)
         # type: (str, (ttk.Frame, dict, dict, dict, dict)) -> None
@@ -37,7 +38,7 @@ cdef class GuiManager:
     cpdef dict getEntries(self)
         # type: () -> dict
 
-    cpdef start(self, str title=*)
+    cpdef start(self, str title=*, str icon=*)
         # type: (str) -> None
 
     cpdef stop(self)

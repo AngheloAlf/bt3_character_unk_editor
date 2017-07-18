@@ -17,9 +17,19 @@ def runProcess(proc, showCommand=False):
         (output, err) = process.communicate()
         return process.wait()
     except WindowsError, err:
-        print "\tFatal error", err.errno, ": " + proc[0] + "not found"
+        print "\tFatal error " + str(err.errno) + ": " + proc[0] + " not found"
         exit(err.errno)
     # TODO: que tipo de error ocurre en linux
+
+
+def isWindows():
+    # type: () -> bool
+    return sys.platform == "win32"
+
+
+def isLinux():
+    # type: () -> bool
+    return sys.platform.startswith("linux")
 
 
 def getPythonIncludeFolder():
@@ -31,7 +41,7 @@ def getLIBPL():
     # type: () -> str
     LIBPL = sysconfig.get_config_var('LIBPL')
     if not LIBPL:
-        if sys.platform == "win32":
+        if isWindows():
             LIBPL = "C:\\Python27\\libs"
         else:
             print "sysconfig.get_config_var('LIBPL') returned None"
@@ -44,15 +54,15 @@ def getLIBS():
     LIBS = sysconfig.get_config_var('LIBS')
 
     if not LIBS:
-        if sys.platform == "win32":
+        if isWindows():
             LIBS = "-lpython27 -lpthread"
         else:
             print "sysconfig.get_config_var('LIBS') returned None"
             exit(1)
 
-    if sys.platform == "linux2":
+    if isLinux():
         LIBS = LIBS.split(" ")[:-2]
-    elif sys.platform == "win32":
+    elif isWindows():
         LIBS = LIBS.split(" ")
     else:
         LIBS = LIBS.split(" ")
@@ -64,15 +74,15 @@ def getPYLIBRARY():
     # type: () -> str
     PYLIB = sysconfig.get_config_var('LIBRARY')
     if not PYLIB:
-        if sys.platform == "win32":
+        if isWindows():
             PYLIB = "m"
         else:
             print "sysconfig.get_config_var('LIBRARY') returned None"
             exit(1)
 
-    if sys.platform == "linux2":
+    if isLinux():
         PYLIB = PYLIB[3:-2]
-    elif sys.platform == "win32":
+    elif isWindows():
         pass
         # PYLIB = sysconfig.get_config_var('LIBRARY')[3:-2]
     else:
@@ -146,7 +156,7 @@ def compilePyPackages(arguments):
         # setup(name=py[0], ext_modules=cythonize([py[1]]))
         soName = os.path.join("out", "packages", py[0])
         cName = os.path.join(packagesFolder, py[0] + ".c")
-        if sys.platform == "win32":
+        if isWindows():
             soName += ".pyd"
         else:
             soName += ".so"
@@ -193,8 +203,19 @@ def cToBinary(arguments):
 
     # compileCommandList = ["gcc", "-Os", "-I", pythonInclude, "-L", LIBPL, "-o", finalName, "src/main.c"] + LIBS + \
     #                      ["-l" + PYLIBRARY]
+
     compileCommandList = ["gcc", "-I", pythonInclude, "-L", LIBPL]
-    compileCommandList += ["-o", os.path.join("out", finalName), "src/main.c"]
+    compileCommandList += ["-o", os.path.join("out", finalName), os.path.join("src", "main.c")]
+
+    if isWindows():
+        resResult = os.path.join("src", "winRc.res")
+        rcCompilate = ["windres", os.path.join("src", "winRc.rc"), "-O", "coff", "-o", resResult]
+        exit_code = runProcess(rcCompilate, True)
+        if exit_code:
+            print "Error compilating winRc.rc"
+        else:
+            compileCommandList.append(resResult)
+
     compileCommandList += LIBS + ["-l" + PYLIBRARY]
     if "-Wall" in arguments:
         compileCommandList.append("-Wall")
@@ -244,16 +265,10 @@ def copyFiles():
     copy = ["cp", "-a", "lang/", "out/"]
     exit_code = runProcess(copy, True)
 
-    # move = ["mv", "packages", "out"]
-    # exit_code += runProcess(move, True)
+    copy = ["cp", "-a", "resources/", "out/"]
+    exit_code += runProcess(copy, True)
 
-    # if sys.platform == "win32":
-    #     move = ["mv", finalName + ".exe", "out"]
-    # else:
-    #     move = ["mv", finalName, "out"]
-    # exit_code += runProcess(move, True)
-
-    if sys.platform == "win32":
+    if isWindows():
         dlls = getPythonDll()
         for dll in dlls:
             copy = ["cp", dll, "out/"]
@@ -291,7 +306,7 @@ def makeAll(arguments):
 
 def execBulid(arguments):
     program = os.path.join(os.getcwd(), 'out', finalName)
-    if sys.platform == "win32":
+    if isWindows():
         program += ".exe"
     exit_code = runProcess([program], True)
     if exit_code:

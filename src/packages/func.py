@@ -48,6 +48,8 @@ import ttk
 print "import functools"
 import functools
 
+print "import os"
+import os
 
 # except:
 #     print "got error"
@@ -528,10 +530,10 @@ def parseUnkFile(fileName):
         updateTransformations()
         updateFusions()
         updateMenus()
-    except Exception, err:
+    except Exception as err:
         print ""
         GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
-        raise err
+        raise
 
     # trans = threading.Thread(target=updateTransformations)
     # fus = threading.Thread(target=updateFusions)
@@ -769,10 +771,10 @@ def saveFile():
     try:
         character.data.saveFile()
         GuiManager.showPopUp("Accion completada", "Archivo actualizado correctamente")
-    except Exception, err:
+    except Exception as err:
         print ""
         GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
-        raise err
+        raise
     # threading.Thread(character.data.saveFile, args=[]).start()
 
 
@@ -788,10 +790,10 @@ def saveAsUnkFile(fileName):
     try:
         character.data.saveFile(fileName)
         GuiManager.showPopUp("Accion completada", "Archivo " + fileName + " guardado satisfactoriamente")
-    except Exception, err:
+    except Exception as err:
         print ""
         GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
-        raise err
+        raise
     # threading.Thread(target=character.data.saveFile, args=[fileName]).start()
 
 
@@ -809,15 +811,15 @@ def updateMultiplesUnkFiles(archivos):
             personaje.parse()
             personaje.saveFile(src=character.data)
         GuiManager.showPopUp("Acción completada", "Archivos actualizados satisfactoriamente")
-    except Exception, err:
+    except Exception as err:
         print ""
         GuiManager.showPopUp("Acción fallida",
                              "Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje.")
-        raise err
+        raise
 
 
 character = CharacterData()
-gui = GuiManager.GuiManager("BT3 Character 'unk' Editor")
+gui = GuiManager.GuiManager("BT3 Character 'unk' Editor", icon=os.path.join("resources", "icon.ico"))
 
 
 def main():

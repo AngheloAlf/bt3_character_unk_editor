@@ -2,6 +2,7 @@ import Tkinter
 import ttk
 import tkFileDialog
 import tkMessageBox
+import os
 
 
 def popUp(title, text, text2):
@@ -27,8 +28,8 @@ def addMsgToText(txtWid, msg):
 
 
 class GuiManager:
-    def __init__(self, title="Tk", languageFile="spanish.db"):  # , xOffset, yOffSet):
-        # type: (str, str) -> None
+    def __init__(self, title="Tk", languageFile="spanish.db", icon=None):  # , xOffset, yOffSet):
+        # type: (str, str, str) -> None
         self.gui = Tkinter.Tk()
         # self.gui.minsize(xOffset, yOffSet)
         # self.xOffset = xOffset
@@ -49,6 +50,7 @@ class GuiManager:
         self.progressBar = list()
         self.restart = False
         self.languageFile = languageFile
+        self.icon = icon
 
     # def addPanel(self, frameName, labels, inputs, button):
     #     # type: (str, list, list, list) -> GuiManager
@@ -149,11 +151,24 @@ class GuiManager:
         # type: () -> dict
         return self.entries
 
-    def start(self, title=None):
-        # type: (str) -> None
+    def start(self, title=None, icon=None):
+        # type: (str, str) -> None
+        if icon:
+            self.icon = icon
+        if self.icon:
+            # TODO: test on linux
+            try:
+                self.gui.wm_iconbitmap(bitmap=self.icon)
+                # img = Tkinter.PhotoImage(file=self.icon)
+            except Exception:
+                self.gui.wm_iconbitmap(bitmap=os.path.join("..", self.icon))
+                # img = Tkinter.PhotoImage(file=os.path.join("..", self.icon))
+            # self.gui.tk.call('wm', 'iconphoto', self.gui._w, img)
+                
         if title:
             self.title = title
         self.gui.title(self.title)
+
         # self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
