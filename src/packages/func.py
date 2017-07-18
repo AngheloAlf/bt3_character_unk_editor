@@ -143,7 +143,7 @@ def menusUpdate(event=None):
             if j < len(subMenuLoop):
                 if not subMenuLoop[j].isNone():
                     subMenuLoop[j].setMenuName(unicode(gui.entries["nombreMenu"][i][j].get()))
-                    for k in range(24):
+                    for k in range(32):
                         if gui.checkbuttons["addStat"][i][j][k].is_checked():
                             a = gui.entries["nombreStat"][i][j][k].get()
                             subMenuLoop[j].stats[k].setName(unicode(a))
@@ -468,7 +468,7 @@ def addMenusTab(tab):
             ttk.Label(frame, text="Barras de Ki ocupadas").grid(row=0, column=3)
             ttk.Label(frame, text="Reservas de Ki ocupadas").grid(row=0, column=4)
 
-            for k in range(24):
+            for k in range(32):
                 checkbutton = GuiManager.MyCheckButton(frame, text=str(k + 1), onvalue=1, offvalue=0, state="disabled")
                 checkbutton.deselect()
                 # label = ttk.Label(frame, text=str(k+1))
@@ -706,7 +706,7 @@ def updateMenus():
                         # entries["nombreStat"][i][j][k]["state"] = "disabled"
 
                         gui.checkbuttons["addStat"][i][j][k].select()
-                        gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
+                        # gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
 
                         if stat.getMaxPower():
                             gui.checkbuttons["maxPower"][i][j][k].select()
@@ -732,8 +732,8 @@ def updateMenus():
 
                         k += 1
                         k0 += 1
-                    while k0 < 24:
-                        gui.checkbuttons["addStat"][i][j][k0]["state"] = "normal"
+                    while k0 < 32:
+                        # gui.checkbuttons["addStat"][i][j][k0]["state"] = "normal"
                         gui.checkbuttons["addStat"][i][j][k0].deselect()
                         gui.checkbuttons["maxPower"][i][j][k0].deselect()
                         gui.buttons["showData"][i][j][k0]["state"] = "disabled"
