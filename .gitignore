@@ -103,7 +103,7 @@ ENV/
 .idea/
 
 /out/
-/src/packages/*.c
+*.c
 *.unk
 /packages/
 *.html

@@ -103,6 +103,10 @@ def getPythonDll():
     return dll
 
 
+def getPythonFolder():
+    return os.path.split(sys.executable)[0]
+
+
 # def compilePyPackages():
 #     packagesFolder = os.path.join("src", "packages")
 #     pyFiles = [(f[:-3], os.path.join(packagesFolder, f)) for f in os.listdir(packagesFolder) if
@@ -192,6 +196,13 @@ def mainPyToC(arguments):
     # type: (list) -> int
     main = os.path.join("src", "main")
     if "-nosite" in arguments:
+        zipName = 'pythonLib.zip'
+        folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3"), os.path.join("Lib", "lib-tk")]
+        pyzip = ['.', zipName]
+        for fld in folders:
+            pyzip.append(os.path.join(zipName, fld))
+        pyzip.append("DLLs")
+
         arch = open(main+".py")
         mainData = ""
         for line in arch:
@@ -203,11 +214,16 @@ def mainPyToC(arguments):
         arch.write('\n')
         arch.write('int main(int argc, char *argv[]){\n')
         arch.write('    Py_NoSiteFlag = 1;\n')
-        arch.write('    Py_Initialize();\n')
+        arch.write('    Py_SetPythonHome(".");\n')
+        arch.write('    Py_InitializeEx(0);\n')
         arch.write('    Py_SetProgramName(argv[0]);\n')
         arch.write('    PySys_SetArgv(argc, argv);\n')
+        arch.write('    PyRun_SimpleString("import sys");\n')
+        arch.write('    PyRun_SimpleString("sys.path = ' + str(pyzip) + '");\n')
+        arch.write('\n')
         arch.write('    PyRun_SimpleString("'+mainData+'");\n')
-        arch.write('    Py_Finalize();')
+        arch.write('\n')
+        arch.write('    Py_Finalize();\n')
         arch.write('    return 0;\n')
         arch.write('}\n')
         arch.close()
@@ -279,6 +295,66 @@ def argv():
     return returned
 
 
+
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+
+import os
+import zipfile
+
+def copyPythonDependencies():
+    folder = getPythonFolder()
+    DLLs = ["_sqlite3.pyd", "_tkinter.pyd", "sqlite3.dll", "tcl85.dll", "tk85.dll"]
+    tcl85 = ["encoding/"]
+    tk85 = ["ttk/"]
+    folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
+    [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
+    dependencies = [os.path.join("DLLs", x) for x in DLLs]
+    dependencies += [os.path.join("tcl", "tcl8.5", x) for x in tcl85]
+    dependencies += [os.path.join("tcl", "tcl8.5", x) for x in os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
+    dependencies += [os.path.join("tcl", "tk8.5", x) for x in tk85]
+    dependencies += [os.path.join("tcl", "tk8.5", x) for x in os.listdir(os.path.join(folder, "tcl", "tk8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
+    for depend in dependencies:
+        copy = ["cp", "-r", os.path.join(folder, depend), os.path.join("out", depend)]
+        if runProcess(copy, True):
+            print "\terror: " + " ".join(copy)
+
+    mkdir = ["mkdir", os.path.join("Lib")]
+    runProcess(mkdir, True)
+
+    LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py', 'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py', 'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py', 'warnings.py', '_abcoll.py', '_weakrefset.py']
+    LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
+
+    import py_compile
+    for i in LibDependencies:
+        copy = ["cp", os.path.join(folder, "Lib", i), os.path.join("Lib/")]
+        runProcess(copy)
+        py_compile.compile(os.path.join("Lib", i))
+        rm = ["rm", os.path.join("Lib", i)]
+        runProcess(rm)
+
+    for i in LibDependenciesFolder:
+        mkdir = ["mkdir", os.path.join("Lib", i)]
+        runProcess(mkdir, True)
+        for j in os.listdir(os.path.join(folder, "Lib", i)):
+            if os.path.isfile(os.path.join(folder, "Lib", i, j)) and j.endswith(".py"):
+                copy = ["cp", os.path.join(folder, "Lib", i, j), os.path.join("Lib", i)]
+                runProcess(copy, True)
+                py_compile.compile(os.path.join("Lib", i, j))
+                rm = ["rm", os.path.join("Lib", i, j)]
+                runProcess(rm)
+
+    zipf = zipfile.ZipFile(os.path.join('out', 'pythonLib.zip'), 'w', zipfile.ZIP_DEFLATED)
+    zipdir('Lib', zipf)
+    zipf.close()
+
+    rm = ["rm", "-r", "Lib"]
+    runProcess(rm, True)
+
+
 def copyFiles():
     if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
         mkdir = ["mkdir", "out"]
@@ -300,7 +376,9 @@ def copyFiles():
             copy = ["cp", dll, "out/"]
             exit2 += runProcess(copy, True)
         if exit2:
-            print "error copying python dlls"
+            print "\terror copying python dlls"
+
+        copyPythonDependencies()
 
     return exit_code
 
@@ -342,8 +420,6 @@ def execBulid(arguments):
         exit(exit_code)
 
 def clean(arguments):
-    rmMain = ["rm", os.path.join("src", "main.c")]
-    exit_code = runProcess(rmMain, True)
 
     # rmBuild = ["rm", "-r", "build"]
     # exit_code += runProcess(rmBuild, True)
@@ -352,6 +428,10 @@ def clean(arguments):
     rmFiles = [os.path.join(packagesFolder, f) for f in os.listdir(packagesFolder)
                if os.path.isfile(os.path.join(packagesFolder, f)) and
                (f.lower().endswith(".pyc") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
+    rmFiles += [os.path.join("src", f) for f in os.listdir("src")
+               if os.path.isfile(os.path.join(packagesFolder, f)) and
+               (f.lower().endswith(".res") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
+    exit_code = 0
     for delete in rmFiles:
         rmPac = ["rm", delete]
         exit_code += runProcess(rmPac, True)
