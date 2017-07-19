@@ -16,7 +16,7 @@ def runProcess(proc, showCommand=False):
         # process = Popen(proc)
         (output, err) = process.communicate()
         return process.wait()
-    except WindowsError, err:
+    except OSError as err:
         print "\tFatal error " + str(err.errno) + ": " + proc[0] + " not found"
         exit(err.errno)
     # TODO: que tipo de error ocurre en linux

@@ -157,13 +157,14 @@ class GuiManager:
             self.icon = icon
         if self.icon:
             # TODO: test on linux
-            try:
-                self.gui.wm_iconbitmap(bitmap=self.icon)
-                # img = Tkinter.PhotoImage(file=self.icon)
-            except Exception:
-                self.gui.wm_iconbitmap(bitmap=os.path.join("..", self.icon))
-                # img = Tkinter.PhotoImage(file=os.path.join("..", self.icon))
-            # self.gui.tk.call('wm', 'iconphoto', self.gui._w, img)
+            if os.name == 'nt':
+                try:
+                    self.gui.wm_iconbitmap(bitmap=self.icon)
+                    # img = Tkinter.PhotoImage(file=self.icon)
+                except Exception:
+                    self.gui.wm_iconbitmap(bitmap=os.path.join("..", self.icon))
+                    # img = Tkinter.PhotoImage(file=os.path.join("..", self.icon))
+                # self.gui.tk.call('wm', 'iconphoto', self.gui._w, img)
 
         if title:
             self.title = title
