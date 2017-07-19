@@ -1,64 +1,13 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
-# try:
-#     from packages.TransformClass import TransformClass
-#     from packages.CharacterUnkParser import CharacterUnkParser
-#     from packages.LanguageManager import LanguageManager
-#     from packages.GuiManager import GuiManager
-#     from packages.UnkEditorGui import *
-#     print "import normal"
-# except ImportError:
-#     from packages import *
-#     import packages
-#     print "wea"
-#     print dir(packages)
-#     #print help(packages)
-#     print packages.__builtins__
-#     print packages.__doc__
-#     print packages.__file__
-#     print packages.__name__
-#     print packages.__package__
-#     print packages.__test__
-# import threading
-
-# try:
-print "import GuiManager"
 import GuiManager
-
-# print len(dir(GuiManager))
-# for i in dir(GuiManager):
-#     print i
-# print "from CharacterUnkParser import CharacterUnkParser"
-# from CharacterUnkParser import CharacterUnkParser
-# print "from UnkEditorGui import *"
-# from UnkEditorGui import *
-print "import CharacterUnkParser"
 import CharacterUnkParser
-
-print "import LanguageManager"
 import LanguageManager
-
-print "import Tkinter"
 import Tkinter
-
-print "import ttk"
 import ttk
-
-print "import functools"
 import functools
-
-print "import os"
 import os
-
-# except:
-#     print "got error"
-#     print "import packages.GuiManager"
-#     import packages.GuiManager
-#     print "from packages.CharacterUnkParser import CharacterUnkParser"
-#     from packages.CharacterUnkParser import CharacterUnkParser
-#     print "from packages.UnkEditorGui import *"
-#     from packages.UnkEditorGui import *
 
 
 class CharacterData:
@@ -501,8 +450,7 @@ def addMenusTab(tab):
                 reservaKi.grid(row=k + 1, column=4)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
-                showData = ttk.Button(frame, text="Ver data " + str(k + 1),
-                                      state="disabled")  # , command = functools.partial(popData, stat.getStatChars()))
+                showData = ttk.Button(frame, text="Ver data " + str(k + 1), state="disabled")
                 showData.grid(row=k + 1, column=5)
                 gui.buttons["showData"][-1][-1].append(showData)
 
@@ -531,8 +479,8 @@ def parseUnkFile(fileName):
         updateFusions()
         updateMenus()
     except Exception as err:
-        print ""
-        GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
+        print err
+        GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
         raise
 
     # trans = threading.Thread(target=updateTransformations)
@@ -765,17 +713,21 @@ def updateMenus():
 
 
 def saveFile():
-    comboTransUpdate()
-    comboFusUpdate()
-    menusUpdate()
-    try:
-        character.data.saveFile()
-        GuiManager.showPopUp("Accion completada", "Archivo actualizado correctamente")
-    except Exception as err:
-        print ""
-        GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
-        raise
-    # threading.Thread(character.data.saveFile, args=[]).start()
+    # type () -> None
+    if character.data:
+        comboTransUpdate()
+        comboFusUpdate()
+        menusUpdate()
+        try:
+            character.data.saveFile()
+            GuiManager.showPopUp(u"Accion completada", u"Archivo actualizado correctamente")
+        except Exception as err:
+            print err
+            GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+            raise
+        # threading.Thread(character.data.saveFile, args=[]).start()
+    else:
+        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
 
 
 def saveAsUnkFile(fileName):
@@ -791,10 +743,17 @@ def saveAsUnkFile(fileName):
         character.data.saveFile(fileName)
         GuiManager.showPopUp(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
     except Exception as err:
-        print ""
-        GuiManager.showPopUp("Acción fallida", "Ha ocurrido un error inesperado.\n")
+        print err
+        GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
         raise
     # threading.Thread(target=character.data.saveFile, args=[fileName]).start()
+
+
+def saveAsUnkFileCaller():
+    if character.data:
+        gui.saveFile("Guardar archivo", fileTypes, saveAsUnkFile)
+    else:
+        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
 
 
 def updateMultiplesUnkFiles(archivos):
@@ -810,41 +769,50 @@ def updateMultiplesUnkFiles(archivos):
             personaje = CharacterUnkParser.CharacterUnkParser(arch)
             personaje.parse()
             personaje.saveFile(src=character.data)
-        GuiManager.showPopUp("Acción completada", "Archivos actualizados satisfactoriamente")
+        GuiManager.showPopUp(u"Acción completada", u"Archivos actualizados satisfactoriamente")
     except Exception as err:
-        print ""
-        GuiManager.showPopUp("Acción fallida",
-                             "Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje.")
+        print err
+        texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
+        GuiManager.showPopUp(u"Acción fallida", texto)
         raise
 
 
+def updateMultiplesUnkFilesCaller():
+    # type: () -> None
+    if character.data:
+        gui.selectMultiplesFiles("Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
+    else:
+        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
+
+
+def acercaDe():
+    # type: () -> None
+    titulo = u"Acerca de"
+    texto = u"BT3 Character 'unk' Editor v0.1 Alpha.\nCreado por AngheloAlf"
+    GuiManager.showPopUp(titulo, texto)
+
 character = CharacterData()
 gui = GuiManager.GuiManager("BT3 Character 'unk' Editor v0.1 Alpha", icon=os.path.join("resources", "icon.ico"))
+fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos", "*.*"))
 
 
 def main():
     while True:
-        fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos", "*,*"))
         menuAbrir = functools.partial(gui.openFile, "Abrir archivo", fileTypes, parseUnkFile)
-        menuGuardarComo = functools.partial(gui.saveFile, "Guardar archivo", fileTypes, saveAsUnkFile)
-        menuMuchos = functools.partial(gui.selectMultiplesFiles, "Seleccionar archivos", fileTypes,
-                                       updateMultiplesUnkFiles)
         menuCarpeta = functools.partial(gui.selectFolder, "Selecciona carpeta de archivos 'unk' de personajes.")
-        menuAcercaDe = functools.partial(GuiManager.showPopUp, "Acerca de",
-                                         "BT3 Character 'unk' Editor v0.1 Alpha.\nCreado por AngheloAlf")
 
         print 3
         gui.addMenu(["Archivo", "Opciones", "Ayuda"],
                     [
                         [("Abrir", menuAbrir),
                          ("Guardar", saveFile),
-                         ("Guardar como...", menuGuardarComo),
-                         ("Aplicar cambios a muchos '.unk'", menuMuchos),
+                         ("Guardar como...", saveAsUnkFileCaller),
+                         ("Aplicar cambios a muchos '.unk'", updateMultiplesUnkFilesCaller),
                          ("[WIP]Aplicar a todos los '.unk' en capeta", menuCarpeta),
                          (None, None),
                          ("Salir", gui.quit)],
                         [("[WIP]Idioma", None)],
-                        [("Acerca de", menuAcercaDe)]
+                        [("Acerca de", acercaDe)]
                     ])
 
         print 4

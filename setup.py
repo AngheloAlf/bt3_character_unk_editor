@@ -1,10 +1,9 @@
-# from distutils.core import setup
-# from Cython.Build import cythonize
 import os
 from distutils import sysconfig
 import sys
 from subprocess import Popen, PIPE
-# from distutils.extension import Extension
+import zipfile
+import py_compile
 
 
 def runProcess(proc, showCommand=False):
@@ -187,7 +186,10 @@ def compilePyPackages(arguments):
 
         print ""
 
-    open(os.path.join("out", "packages", "__init__.py"), "w").close()
+    initDir = os.path.join("out", "packages", "__init__.py")
+    open(initDir, "w").close()
+    py_compile.compile(initDir)
+    runProcess(["rm", initDir])
 
     return 0
 
@@ -295,15 +297,12 @@ def argv():
     return returned
 
 
-
 def zipdir(path, ziph):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
             ziph.write(os.path.join(root, file))
 
-import os
-import zipfile
 
 def copyPythonDependencies():
     folder = getPythonFolder()
@@ -312,13 +311,13 @@ def copyPythonDependencies():
     tk85 = ["ttk/"]
     folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
     [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
-    dependencies = [os.path.join("DLLs", x) for x in DLLs]
-    dependencies += [os.path.join("tcl", "tcl8.5", x) for x in tcl85]
-    dependencies += [os.path.join("tcl", "tcl8.5", x) for x in os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
-    dependencies += [os.path.join("tcl", "tk8.5", x) for x in tk85]
-    dependencies += [os.path.join("tcl", "tk8.5", x) for x in os.listdir(os.path.join(folder, "tcl", "tk8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
+    dependencies = [(os.path.join("DLLs", x), os.path.join("DLLs", x)) for x in DLLs]
+    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5")) for x in tcl85]
+    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
+    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5")) for x in tk85]
+    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in os.listdir(os.path.join(folder, "tcl", "tk8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
     for depend in dependencies:
-        copy = ["cp", "-r", os.path.join(folder, depend), os.path.join("out", depend)]
+        copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
         if runProcess(copy, True):
             print "\terror: " + " ".join(copy)
 
@@ -328,7 +327,6 @@ def copyPythonDependencies():
     LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py', 'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py', 'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py', 'warnings.py', '_abcoll.py', '_weakrefset.py']
     LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
 
-    import py_compile
     for i in LibDependencies:
         copy = ["cp", os.path.join(folder, "Lib", i), os.path.join("Lib/")]
         runProcess(copy)
