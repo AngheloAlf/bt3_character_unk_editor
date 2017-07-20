@@ -5,18 +5,28 @@ import tkMessageBox
 import os
 
 
-def popUp(title, text, text2):
-    # type: (str, str, str) -> None
-    pop = Tkinter.Toplevel()
-    pop.title(title)
-    ttk.Label(pop, text=text).pack()
-    ttk.Button(pop, text=text2, command=pop.destroy).pack(side=Tkinter.BOTTOM)
-    return
+def popupInfo(title, text):
+    # type: (unicode, unicode) -> None
+    tkMessageBox.showinfo(title, text)
 
 
-def showPopUp(text1, text2):
-    # type: (unicode, unicodev) -> None
-    tkMessageBox.showinfo(text1, text2)
+def popupWarning(title, text):
+    # type: (unicode, unicode) -> None
+    tkMessageBox.showwarning(title, text)
+
+
+def popupError(title, text):
+    # type: (unicode, unicode) -> None
+    tkMessageBox.showerror(title, text)
+
+
+# askokcancel(text1, text2) -> bool
+# askyesno(a, b) -> bool
+#    ask yes or no
+# askretrycancel(a, b) -> bool
+#    ask "retry" or "cancel". has a warning sign
+# askyesnocancel(a, b) -> bool
+#    ask yes, no or cancel. returns True, False or None respectively
 
 
 def addMsgToText(txtWid, msg):
@@ -28,8 +38,8 @@ def addMsgToText(txtWid, msg):
 
 
 class GuiManager:
-    def __init__(self, title="Tk", languageFile="spanish.db", icon=None):  # , xOffset, yOffSet):
-        # type: (str, str, str) -> None
+    def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):  # , xOffset, yOffSet):
+        # type: (unicode, unicode, unicode) -> None
         self.gui = Tkinter.Tk()
         # self.gui.minsize(xOffset, yOffSet)
         # self.xOffset = xOffset
@@ -111,7 +121,7 @@ class GuiManager:
     #     return self
 
     def addTab(self, tabName, tabCallback):
-        # type: (str, (ttk.Frame, )) -> None
+        # type: (unicode, (ttk.Frame, )) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
@@ -152,7 +162,7 @@ class GuiManager:
         return self.entries
 
     def start(self, title=None, icon=None):
-        # type: (str, str) -> None
+        # type: (unicode, unicode) -> None
         if icon:
             self.icon = icon
         if self.icon:
@@ -192,49 +202,51 @@ class GuiManager:
         return not self.running
 
     def openFile(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, )) -> unicode
-        archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
+        # type: (unicode, tuple, (unicode, )) -> unicode
+        archivo = unicode(tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes))
         try:
             print archivo
         except UnicodeEncodeError:
             pass
         if callback:
             callback(archivo)
-        return unicode(archivo)
+        return archivo
 
     def saveFile(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, )) -> unicode
-        archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
+        # type: (unicode, tuple, (unicode, )) -> unicode
+        archivo = unicode(tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes))
         try:
             print archivo
         except UnicodeEncodeError:
             pass
         if callback:
             callback(archivo)
-        return unicode(archivo)
+        return archivo
 
     def selectMultiplesFiles(self, title, fileTypes, callback=None):
-        # type: (str, tuple, (unicode, )) -> tuple
+        # type: (unicode, tuple, (unicode, )) -> list[unicode]
         archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
+        if type(archivos) != tuple:
+            return list()
+        archivos = map(unicode, archivos)
         try:
             print archivos
         except UnicodeEncodeError:
             pass
         if callback:
             callback(archivos)
-        if type(archivos) != tuple:
-            print type(archivos)
-            print archivos
-            return tuple()
         return archivos
 
     def selectFolder(self, title=None, callback=None):
-        # type: (str, (unicode, )) -> unicode
-        carpeta = tkFileDialog.askdirectory(title=title)
-        print carpeta
+        # type: (unicode, (unicode, )) -> unicode
+        carpeta = unicode(tkFileDialog.askdirectory(title=title))
+        try:
+            print carpeta
+        except UnicodeEncodeError:
+            pass
         if callback:
             callback(carpeta)
-        return unicode(carpeta)
+        return carpeta
 
     def putProgressBar(self, maxi):
         # type: (int) -> None

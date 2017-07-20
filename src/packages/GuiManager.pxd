@@ -1,7 +1,10 @@
-cpdef popUp(str title, str text, str text2)
-    # type: (str, str, str) -> None
+cpdef popupInfo(unicode title, unicode text)
+    # type: (unicode, unicode) -> None
 
-cpdef showPopUp(unicode text1, unicode text2)
+cpdef popupWarning(title, text)
+    # type: (unicode, unicode) -> None
+
+cpdef popupError(title, text)
     # type: (unicode, unicode) -> None
 
 cpdef addMsgToText(txtWid, str msg)
@@ -16,7 +19,7 @@ cdef class GuiManager:
     cdef int height
     cdef int width
     cdef bint running
-    cdef str title
+    cdef unicode title
     cdef tabs
     # tabs = ttk.Notebook(self.gui)
     cdef dict tabsData
@@ -26,11 +29,11 @@ cdef class GuiManager:
     cpdef public dict buttons
     cdef list progressBar
     cdef bint restart
-    cpdef public languageFile
-    cdef str icon
+    cpdef public unicode languageFile
+    cdef unicode icon
 
-    cpdef addTab(self, str  tabName, tabCallback)
-        # type: (str, (ttk.Frame, dict, dict, dict, dict)) -> None
+    cpdef addTab(self, unicode tabName, tabCallback)
+        # type: (unicode, (ttk.Frame, dict, dict, dict, dict)) -> None
 
     cpdef addMenu(self, list cascadeNames, list cascadeData)
         # type: (list, list) -> None
@@ -38,8 +41,8 @@ cdef class GuiManager:
     cpdef dict getEntries(self)
         # type: () -> dict
 
-    cpdef start(self, str title=*, str icon=*)
-        # type: (str) -> None
+    cpdef start(self, unicode title=*, unicode icon=*)
+        # type: (unicode, unicode) -> None
 
     cpdef stop(self)
         # type: () -> None
@@ -47,17 +50,17 @@ cdef class GuiManager:
     cpdef bint isClose(self)
         # type: () -> bool
 
-    cpdef unicode openFile(self, str title, tuple fileTypes, callback=*)
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+    cpdef unicode openFile(self, unicode title, tuple fileTypes, callback=*)
+        # type: (unicode, tuple, (unicode, )) -> unicode
 
-    cpdef unicode saveFile(self, str title, tuple fileTypes, callback=*)
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> unicode
+    cpdef unicode saveFile(self, unicode title, tuple fileTypes, callback=*)
+        # type: (unicode, tuple, (unicode, )) -> unicode
 
-    cpdef tuple selectMultiplesFiles(self, str title, tuple fileTypes, callback=*)
-        # type: (str, tuple, (unicode, dict, dict, dict, dict)) -> tuple
+    cpdef list selectMultiplesFiles(self, unicode title, tuple fileTypes, callback=*)
+        # type: (unicode, tuple, (unicode, )) -> list[unicode]
 
-    cpdef unicode selectFolder(self, str title=*, callback=*)
-        # type: (str, (unicode, dict, dict, dict, dict)) -> unicode
+    cpdef unicode selectFolder(self, unicode title=*, callback=*)
+        # type: (unicode, (unicode, )) -> unicode
 
     cpdef putProgressBar(self, int maxi)
         # type: (int) -> None

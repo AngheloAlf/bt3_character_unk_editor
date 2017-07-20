@@ -4,6 +4,7 @@ import os
 
 class LanguageManager:
     def __init__(self, dbname):
+        # type: (unicode) -> None
         self.dbname = dbname
         dbFolder = os.path.join(os.getcwd(), "lang", dbname)
         dbFolder2 = os.path.join(os.getcwd(), "..", "lang", dbname)

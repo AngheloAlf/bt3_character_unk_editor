@@ -18,6 +18,8 @@ endOfFile = [0x21, 0x00, 0x46, 0x00, 0x40, 0x00]
 
 startOfutf16Text = [0xFF, 0xFE]
 
+Version = u"0.1.0-beta"
+
 # u'!1#' <PAD=Ｌ２＋○>
 # u'!2#' <PAD=†上＋†振縦>
 # u'!8#' <PAD=Ｒ１＋○>

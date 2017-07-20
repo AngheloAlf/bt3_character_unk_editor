@@ -1,8 +1,8 @@
 # import sqlite3
 
 cdef class LanguageManager:
-    cdef str dbname
-    cdef str dbFolder
+    cdef unicode dbname
+    cdef unicode dbFolder
     # cdef sqlite3.Connection connection
     # cdef sqlite3.Cursor cursor
     cdef connection

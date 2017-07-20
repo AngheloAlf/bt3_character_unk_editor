@@ -8,6 +8,7 @@ import Tkinter
 import ttk
 import functools
 import os
+import Constants
 
 
 class CharacterData:
@@ -450,7 +451,7 @@ def addMenusTab(tab):
                 reservaKi.grid(row=k + 1, column=4)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
-                showData = ttk.Button(frame, text="Ver data " + str(k + 1), state="disabled")
+                showData = ttk.Button(frame, text="[WIP]Ver data " + str(k + 1), state="disabled")
                 showData.grid(row=k + 1, column=5)
                 gui.buttons["showData"][-1][-1].append(showData)
 
@@ -480,7 +481,7 @@ def parseUnkFile(fileName):
         updateMenus()
     except Exception as err:
         print err
-        GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
         raise
 
     # trans = threading.Thread(target=updateTransformations)
@@ -516,7 +517,7 @@ def threadsStop(*args):
 def popData(data):
     # type: (list) -> None
     pop = Tkinter.Toplevel()
-    for i in range(7):
+    for i in range(8):
 
         entry1 = ttk.Entry(pop)
         entry1.grid(row=i, column=0)
@@ -720,18 +721,18 @@ def saveFile():
         menusUpdate()
         try:
             character.data.saveFile()
-            GuiManager.showPopUp(u"Accion completada", u"Archivo actualizado correctamente")
+            GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
         except Exception as err:
             print err
-            GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+            GuiManager.popupError(u"Acción fallida.", u"Ha ocurrido un error inesperado.\n")
             raise
         # threading.Thread(character.data.saveFile, args=[]).start()
     else:
-        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
+        GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
 
 
 def saveAsUnkFile(fileName):
-    # type: (str) -> None
+    # type: (unicode) -> None
     if not fileName:
         return
     if not fileName.lower().endswith(".unk"):
@@ -741,23 +742,23 @@ def saveAsUnkFile(fileName):
     menusUpdate()
     try:
         character.data.saveFile(fileName)
-        GuiManager.showPopUp(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
+        GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
     except Exception as err:
         print err
-        GuiManager.showPopUp(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
         raise
     # threading.Thread(target=character.data.saveFile, args=[fileName]).start()
 
 
 def saveAsUnkFileCaller():
     if character.data:
-        gui.saveFile("Guardar archivo", fileTypes, saveAsUnkFile)
+        gui.saveFile(u"Guardar archivo", fileTypes, saveAsUnkFile)
     else:
-        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
+        GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
 
 def updateMultiplesUnkFiles(archivos):
-    # type: (tuple) -> None
+    # type: (list) -> None
     if not archivos:
         return
     comboTransUpdate()
@@ -769,37 +770,38 @@ def updateMultiplesUnkFiles(archivos):
             personaje = CharacterUnkParser.CharacterUnkParser(arch)
             personaje.parse()
             personaje.saveFile(src=character.data)
-        GuiManager.showPopUp(u"Acción completada", u"Archivos actualizados satisfactoriamente")
+        GuiManager.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
     except Exception as err:
         print err
         texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
-        GuiManager.showPopUp(u"Acción fallida", texto)
-        raise
+        GuiManager.popupError(u"Acción fallida", texto)
+        # raise
 
 
 def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
-        gui.selectMultiplesFiles("Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
+        gui.selectMultiplesFiles(u"Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
     else:
-        GuiManager.showPopUp(u"Acción fallida", u"Debe abrir un archivo primero.")
+        GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
 
 def acercaDe():
     # type: () -> None
     titulo = u"Acerca de"
-    texto = u"BT3 Character 'unk' Editor v0.1 Alpha.\nCreado por AngheloAlf"
-    GuiManager.showPopUp(titulo, texto)
+    texto = u"BT3 Character 'unk' Editor v" + Constants.Version + u".\nCreado por AngheloAlf"
+    GuiManager.popupInfo(titulo, texto)
+
 
 character = CharacterData()
-gui = GuiManager.GuiManager("BT3 Character 'unk' Editor v0.1 Alpha", icon=os.path.join("resources", "icon.ico"))
-fileTypes = (("Archivos 'unk' de personajes", "*.unk"), ("Todos los archivos", "*.*"))
+gui = GuiManager.GuiManager(u"BT3 Character 'unk' Editor v"+Constants.Version, icon=os.path.join(u"resources", u"icon.ico"))
+fileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
 
 
 def main():
     while True:
-        menuAbrir = functools.partial(gui.openFile, "Abrir archivo", fileTypes, parseUnkFile)
-        menuCarpeta = functools.partial(gui.selectFolder, "Selecciona carpeta de archivos 'unk' de personajes.")
+        menuAbrir = functools.partial(gui.openFile, u"Abrir archivo", fileTypes, parseUnkFile)
+        menuCarpeta = functools.partial(gui.selectFolder, u"Selecciona carpeta de archivos 'unk' de personajes.")
 
         print 3
         gui.addMenu(["Archivo", "Opciones", "Ayuda"],
@@ -816,9 +818,9 @@ def main():
                     ])
 
         print 4
-        gui.addTab("Transformaciones", addTrans)
-        gui.addTab("Fusiones", addFusion)
-        gui.addTab("Menus", addMenusTab)
+        gui.addTab(u"Transformaciones", addTrans)
+        gui.addTab(u"Fusiones", addFusion)
+        gui.addTab(u"Menus", addMenusTab)
         # gui.putProgressBar(20)
         print 5
         gui.start()
