@@ -155,7 +155,7 @@ def addTrans(tab):
         gui.comboboxs["trans"].append(trans)
 
         barras = ttk.Combobox(tab, state='disabled')
-        barras['values'] = range(7)
+        barras['values'] = range(8)
         barras.bind("<<ComboboxSelected>>", comboTransUpdate)
         # barras.current(0)
         barras.pack()
@@ -240,7 +240,7 @@ def addFusion(tab):
         label.place(x=xPoss[0], y=yPoss[0])
 
         fusBarras = ttk.Combobox(subTab, state='disabled')
-        fusBarras['values'] = range(7)
+        fusBarras['values'] = range(8)
         fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
         fusBarras.pack()
         fusBarras.place(x=xPoss[0], y=yPoss[1], width=50)
@@ -447,7 +447,7 @@ def addMenusTab(tab):
                 gui.comboboxs["barrasKiMenus"][-1][-1].append(barrasKiMenus)
 
                 reservaKi = ttk.Combobox(frame, state="disabled")
-                reservaKi["values"] = range(7)
+                reservaKi["values"] = range(8)
                 reservaKi.grid(row=k + 1, column=4)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 

@@ -18,7 +18,6 @@ def runProcess(proc, showCommand=False):
     except OSError as err:
         print "\tFatal error " + str(err.errno) + ": " + proc[0] + " not found"
         exit(err.errno)
-    # TODO: que tipo de error ocurre en linux
 
 
 def isWindows():
@@ -205,13 +204,13 @@ def mainPyToC(arguments):
             pyzip.append(os.path.join(zipName, fld))
         pyzip.append("DLLs")
 
-        arch = open(main+".py")
+        arch = open(main + ".py")
         mainData = ""
         for line in arch:
-            mainData += line.strip()+";"
+            mainData += line.strip() + ";"
         arch.close()
 
-        arch = open(main+".c", "w")
+        arch = open(main + ".c", "w")
         arch.write('#include <Python.h>\n')
         arch.write('\n')
         arch.write('int main(int argc, char *argv[]){\n')
@@ -223,7 +222,7 @@ def mainPyToC(arguments):
         arch.write('    PyRun_SimpleString("import sys");\n')
         arch.write('    PyRun_SimpleString("sys.path = ' + str(pyzip) + '");\n')
         arch.write('\n')
-        arch.write('    PyRun_SimpleString("'+mainData+'");\n')
+        arch.write('    PyRun_SimpleString("' + mainData + '");\n')
         arch.write('\n')
         arch.write('    Py_Finalize();\n')
         arch.write('    return 0;\n')
@@ -231,7 +230,7 @@ def mainPyToC(arguments):
         arch.close()
         return 0
     else:
-        cythonizeCommand = ["cython", "--embed", "-o", main+".c", main+".py"]
+        cythonizeCommand = ["cython", "--embed", "-o", main + ".c", main + ".py"]
         if "-a" in arguments:
             cythonizeCommand.append("-a")
         return runProcess(cythonizeCommand, True)
@@ -313,9 +312,13 @@ def copyPythonDependencies():
     [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
     dependencies = [(os.path.join("DLLs", x), os.path.join("DLLs", x)) for x in DLLs]
     dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5")) for x in tcl85]
-    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
+    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in
+                     os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if
+                     os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
     dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5")) for x in tk85]
-    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in os.listdir(os.path.join(folder, "tcl", "tk8.5")) if os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
+    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in
+                     os.listdir(os.path.join(folder, "tcl", "tk8.5")) if
+                     os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
     for depend in dependencies:
         copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
         if runProcess(copy, True):
@@ -324,7 +327,10 @@ def copyPythonDependencies():
     mkdir = ["mkdir", os.path.join("Lib")]
     runProcess(mkdir, True)
 
-    LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py', 'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py', 'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py', 'warnings.py', '_abcoll.py', '_weakrefset.py']
+    LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py',
+                       'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py',
+                       'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py',
+                       'warnings.py', '_abcoll.py', '_weakrefset.py']
     LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
 
     for i in LibDependencies:
@@ -417,8 +423,8 @@ def execBulid(arguments):
         print "error executing:", program
         exit(exit_code)
 
-def clean(arguments):
 
+def clean(arguments):
     # rmBuild = ["rm", "-r", "build"]
     # exit_code += runProcess(rmBuild, True)
 
@@ -427,8 +433,8 @@ def clean(arguments):
                if os.path.isfile(os.path.join(packagesFolder, f)) and
                (f.lower().endswith(".pyc") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
     rmFiles += [os.path.join("src", f) for f in os.listdir("src")
-               if os.path.isfile(os.path.join(packagesFolder, f)) and
-               (f.lower().endswith(".res") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
+                if os.path.isfile(os.path.join("src", f)) and
+                (f.lower().endswith(".res") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
     exit_code = 0
     for delete in rmFiles:
         rmPac = ["rm", delete]
@@ -475,8 +481,8 @@ def main():
 
     print "\n\tREADY"
 
+
 finalName = "bt3_character_unk_editor"
 
 if __name__ == "__main__":
     main()
-
