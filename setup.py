@@ -1,4 +1,5 @@
 import os
+import shutil
 from distutils import sysconfig
 import sys
 from subprocess import Popen, PIPE
@@ -124,22 +125,25 @@ def compilePyPackages(arguments):
                os.path.isfile(os.path.join(packagesFolder, f)) and f.lower().endswith(".py") and f != "__init__.py"]
 
     if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
-        mkdir = ["mkdir", "out"]
-        exit_code = runProcess(mkdir, True)
-        if exit_code:
-            print "Error creating the folder 'out'"
-            exit(exit_code)
-        mkdir = ["mkdir", os.path.join("out", "packages")]
-        exit_code = runProcess(mkdir, True)
-        if exit_code:
-            print "Error creating the folder 'out\\packages'"
-            exit(exit_code)
-    elif not os.path.isdir(os.path.join(os.getcwd(), 'out', 'packages')):
-        mkdir = ["mkdir", os.path.join("out", "packages")]
-        exit_code = runProcess(mkdir, True)
-        if exit_code:
-            print "Error creating the folder 'out\\packages'"
-            exit(exit_code)
+        # mkdir = ["mkdir", "out"]
+        # exit_code = runProcess(mkdir, True)
+        # if exit_code:
+        #     print "Error creating the folder 'out'"
+        #     exit(exit_code)
+        os.mkdir(os.path.join(os.getcwd(), "out"))
+        # mkdir = ["mkdir", os.path.join("out", "packages")]
+        # exit_code = runProcess(mkdir, True)
+        # if exit_code:
+        #     print "Error creating the folder 'out\\packages'"
+        #     exit(exit_code)
+        # os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
+    if not os.path.isdir(os.path.join(os.getcwd(), 'out', 'packages')):
+        # mkdir = ["mkdir", os.path.join("out", "packages")]
+        # exit_code = runProcess(mkdir, True)
+        # if exit_code:
+        #     print "Error creating the folder 'out\\packages'"
+        #     exit(exit_code)
+        os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
 
     pythonInclude = getPythonIncludeFolder()
     LIBPL = getLIBPL()
@@ -185,10 +189,11 @@ def compilePyPackages(arguments):
 
         print ""
 
-    initDir = os.path.join("out", "packages", "__init__.py")
+    initDir = os.path.join(os.getcwd(), "out", "packages", "__init__.py")
     open(initDir, "w").close()
     py_compile.compile(initDir)
-    runProcess(["rm", initDir])
+    # runProcess(["rm", initDir])
+    os.remove(initDir)
 
     return 0
 
@@ -309,23 +314,37 @@ def copyPythonDependencies():
     tcl85 = ["encoding/"]
     tk85 = ["ttk/"]
     folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
-    [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
+    # [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
+    for x in folders:
+        mkdir = os.path.join(os.getcwd(), "out", x)
+        if os.path.isdir(mkdir):
+            shutil.rmtree(mkdir)
+        os.mkdir(mkdir)
     dependencies = [(os.path.join("DLLs", x), os.path.join("DLLs", x)) for x in DLLs]
-    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5")) for x in tcl85]
+    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in tcl85]
     dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in
                      os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if
                      os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
-    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5")) for x in tk85]
+    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in tk85]
     dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in
                      os.listdir(os.path.join(folder, "tcl", "tk8.5")) if
                      os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
     for depend in dependencies:
-        copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
-        if runProcess(copy, True):
-            print "\terror: " + " ".join(copy)
+        # copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
+        # if runProcess(copy, True):
+        #     print "\terror: " + " ".join(copy)
+        src =  os.path.join(folder, depend[0])
+        dst = os.path.join(os.getcwd(), "out", depend[1])
+        print "cp", src, dst
+        if os.path.isfile(src):
+            shutil.copy2(src, dst)
+        else:
+            shutil.copytree(src, dst)
 
-    mkdir = ["mkdir", os.path.join("Lib")]
-    runProcess(mkdir, True)
+    # mkdir = ["mkdir", os.path.join("Lib")]
+    # runProcess(mkdir, True)
+    if not os.path.isdir(os.path.join(os.getcwd(), "Lib")):
+        os.mkdir(os.path.join(os.getcwd(), "Lib"))
 
     LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py',
                        'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py',
@@ -334,57 +353,74 @@ def copyPythonDependencies():
     LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
 
     for i in LibDependencies:
-        copy = ["cp", os.path.join(folder, "Lib", i), os.path.join("Lib/")]
-        runProcess(copy)
-        py_compile.compile(os.path.join("Lib", i))
-        rm = ["rm", os.path.join("Lib", i)]
-        runProcess(rm)
+        # copy = ["cp", os.path.join(folder, "Lib", i), os.path.join("Lib/")]
+        # runProcess(copy)
+        shutil.copy2(os.path.join(folder, "Lib", i), os.path.join(os.getcwd(), "Lib/"))
+        py_compile.compile(os.path.join(os.getcwd(), "Lib", i))
+        # rm = ["rm", os.path.join("Lib", i)]
+        # runProcess(rm)
+        os.remove(os.path.join(os.getcwd(), "Lib", i))
 
     for i in LibDependenciesFolder:
-        mkdir = ["mkdir", os.path.join("Lib", i)]
-        runProcess(mkdir, True)
+        # mkdir = ["mkdir", os.path.join("Lib", i)]
+        # runProcess(mkdir, True)
+        os.mkdir(os.path.join(os.getcwd(), "Lib", i))
         for j in os.listdir(os.path.join(folder, "Lib", i)):
             if os.path.isfile(os.path.join(folder, "Lib", i, j)) and j.endswith(".py"):
-                copy = ["cp", os.path.join(folder, "Lib", i, j), os.path.join("Lib", i)]
-                runProcess(copy, True)
+                # copy = ["cp", os.path.join(folder, "Lib", i, j), os.path.join("Lib", i)]
+                # runProcess(copy, True)
+                shutil.copy2(os.path.join(folder, "Lib", i, j), os.path.join(os.getcwd(), "Lib", i))
                 py_compile.compile(os.path.join("Lib", i, j))
-                rm = ["rm", os.path.join("Lib", i, j)]
-                runProcess(rm)
+                # rm = ["rm", os.path.join("Lib", i, j)]
+                # runProcess(rm)
+                os.remove(os.path.join(os.getcwd(), "Lib", i, j))
 
     zipf = zipfile.ZipFile(os.path.join('out', 'pythonLib.zip'), 'w', zipfile.ZIP_DEFLATED)
     zipdir('Lib', zipf)
     zipf.close()
 
-    rm = ["rm", "-r", "Lib"]
-    runProcess(rm, True)
+    # rm = ["rm", "-r", "Lib"]
+    # runProcess(rm, True)
+    shutil.rmtree(os.path.join(os.getcwd(), "Lib"))
 
 
 def copyFiles():
     if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
-        mkdir = ["mkdir", "out"]
-        exit_code = runProcess(mkdir, True)
-        if exit_code:
-            print "Error creating the folder 'out'"
-            exit(exit_code)
+        # mkdir = ["mkdir", "out"]
+        # exit_code = runProcess(mkdir, True)
+        # if exit_code:
+        #     print "Error creating the folder 'out'"
+        #     exit(exit_code)
+        os.mkdir(os.path.join(os.getcwd(), "out"))
 
-    copy = ["cp", "-a", "lang/", "out/"]
-    exit_code = runProcess(copy, True)
+    # copy = ["cp", "-a", "lang/", "out/"]
+    # exit_code = runProcess(copy, True)
+    dst = os.path.join(os.getcwd(), "out", "lang")
+    if os.path.isdir(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(os.path.join(os.getcwd(), "lang"), dst)
 
-    copy = ["cp", "-a", "resources/", "out/"]
-    exit_code += runProcess(copy, True)
+    # copy = ["cp", "-a", "resources/", "out/"]
+    # exit_code += runProcess(copy, True)
+    dst = os.path.join(os.getcwd(), "out", "resources")
+    if os.path.isdir(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(os.path.join(os.getcwd(), "resources"), dst)
 
     if isWindows():
         dlls = getPythonDll()
         exit2 = 0
         for dll in dlls:
-            copy = ["cp", dll, "out/"]
-            exit2 += runProcess(copy, True)
+            # copy = ["cp", dll, "out/"]
+            # exit2 += runProcess(copy, True)
+            shutil.copy2(dll, os.path.join(os.getcwd(), "out"))
         if exit2:
             print "\terror copying python dlls"
 
         copyPythonDependencies()
 
-    return exit_code
+    # return exit_code
+    return 0
 
 
 def makeAll(arguments):
@@ -437,8 +473,9 @@ def clean(arguments):
                 (f.lower().endswith(".res") or f.lower().endswith(".c")) or f.lower().endswith(".html")]
     exit_code = 0
     for delete in rmFiles:
-        rmPac = ["rm", delete]
-        exit_code += runProcess(rmPac, True)
+        # rmPac = ["rm", delete]
+        # exit_code += runProcess(rmPac, True)
+        os.remove(delete)
 
     return exit_code
 
@@ -455,8 +492,9 @@ def cleanAll(arguments):
     # rmPac = ["rm", "-r", "packages"]
     # exit_code += runProcess(rmPac, True)
 
-    rm = ["rm", "-r", "out"]
-    exit_code += runProcess(rm, True)
+    # rm = ["rm", "-r", "out"]
+    # exit_code += runProcess(rm, True)
+    shutil.rmtree(os.path.join(os.getcwd(), "out"))
 
     return exit_code
 
