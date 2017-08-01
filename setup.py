@@ -221,7 +221,7 @@ def mainPyToC(arguments):
         arch.write('int main(int argc, char *argv[]){\n')
         arch.write('    Py_NoSiteFlag = 1;\n')
         arch.write('    Py_SetPythonHome(".");\n')
-        arch.write('    Py_InitializeEx(0);\n')
+        arch.write('    Py_Initialize();\n')
         arch.write('    Py_SetProgramName(argv[0]);\n')
         arch.write('    PySys_SetArgv(argc, argv);\n')
         arch.write('    PyRun_SimpleString("import sys");\n')
