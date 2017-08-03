@@ -32,3 +32,20 @@ Version = u"0.1.0-beta"
 def hexListToChar(hexList):
     # type: (list) -> str
     return "".join(map(chr, hexList))
+
+
+def findDataPos(archivo, data, maxi=-1, inicio=0, tope=-1):
+    # type: (str, str, int, int, int) -> list
+    i = 0
+    l = list()
+    while i < maxi or maxi == -1:
+        if tope > 0:
+            finded = archivo.find(data, inicio, tope)
+        else:
+            finded = archivo.find(data, inicio)
+        if finded == -1:
+            break
+        l.append(finded)
+        i += 1
+        inicio = finded+1
+    return l

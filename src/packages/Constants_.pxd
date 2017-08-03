@@ -11,3 +11,6 @@ cpdef public unicode Version
 
 cpdef str hexListToChar(list hexList)
     # type: (list) -> str
+
+cdef list findDataPos(str archivo, str data, int maxi=*, inicio=*, int tope=*)
+    # type: (str, str, int, int, int) -> list

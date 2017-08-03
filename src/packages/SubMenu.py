@@ -16,31 +16,38 @@ def getMenuName(submenuData, i):
 
 def getStat(submenuData, i):
     # type: (str, int) -> (StatMenu.StatMenu, int)
+    endOfLine = Constants.hexListToChar(Constants.endOfLine)
+    statCode = Constants.hexListToChar(Constants.statCode)
+
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
-    statName = ""
-    while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
-        statName += submenuData[i]
-        i += 1
-    i += 2
+    pos = submenuData.find(endOfLine, i)
+
+    statName = submenuData[i:pos]
+    i = pos + 2
+
+    tope = submenuData.find(statCode, i)
+    ends = Constants.findDataPos(submenuData, endOfLine, inicio=i, tope=tope)
 
     statChars = []
-    while i + 7 < len(submenuData) and map(ord, submenuData[i + 1:i + 7]) != Constants.statCode:
-        if ord(submenuData[i]) == 0x0:
-            i += 1
-
-        subStatFirst = submenuData[i:i + 6]
-        i += 6
-
-        description = ""
-        while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
-            description += submenuData[i]
-            i += 1
-
+    if len(ends) > 0:
+        subStatFirst = submenuData[i:i+6]
+        subStatFirstList1 = [subStatFirst]
+        description = submenuData[i+6:ends[0]]
         statChars.append([subStatFirst, description])
-        i += 1
+        for endI in range(len(ends[:-1])):
+            end = ends[endI]
+            end += 2
+            subStatFirst = submenuData[end:end+6]
+            subStatFirstList1.append(subStatFirst)
+            end += 6
 
-    return StatMenu.StatMenu([statNumbers, statName], statChars), i
+            description = submenuData[end:ends[endI+1]]
+            statChars.append([subStatFirst, description])
+
+        return StatMenu.StatMenu([statNumbers, statName], statChars), ends[-1] + 1
+    else:
+        return StatMenu.StatMenu([statNumbers, statName], statChars), i + 1
 
 
 class SubMenu:

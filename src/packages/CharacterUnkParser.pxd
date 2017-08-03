@@ -19,9 +19,6 @@ cdef str setTransformData(str archivo, int pointerFile, list transLines)
 cdef str setFusionData(str archivo, int pointerFile, str fusionLine)
     # type: (str, int, str) -> str
 
-cdef list findDataPos(str archivo, str data, int maxi)
-    # type: (str, str, int) -> list
-
 cdef class CharacterUnkParser:
     # cdef public
     # cdef readonly

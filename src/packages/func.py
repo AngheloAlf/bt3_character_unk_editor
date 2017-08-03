@@ -3,6 +3,7 @@
 
 import GuiManager
 import CharacterUnkParser
+import StatMenu
 import LanguageManager
 import Tkinter
 import ttk
@@ -93,19 +94,29 @@ def menusUpdate(event=None):
             if j < len(subMenuLoop):
                 if not subMenuLoop[j].isNone():
                     subMenuLoop[j].setMenuName(unicode(gui.entries["nombreMenu"][i][j].get()))
+                    stats = subMenuLoop[j].stats
+                    k0 = 0
                     for k in range(32):
                         if gui.checkbuttons["addStat"][i][j][k].is_checked():
-                            a = gui.entries["nombreStat"][i][j][k].get()
-                            subMenuLoop[j].stats[k].setName(unicode(a))
-
+                            nombrestat = unicode(gui.entries["nombreStat"][i][j][k].get())
                             maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
-                            subMenuLoop[j].stats[k].setMaxPower(maxPower)
-
                             barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
-                            subMenuLoop[j].stats[k].setBarrasKi(barrasKi)
-
                             reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
-                            subMenuLoop[j].stats[k].setReservaKi(reservaKi)
+
+                            # TODO: revisar que pasa si se quitan stats
+                            if k >= len(stats):
+                                statName = [['', '', ''], '']
+                                # statChars = [["", ""]]
+                                statChars = []
+                                nuevoStat = StatMenu.StatMenu(statName, statChars)
+                                stats.append(nuevoStat)
+
+                            stats[k0].setName(nombrestat)
+                            stats[k0].setMaxPower(maxPower)
+                            stats[k0].setBarrasKi(barrasKi)
+                            stats[k0].setReservaKi(reservaKi)
+                            k0 += 1
+                    del stats[k0:]
     language.close()
     return
 
@@ -342,10 +353,8 @@ def addMenusTab(tab):
     gui.buttons["showData"] = list()
 
     for i in range(8):
-        i += 1
-
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-        newTabs.add(subTab, text="Idioma " + str(i))
+        newTabs.add(subTab, text=u"Idioma " + unicode(i+1))
 
         menuNameTab = ttk.Notebook(subTab)
         gui.entries["nombreMenu"].append(list())
@@ -360,15 +369,14 @@ def addMenusTab(tab):
         gui.buttons["showData"].append(list())
 
         for j in range(7):
-            j += 1
             menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-            menuNameTab.add(menuTab, text="Menu " + str(j))
+            menuNameTab.add(menuTab, text=u"Menu " + unicode(j+1))
 
             nameTab = ttk.LabelFrame(menuTab, width=880, height=70)
             nameTab.pack()
             nameTab.place(x=10, y=0)
 
-            label = ttk.Label(nameTab, text="Nombre del menú")
+            label = ttk.Label(nameTab, text=u"Nombre del menú")
             label.pack()
             label.place(x=xPoss[1], y=yPoss[0])
 
@@ -419,13 +427,14 @@ def addMenusTab(tab):
             ttk.Label(frame, text="Reservas de Ki ocupadas").grid(row=0, column=4)
 
             for k in range(32):
-                checkbutton = GuiManager.MyCheckButton(frame, text=str(k + 1), onvalue=1, offvalue=0, state="disabled")
+                checkbutton = GuiManager.MyCheckButton(frame, text=str(k + 1), onvalue=1, offvalue=0) # , state="disabled")
                 checkbutton.deselect()
                 # label = ttk.Label(frame, text=str(k+1))
                 # label.pack()
                 # label.place(x = xPoss[0], y=yPoss[2] + k*23)
                 # label.grid(row=k, column=0)
                 checkbutton.grid(row=k + 1, column=0)
+                checkbutton["command"] = functools.partial(onActiveRowClick, checkbutton, (i, j, k))
                 gui.checkbuttons["addStat"][-1][-1].append(checkbutton)
 
                 nombreStat = ttk.Entry(frame, state="disabled", width=50)
@@ -444,11 +453,13 @@ def addMenusTab(tab):
                 barrasKiMenus = ttk.Combobox(frame, state="disabled")
                 barrasKiMenus["values"] = range(6)
                 barrasKiMenus.grid(row=k + 1, column=3)
+                barrasKiMenus.current(0)
                 gui.comboboxs["barrasKiMenus"][-1][-1].append(barrasKiMenus)
 
                 reservaKi = ttk.Combobox(frame, state="disabled")
                 reservaKi["values"] = range(8)
                 reservaKi.grid(row=k + 1, column=4)
+                reservaKi.current(0)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
                 showData = ttk.Button(frame, text="[WIP]Ver data " + str(k + 1), state="disabled")
@@ -737,15 +748,15 @@ def saveAsUnkFile(fileName):
         return
     if not fileName.lower().endswith(".unk"):
         fileName = fileName + ".unk"
-    comboTransUpdate()
-    comboFusUpdate()
-    menusUpdate()
     try:
+        comboTransUpdate()
+        comboFusUpdate()
+        menusUpdate()
         character.data.saveFile(fileName)
         GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
     except Exception as err:
         print err
-        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
         raise
     # threading.Thread(target=character.data.saveFile, args=[fileName]).start()
 
@@ -794,7 +805,8 @@ def acercaDe():
 
 
 character = CharacterData()
-gui = GuiManager.GuiManager(u"BT3 Character 'unk' Editor v"+Constants.Version, icon=os.path.join(u"resources", u"icon.ico"))
+title = u"BT3 Character 'unk' Editor v"+Constants.Version
+gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
 fileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
 
 

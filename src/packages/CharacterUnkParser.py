@@ -51,21 +51,6 @@ def setFusionData(archivo, pointerFile, fusionLine):
     return archivo
 
 
-def findDataPos(archivo, data, maxi):
-    # type: (str, str, int) -> list
-    i = 0
-    l = list()
-    pos = 0
-    while i < maxi:
-        finded = archivo.find(data, pos)
-        if finded == -1:
-            break
-        l.append(finded)
-        i += 1
-        pos = finded+1
-    return l
-
-
 class CharacterUnkParser:
     def __init__(self, name, printData=False):
         # type: (unicode, bool) -> None
@@ -88,7 +73,7 @@ class CharacterUnkParser:
         self.fusionObj = getFusionData(self.fullFile, pointerFile+30, self.printData)
 
         startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
-        starts = findDataPos(self.fullFile, startOfMenuFile, 8)
+        starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
         pointer = 0
         while pointer < len(starts):
             charMenuObj = getMenusData(self.fullFile, starts[pointer]+2)
@@ -114,8 +99,8 @@ class CharacterUnkParser:
 
         startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
         endOfMenuFile = Constants.hexListToChar(Constants.endOfMenuFile)
-        starts = findDataPos(self.fullFile, startOfMenuFile, 8)
-        ends = findDataPos(self.fullFile, endOfMenuFile, 8)
+        starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
+        ends = Constants.findDataPos(self.fullFile, endOfMenuFile, 8)
 
         newFile = self.fullFile[:starts[0]]
         pointer = 0
