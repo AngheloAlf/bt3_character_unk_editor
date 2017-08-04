@@ -103,7 +103,6 @@ def menusUpdate(event=None):
                             barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
                             reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
 
-                            # TODO: revisar que pasa si se quitan stats
                             if k >= len(stats):
                                 statName = [['', '', ''], '']
                                 # statChars = [["", ""]]
@@ -481,48 +480,23 @@ def parseUnkFile(fileName):
     # type: (unicode) -> None
     if not fileName:
         return
-    character.data = CharacterUnkParser.CharacterUnkParser(fileName, True)
-    # threading.Thread(target=updateGui, args=[languageFile]).start()
-    # updateGui(languageFile)
+    character.data = CharacterUnkParser.CharacterUnkParser(fileName)
+    gui.clean()
 
     try:
         character.data.parse()
-        updateTransformations()
-        updateFusions()
-        updateMenus()
+        try:
+            updateTransformations()
+            updateFusions()
+            updateMenus()
+        except Exception as err:
+            print err
+            GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
+            raise
     except Exception as err:
         print err
-        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\n")
+        GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
         raise
-
-    # trans = threading.Thread(target=updateTransformations)
-    # fus = threading.Thread(target=updateFusions)
-    # men = threading.Thread(target=updateMenus)
-    # trans.start()
-    # fus.start()
-    # men.start()
-    # threading.Thread(target=threadsStop, args=[trans, fus, men]).start()
-    # if comboboxs or entries or checkbuttons or buttons:
-    # character.data.parse(gui)
-    # language = LanguageManager(languageFile)
-    # trans = threading.Thread(target=updateTransformations, args=[comboboxs, entries, checkbuttons, buttons])
-    # fus = threading.Thread(target=updateFusions, args=[comboboxs, entries, checkbuttons, buttons])
-    # men = threading.Thread(target=updateMenus, args=[comboboxs, entries, checkbuttons, buttons])
-    # trans.start()
-    # fus.start()
-    # men.start()
-    # threading.Thread(target=threadsStop, args=[trans, fus, men]).start()
-
-
-def threadsStop(*args):
-    while True:
-        a = 0
-        for i in args:
-            if not i.isAlive():
-                a += 1
-        if a == len(args):
-            break
-    print "t ready"
 
 
 def popData(data):
@@ -583,7 +557,7 @@ def updateTransformations():
     gui.comboboxs["bonus"].current(bonus)
     gui.comboboxs["bonus"]["state"] = "readonly"
     language.close()
-    print "trans ready"
+    print u"Pestaña 'Transformaciones' lista"
 
 
 def updateFusions():
@@ -611,7 +585,7 @@ def updateFusions():
             gui.comboboxs["fusEquipo"][i][j].current(fusEquipo)
             gui.comboboxs["fusEquipo"][i][j]["state"] = "readonly"
     language.close()
-    print "fus ready"
+    print u"Pestaña 'Fusiones' lista"
 
 
 def updateMenus():
@@ -706,22 +680,11 @@ def updateMenus():
                     j += 1
             i += 1
     language.close()
-    print "menus ready"
+    print u"Pestaña 'Menus' lista"
 
 
-#
-# def updateGui(languageFile="spanish.db"):
-#     # type: (str) -> None
-#     character.data.parse()
-#     trans = threading.Thread(target=updateTransformations)
-#     fus = threading.Thread(target=updateFusions)
-#     men = threading.Thread(target=updateMenus)
-#     trans.start()
-#     fus.start()
-#     men.start()
-#     threading.Thread(target=threadsStop, args=[trans, fus, men]).start()
-#     print "Ready"
-#     return
+def openFileCaller():
+    GuiManager.openFile(u"Abrir archivo", fileTypes, parseUnkFile)
 
 
 def saveFile():
@@ -735,9 +698,10 @@ def saveFile():
             GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
         except Exception as err:
             print err
-            GuiManager.popupError(u"Acción fallida.", u"Ha ocurrido un error inesperado.\n")
+            text1 = u"Acción fallida."
+            text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
+            GuiManager.popupError(text1, text2)
             raise
-        # threading.Thread(character.data.saveFile, args=[]).start()
     else:
         GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
 
@@ -758,12 +722,11 @@ def saveAsUnkFile(fileName):
         print err
         GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
         raise
-    # threading.Thread(target=character.data.saveFile, args=[fileName]).start()
 
 
 def saveAsUnkFileCaller():
     if character.data:
-        gui.saveFile(u"Guardar archivo", fileTypes, saveAsUnkFile)
+        GuiManager.saveFile(u"Guardar archivo", fileTypes, saveAsUnkFile)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
@@ -792,9 +755,19 @@ def updateMultiplesUnkFiles(archivos):
 def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
-        gui.selectMultiplesFiles(u"Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
+        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+
+
+def openFolderCaller():
+    # type: () -> None
+    GuiManager.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
+
+
+def languageSelectorCaller():
+    # type: () -> None
+    GuiManager.popupInfo(u"WIP", u"Work in progress.")
 
 
 def acercaDe():
@@ -812,29 +785,26 @@ fileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos"
 
 def main():
     while True:
-        menuAbrir = functools.partial(gui.openFile, u"Abrir archivo", fileTypes, parseUnkFile)
-        menuCarpeta = functools.partial(gui.selectFolder, u"Selecciona carpeta de archivos 'unk' de personajes.")
-
-        print 3
+        print u"Preparando barra superior..."
         gui.addMenu(["Archivo", "Opciones", "Ayuda"],
                     [
-                        [("Abrir", menuAbrir),
+                        [("Abrir", openFileCaller),
                          ("Guardar", saveFile),
                          ("Guardar como...", saveAsUnkFileCaller),
                          ("Aplicar cambios a muchos '.unk'", updateMultiplesUnkFilesCaller),
-                         ("[WIP]Aplicar a todos los '.unk' en capeta", menuCarpeta),
+                         ("[WIP]Aplicar a todos los '.unk' en capeta", openFolderCaller),
                          (None, None),
                          ("Salir", gui.quit)],
-                        [("[WIP]Idioma", None)],
+                        [("[WIP]Idioma", languageSelectorCaller)],
                         [("Acerca de", acercaDe)]
                     ])
 
-        print 4
+        print u"Preparando pestañas..."
         gui.addTab(u"Transformaciones", addTrans)
         gui.addTab(u"Fusiones", addFusion)
         gui.addTab(u"Menus", addMenusTab)
         # gui.putProgressBar(20)
-        print 5
+        print u"Iniciando interfaz"
         gui.start()
 
         if not gui.isRestart():

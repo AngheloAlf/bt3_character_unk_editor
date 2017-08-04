@@ -10,6 +10,18 @@ cpdef popupError(title, text)
 cpdef addMsgToText(txtWid, str msg)
     # type: (Tkinter.Text, str) -> None
 
+cpdef unicode openFile(unicode title, tuple fileTypes, callback=*)
+    # type: (unicode, tuple, (unicode, )) -> unicode
+
+cpdef unicode saveFile(unicode title, tuple fileTypes, callback=*)
+    # type: (unicode, tuple, (unicode, )) -> unicode
+
+cpdef list selectMultiplesFiles(unicode title, tuple fileTypes, callback=*)
+    # type: (unicode, tuple, (unicode, )) -> list[unicode]
+
+cpdef unicode selectFolder(unicode title=*, callback=*)
+    # type: (unicode, (unicode, )) -> unicode
+
 cdef class GuiManager:
     cdef gui
     # gui = Tkinter.Tk()
@@ -49,18 +61,6 @@ cdef class GuiManager:
 
     cpdef bint isClose(self)
         # type: () -> bool
-
-    cpdef unicode openFile(self, unicode title, tuple fileTypes, callback=*)
-        # type: (unicode, tuple, (unicode, )) -> unicode
-
-    cpdef unicode saveFile(self, unicode title, tuple fileTypes, callback=*)
-        # type: (unicode, tuple, (unicode, )) -> unicode
-
-    cpdef list selectMultiplesFiles(self, unicode title, tuple fileTypes, callback=*)
-        # type: (unicode, tuple, (unicode, )) -> list[unicode]
-
-    cpdef unicode selectFolder(self, unicode title=*, callback=*)
-        # type: (unicode, (unicode, )) -> unicode
 
     cpdef putProgressBar(self, int maxi)
         # type: (int) -> None

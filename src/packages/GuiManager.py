@@ -37,6 +37,57 @@ def addMsgToText(txtWid, msg):
     txtWid["state"] = "disabled"
 
 
+def openFile(title, fileTypes, callback=None):
+    # type: (unicode, tuple, (unicode, )) -> unicode
+    archivo = unicode(tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes))
+    try:
+        print archivo
+    except UnicodeEncodeError:
+        pass
+    if callback:
+        callback(archivo)
+    return archivo
+
+
+def saveFile(title, fileTypes, callback=None):
+    # type: (unicode, tuple, (unicode, )) -> unicode
+    archivo = unicode(tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes))
+    try:
+        print archivo
+    except UnicodeEncodeError:
+        pass
+    if callback:
+        callback(archivo)
+    return archivo
+
+
+def selectMultiplesFiles(title, fileTypes, callback=None):
+    # type: (unicode, tuple, (unicode, )) -> list[unicode]
+    archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
+    if type(archivos) != tuple:
+        return list()
+    archivos = map(unicode, archivos)
+    try:
+        print archivos
+    except UnicodeEncodeError:
+        pass
+    if callback:
+        callback(archivos)
+    return archivos
+
+
+def selectFolder(title=None, callback=None):
+    # type: (unicode, (unicode, )) -> unicode
+    carpeta = unicode(tkFileDialog.askdirectory(title=title))
+    try:
+        print carpeta
+    except UnicodeEncodeError:
+        pass
+    if callback:
+        callback(carpeta)
+    return carpeta
+
+
 class GuiManager:
     def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):  # , xOffset, yOffSet):
         # type: (unicode, unicode, unicode) -> None
@@ -184,7 +235,7 @@ class GuiManager:
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
-        print "before mainloop"
+        print u"Iniciando\n"
         self.gui.mainloop()
 
     def stop(self):
@@ -201,52 +252,9 @@ class GuiManager:
         # type: () -> bool
         return not self.running
 
-    def openFile(self, title, fileTypes, callback=None):
-        # type: (unicode, tuple, (unicode, )) -> unicode
-        archivo = unicode(tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes))
-        try:
-            print archivo
-        except UnicodeEncodeError:
-            pass
-        if callback:
-            callback(archivo)
-        return archivo
-
-    def saveFile(self, title, fileTypes, callback=None):
-        # type: (unicode, tuple, (unicode, )) -> unicode
-        archivo = unicode(tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes))
-        try:
-            print archivo
-        except UnicodeEncodeError:
-            pass
-        if callback:
-            callback(archivo)
-        return archivo
-
-    def selectMultiplesFiles(self, title, fileTypes, callback=None):
-        # type: (unicode, tuple, (unicode, )) -> list[unicode]
-        archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
-        if type(archivos) != tuple:
-            return list()
-        archivos = map(unicode, archivos)
-        try:
-            print archivos
-        except UnicodeEncodeError:
-            pass
-        if callback:
-            callback(archivos)
-        return archivos
-
-    def selectFolder(self, title=None, callback=None):
-        # type: (unicode, (unicode, )) -> unicode
-        carpeta = unicode(tkFileDialog.askdirectory(title=title))
-        try:
-            print carpeta
-        except UnicodeEncodeError:
-            pass
-        if callback:
-            callback(carpeta)
-        return carpeta
+    def clean(self):
+        # type: () -> None
+        pass
 
     def putProgressBar(self, maxi):
         # type: (int) -> None
