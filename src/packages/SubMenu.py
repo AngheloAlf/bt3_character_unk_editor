@@ -85,8 +85,8 @@ class SubMenu:
     def setMenuName(self, name):
         # type: (unicode) -> None
         if self.menuName[1] != name.encode("utf-16")[2:]:
-            print "Cambiando:"
-            print "\t", self.menuName[1], "->", name.encode("utf-16")[2:]
+            print(u"Cambiando:")
+            print(u"\t", self.menuName[1], u"->", name.encode("utf-16")[2:])
         self.menuName[1] = name.encode("utf-16")[2:]
         return
 
@@ -98,8 +98,8 @@ class SubMenu:
         if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
         else:
-            print self.menuName
-            print len(self.stats)
+            print(self.menuName)
+            print(len(self.stats))
         for i in self.stats:
             line += i.getAsLine()
         return line

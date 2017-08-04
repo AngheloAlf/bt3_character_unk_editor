@@ -29,7 +29,6 @@ class CharacterMenu:
         if len(self.subMenus) <= 2:
             self.unknow = True
 
-        # print "\n", self
 
     def isKnow(self):
         # type: () -> bool

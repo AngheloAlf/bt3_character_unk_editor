@@ -150,8 +150,8 @@ class LanguageManager:
             # the DROP TABLE commands
             try:
                 self.cursor.execute(command)
-            except:
-                print "Command skipped: ", command
+            except Exception:
+                print(u"Command skipped: ", command)
         self.connection.commit()
 
     def close(self):
@@ -162,15 +162,15 @@ if __name__ == "__main__":
     a = LanguageManager(os.path.join("..", "..", "..", "lang", "spanish.db"))
     # a.executeScriptsFromFile("main.sql")
     cn = a.getCharactersNames()
-    print len(cn)
+    print(len(cn))
     an = a.getAnimations()
-    print len(an)
+    print(len(an))
     au = a.getAuras()
-    print len(au)
+    print(len(au))
     r3 = a.getR3Command()
-    print len(r3)
+    print(len(r3))
     tb = a.getTransformationBonus()
-    print len(tb)
+    print(len(tb))
     ft = a.getFusionsTypes()
-    print len(ft)
+    print(len(ft))
     a.close()

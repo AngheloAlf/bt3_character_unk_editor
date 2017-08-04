@@ -68,7 +68,7 @@ class CharacterUnkParser:
         # type: () -> None
         transformCode = Constants.hexListToChar(Constants.transformCode)
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
-        print pointerFile
+        print(pointerFile)
         self.transObj = getTransformData(self.fullFile, pointerFile, self.printData)
         self.fusionObj = getFusionData(self.fullFile, pointerFile+30, self.printData)
 

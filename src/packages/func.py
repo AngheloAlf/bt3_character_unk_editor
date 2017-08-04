@@ -89,7 +89,6 @@ def menusUpdate(event=None):
     language = LanguageManager.LanguageManager(gui.languageFile)
     for i in range(8):
         for j in range(7):
-            # print gui.entries["nombreMenu"][i][j].get()
             subMenuLoop = character.data.menusList[i].subMenus
             if j < len(subMenuLoop):
                 if not subMenuLoop[j].isNone():
@@ -341,7 +340,9 @@ def addMenusTab(tab):
     language = LanguageManager.LanguageManager(gui.languageFile)
 
     gui.entries["nombreMenu"] = list()
+
     gui.entries["nombreStat"] = list()
+    gui.checkbuttons["menuOn"] = list()
     gui.checkbuttons["addStat"] = list()
     gui.comboboxs["dragonballIcon"] = list()
 
@@ -357,7 +358,9 @@ def addMenusTab(tab):
 
         menuNameTab = ttk.Notebook(subTab)
         gui.entries["nombreMenu"].append(list())
+
         gui.entries["nombreStat"].append(list())
+        gui.checkbuttons["menuOn"].append(list())
         gui.checkbuttons["addStat"].append(list())
         gui.comboboxs["dragonballIcon"].append(list())
 
@@ -385,6 +388,14 @@ def addMenusTab(tab):
             nombreMenu.place(x=xPoss[1], y=yPoss[1], width=150)
             # comboboxs["fusBarras"].append(fusBarras)
             gui.entries["nombreMenu"][-1].append(nombreMenu)
+
+            checkbutton = GuiManager.MyCheckButton(nameTab, text=u"Activar menu", onvalue=1, offvalue=0)
+            checkbutton["state"] = "disabled"
+            checkbutton.deselect()
+            checkbutton.pack()
+            checkbutton.place(x=xPoss[2], y=yPoss[1]-5, width=150)
+            # checkbutton["command"] = ## Funcion activar menu
+            gui.checkbuttons["menuOn"][-1].append(checkbutton)
 
             # label = ttk.Label(nameTab, text="Icono esfera dragon")
             # label.pack()
@@ -490,11 +501,11 @@ def parseUnkFile(fileName):
             updateFusions()
             updateMenus()
         except Exception as err:
-            print err
+            print(err)
             GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
             raise
     except Exception as err:
-        print err
+        print(err)
         GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
         raise
 
@@ -557,7 +568,7 @@ def updateTransformations():
     gui.comboboxs["bonus"].current(bonus)
     gui.comboboxs["bonus"]["state"] = "readonly"
     language.close()
-    print u"Pestaña 'Transformaciones' lista"
+    print(u"Pestaña 'Transformaciones' lista")
 
 
 def updateFusions():
@@ -585,7 +596,7 @@ def updateFusions():
             gui.comboboxs["fusEquipo"][i][j].current(fusEquipo)
             gui.comboboxs["fusEquipo"][i][j]["state"] = "readonly"
     language.close()
-    print u"Pestaña 'Fusiones' lista"
+    print(u"Pestaña 'Fusiones' lista")
 
 
 def updateMenus():
@@ -593,23 +604,18 @@ def updateMenus():
     i = 0
     for menu in character.data.menusList:
         if menu.isKnow():
-            # print unicode(menu.getAsLine(), "utf-16")
             if i >= len(gui.entries["nombreMenu"]):
-                print "ERROR: Mas idiomas de lo esperado"
+                print(u"ERROR: Mas idiomas de lo esperado")
                 break
 
             j = 0
             for submenu in menu.subMenus:
                 if not submenu.isNone():
                     if j >= len(gui.entries["nombreMenu"][i]):
-                        print "ERROR: Mas menus de lo esperado"
+                        print(u"ERROR: Mas menus de lo esperado")
                         break
 
-                    # menuNum = int(submenu.getMenuNum())
                     menuName = submenu.getMenuName()
-                    # print unicode(submenu.getAsLine(), "utf-16")
-
-                    # print menuNum, menuName
 
                     gui.entries["nombreMenu"][i][j]["state"] = "normal"
                     gui.entries["nombreMenu"][i][j].delete(0, "end")
@@ -631,7 +637,6 @@ def updateMenus():
                             statsInesperados = True
                             k += 1
                             continue
-                        # print unicode(stat.getAsLine(), "utf-16")
                         statName = stat.getName()
 
                         gui.entries["nombreStat"][i][j][k]["state"] = "normal"
@@ -656,13 +661,6 @@ def updateMenus():
 
                         gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
                         gui.buttons["showData"][i][j][k]["state"] = "normal"
-                        # for debugeando in stat.getStatChars():
-                        #    if debugeando[0] not in debug:
-                        #        debug[debugeando[0]] = set()
-                        #    debug[debugeando[0]].add(debugeando[1][0])
-                        # print len(stat.getStatChars())
-                        # if len(stat.getStatChars())>5:
-                        #    print "WEA"
 
                         k += 1
                         k0 += 1
@@ -676,11 +674,11 @@ def updateMenus():
                         gui.buttons["showData"][i][j][k0]["state"] = "disabled"
                         k0 += 1
                     if statsInesperados:
-                        print "Error: Mas stats que los esperados:", k
+                        print(u"Error: Mas stats que los esperados:", k)
                     j += 1
             i += 1
     language.close()
-    print u"Pestaña 'Menus' lista"
+    print(u"Pestaña 'Menus' lista")
 
 
 def openFileCaller():
@@ -697,7 +695,7 @@ def saveFile():
             character.data.saveFile()
             GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
         except Exception as err:
-            print err
+            print(err)
             text1 = u"Acción fallida."
             text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
             GuiManager.popupError(text1, text2)
@@ -719,7 +717,7 @@ def saveAsUnkFile(fileName):
         character.data.saveFile(fileName)
         GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
     except Exception as err:
-        print err
+        print(err)
         GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
         raise
 
@@ -740,13 +738,13 @@ def updateMultiplesUnkFiles(archivos):
     menusUpdate()
     try:
         for arch in archivos:
-            print (arch, )
+            print( (arch, ) )
             personaje = CharacterUnkParser.CharacterUnkParser(arch)
             personaje.parse()
             personaje.saveFile(src=character.data)
         GuiManager.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
     except Exception as err:
-        print err
+        print(err)
         texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
         GuiManager.popupError(u"Acción fallida", texto)
         # raise
@@ -777,15 +775,17 @@ def acercaDe():
     GuiManager.popupInfo(titulo, texto)
 
 
-character = CharacterData()
 title = u"BT3 Character 'unk' Editor v"+Constants.Version
-gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
+print(title)
 fileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
+character = CharacterData()
+print(u"Inicializando interfaz...")
+gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
 
 
 def main():
     while True:
-        print u"Preparando barra superior..."
+        print(u"Preparando barra superior...")
         gui.addMenu(["Archivo", "Opciones", "Ayuda"],
                     [
                         [("Abrir", openFileCaller),
@@ -799,12 +799,12 @@ def main():
                         [("Acerca de", acercaDe)]
                     ])
 
-        print u"Preparando pestañas..."
+        print(u"Preparando pestañas...")
         gui.addTab(u"Transformaciones", addTrans)
         gui.addTab(u"Fusiones", addFusion)
         gui.addTab(u"Menus", addMenusTab)
-        # gui.putProgressBar(20)
-        print u"Iniciando interfaz"
+
+        print(u"Iniciando interfaz")
         gui.start()
 
         if not gui.isRestart():

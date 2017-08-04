@@ -41,7 +41,7 @@ def openFile(title, fileTypes, callback=None):
     # type: (unicode, tuple, (unicode, )) -> unicode
     archivo = unicode(tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes))
     try:
-        print archivo
+        print(archivo)
     except UnicodeEncodeError:
         pass
     if callback:
@@ -53,7 +53,7 @@ def saveFile(title, fileTypes, callback=None):
     # type: (unicode, tuple, (unicode, )) -> unicode
     archivo = unicode(tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes))
     try:
-        print archivo
+        print(archivo)
     except UnicodeEncodeError:
         pass
     if callback:
@@ -68,7 +68,7 @@ def selectMultiplesFiles(title, fileTypes, callback=None):
         return list()
     archivos = map(unicode, archivos)
     try:
-        print archivos
+        print(archivos)
     except UnicodeEncodeError:
         pass
     if callback:
@@ -80,7 +80,7 @@ def selectFolder(title=None, callback=None):
     # type: (unicode, (unicode, )) -> unicode
     carpeta = unicode(tkFileDialog.askdirectory(title=title))
     try:
-        print carpeta
+        print(carpeta)
     except UnicodeEncodeError:
         pass
     if callback:
@@ -124,7 +124,6 @@ class GuiManager:
     #     x = 75
     #     y = 0
     #     for i in range(len(inputs)):
-    #         # print inputs[i]
     #         yPos.append(y)
     #         if inputs[i][0] == "Entry":
     #             en = ttk.Entry(frame)
@@ -154,9 +153,6 @@ class GuiManager:
     #     for l in range(len(labels)):
     #         la = ttk.Label(frame, text=labels[l])
     #         la.place(x=x, y=yPos[l])
-    #         # print la.winfo_width()
-    #         # print la.winfo_height()
-    #         # print la['width']
 
     #     yMax = yPos[-1] + 25
 
@@ -235,7 +231,7 @@ class GuiManager:
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
-        print u"Iniciando\n"
+        print(u"Iniciando\n")
         self.gui.mainloop()
 
     def stop(self):

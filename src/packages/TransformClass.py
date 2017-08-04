@@ -11,15 +11,15 @@ class TransformClass:
         self.command = line2[12]
         self.bonus = line2[13]
         if printData:
-            print "Transform:"
-            print "unknowFirst:", map(ord, list(self.unknowFirst))
-            print "trans:", map(ord, self.trans)
-            print "barras:", map(ord, self.barras)
-            print "ani:", map(ord, self.aniCam)
-            print "abs:", map(ord, self.abs)
-            print "r3command:", [ord(self.command)]
-            print "bonus:", [ord(self.bonus)]
-            print "\n"
+            print(u"Transform:")
+            print(u"unknowFirst:", map(ord, list(self.unknowFirst)))
+            print(u"trans:", map(ord, self.trans))
+            print(u"barras:", map(ord, self.barras))
+            print(u"ani:", map(ord, self.aniCam))
+            print(u"abs:", map(ord, self.abs))
+            print(u"r3command:", [ord(self.command)])
+            print(u"bonus:", [ord(self.bonus)])
+            print(u"\n")
 
     def getR3Command(self, asOrd=False):
         # type: (bool) -> int|str
