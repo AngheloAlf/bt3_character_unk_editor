@@ -1,3 +1,4 @@
+#! python2
 import os
 import shutil
 from distutils import sysconfig
@@ -198,44 +199,52 @@ def compilePyPackages(arguments):
     return 0
 
 
+def generateNoSiteMain(mainName):
+    # type: (str) -> int
+    zipName = 'pythonLib.zip'
+    folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3"), os.path.join("Lib", "lib-tk")]
+    pyzip = ['.', zipName]
+    for fld in folders:
+        pyzip.append(os.path.join(zipName, fld))
+    pyzip.append("DLLs")
+
+    arch = open(mainName + ".py")
+    mainData = ""
+    for line in arch:
+        if line.startswith("#"):
+            continue
+        data = line.strip().split("#")
+        mainData += data[0] + ";"
+    arch.close()
+
+    arch = open(mainName + ".c", "w")
+    arch.write('#include <Python.h>\n')
+    arch.write('\n')
+    arch.write('int main(int argc, char *argv[]){\n')
+    arch.write('    Py_NoSiteFlag = 1;\n')
+    arch.write('    Py_SetPythonHome(".");\n')
+    arch.write('    Py_Initialize();\n')
+    arch.write('    Py_SetProgramName(argv[0]);\n')
+    arch.write('    PySys_SetArgv(argc, argv);\n')
+    arch.write('    PyRun_SimpleString("import sys");\n')
+    arch.write('    PyRun_SimpleString("sys.path = ' + str(pyzip) + '");\n')
+    arch.write('\n')
+    arch.write('    PyRun_SimpleString("' + mainData + '");\n')
+    arch.write('\n')
+    arch.write('    Py_Finalize();\n')
+    arch.write('    return 0;\n')
+    arch.write('}\n')
+    arch.close()
+    return 0
+
+
 def mainPyToC(arguments):
     # type: (list) -> int
-    main = os.path.join("src", "main")
+    mainName = os.path.join("src", "main")
     if "-nosite" in arguments:
-        zipName = 'pythonLib.zip'
-        folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3"), os.path.join("Lib", "lib-tk")]
-        pyzip = ['.', zipName]
-        for fld in folders:
-            pyzip.append(os.path.join(zipName, fld))
-        pyzip.append("DLLs")
-
-        arch = open(main + ".py")
-        mainData = ""
-        for line in arch:
-            mainData += line.strip() + ";"
-        arch.close()
-
-        arch = open(main + ".c", "w")
-        arch.write('#include <Python.h>\n')
-        arch.write('\n')
-        arch.write('int main(int argc, char *argv[]){\n')
-        arch.write('    Py_NoSiteFlag = 1;\n')
-        arch.write('    Py_SetPythonHome(".");\n')
-        arch.write('    Py_Initialize();\n')
-        arch.write('    Py_SetProgramName(argv[0]);\n')
-        arch.write('    PySys_SetArgv(argc, argv);\n')
-        arch.write('    PyRun_SimpleString("import sys");\n')
-        arch.write('    PyRun_SimpleString("sys.path = ' + str(pyzip) + '");\n')
-        arch.write('\n')
-        arch.write('    PyRun_SimpleString("' + mainData + '");\n')
-        arch.write('\n')
-        arch.write('    Py_Finalize();\n')
-        arch.write('    return 0;\n')
-        arch.write('}\n')
-        arch.close()
-        return 0
+        return generateNoSiteMain(mainName)
     else:
-        cythonizeCommand = ["cython", "--embed", "-o", main + ".c", main + ".py"]
+        cythonizeCommand = ["cython", "--embed", "-o", mainName + ".c", mainName + ".py"]
         if "-a" in arguments:
             cythonizeCommand.append("-a")
         return runProcess(cythonizeCommand, True)
@@ -424,10 +433,6 @@ def copyFiles():
 
 
 def makeAll(arguments):
-    print "\tcompiling packages -> 'shared object'"
-    compilePyPackages(arguments)
-    print "\t'shared object' files ready\n\n"
-
     print "\tmain.py -> main.c"
     exit_code = mainPyToC(arguments)
     if exit_code:
@@ -441,6 +446,10 @@ def makeAll(arguments):
         print "Error compilling main.c"
         exit(exit_code)
     print "\tmain.c->binary ready\n\n"
+
+    print "\tcompiling packages -> 'shared object'"
+    compilePyPackages(arguments)
+    print "\t'shared object' files ready\n\n"
 
     print "\tcopying files -> out/"
     exit_code = copyFiles()
