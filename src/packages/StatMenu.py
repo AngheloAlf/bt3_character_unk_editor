@@ -1,4 +1,7 @@
-import Constants
+try:
+    import Constants
+except Exception:
+    import packages.Constants as Constants
 
 
 class StatMenu:
@@ -46,7 +49,6 @@ class StatMenu:
     def getStatChars(self):
         # type: () -> list
         return [[unicode(y, "utf-16") for y in x] for x in self.statChars]
-        # return map(lambda x: [unicode(y, "utf-16") for y in x], self.statChars)
 
     # def setStatChars(self, data):
     #    a = map(lambda x: [y.encode("utf-16")[2:] for y in x], data)

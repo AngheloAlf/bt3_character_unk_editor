@@ -1,8 +1,14 @@
-import Tkinter
-import ttk
-import tkFileDialog
-import tkMessageBox
 import os
+try:
+    import Tkinter as tk
+    import ttk
+    import tkFileDialog
+    import tkMessageBox
+except Exception:
+    import tkinter as tk
+    from tkinter import ttk
+    from tkinter import filedialog as tkFileDialog
+    from tkinter import messagebox as tkMessageBox
 
 
 def popupInfo(title, text):
@@ -30,10 +36,10 @@ def popupError(title, text):
 
 
 def addMsgToText(txtWid, msg):
-    # type: (Tkinter.Text, str) -> None
+    # type: (tk.Text, str) -> None
     txtWid["state"] = "normal"
-    txtWid.insert(Tkinter.END, msg + "\n")
-    txtWid.see(Tkinter.END)
+    txtWid.insert(tk.END, msg + "\n")
+    txtWid.see(tk.END)
     txtWid["state"] = "disabled"
 
 
@@ -91,7 +97,7 @@ def selectFolder(title=None, callback=None):
 class GuiManager:
     def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):  # , xOffset, yOffSet):
         # type: (unicode, unicode, unicode) -> None
-        self.gui = Tkinter.Tk()
+        self.gui = tk.Tk()
         # self.gui.minsize(xOffset, yOffSet)
         # self.xOffset = xOffset
         # self.yOffset = yOffSet
@@ -116,7 +122,7 @@ class GuiManager:
     # def addPanel(self, frameName, labels, inputs, button):
     #     # type: (str, list, list, list) -> GuiManager
     #     frame = ttk.LabelFrame(self.gui, text=frameName)
-    #     frame.pack(fill="both", expand="yes", side=Tkinter.LEFT)
+    #     frame.pack(fill="both", expand="yes", side=tk.LEFT)
 
     #     yPos = []
 
@@ -132,13 +138,13 @@ class GuiManager:
     #             self.entries[labels[i]] = en
     #             y += 25
     #         elif inputs[i][0] == "Text":
-    #             # sc = Tkinter.Scrollbar(frame)
+    #             # sc = tk.Scrollbar(frame)
     #             # sc.place(x=x, y=y)
 
-    #             te = Tkinter.Text(frame, state="normal", width="38", height="12")  # , yscrollcommand = sc.set)
-    #             te.insert(Tkinter.INSERT, inputs[i][1])
+    #             te = tk.Text(frame, state="normal", width="38", height="12")  # , yscrollcommand = sc.set)
+    #             te.insert(tk.INSERT, inputs[i][1])
     #             te.place(x=x, y=y)
-    #             # te.pack(side = Tkinter.LEFT, fill = Tkinter.BOTH)
+    #             # te.pack(side = tk.LEFT, fill = tk.BOTH)
     #             self.entries[labels[i]] = te
 
     #             # sc.config(command = te.yview)
@@ -188,10 +194,10 @@ class GuiManager:
         if len(cascadeNames) != len(cascadeData):
             return
         
-        menuVar = Tkinter.Menu(self.gui)
+        menuVar = tk.Menu(self.gui)
 
         for i in range(len(cascadeNames)):
-            subMenu = Tkinter.Menu(menuVar, tearoff=0)
+            subMenu = tk.Menu(menuVar, tearoff=0)
             for optionName, callback in cascadeData[i]:
                 if optionName is None:
                     subMenu.add_separator()
@@ -217,10 +223,10 @@ class GuiManager:
             if os.name == 'nt':
                 try:
                     self.gui.wm_iconbitmap(bitmap=self.icon)
-                    # img = Tkinter.PhotoImage(file=self.icon)
+                    # img = tk.PhotoImage(file=self.icon)
                 except Exception:
                     self.gui.wm_iconbitmap(bitmap=os.path.join("..", self.icon))
-                    # img = Tkinter.PhotoImage(file=os.path.join("..", self.icon))
+                    # img = tk.PhotoImage(file=os.path.join("..", self.icon))
                 # self.gui.tk.call('wm', 'iconphoto', self.gui._w, img)
 
         if title:
@@ -241,7 +247,7 @@ class GuiManager:
         self.entries = dict()
         self.panelsAmmount = 0
         self.height = 0
-        self.gui = Tkinter.Tk()
+        self.gui = tk.Tk()
         self.running = False
 
     def isClose(self):
@@ -280,11 +286,11 @@ class GuiManager:
         self.gui.quit()
 
 
-class MyCheckButton(Tkinter.Checkbutton):
+class MyCheckButton(tk.Checkbutton):
     def __init__(self, *args, **kwargs):
-        self.var = kwargs.get('variable', Tkinter.IntVar())
+        self.var = kwargs.get('variable', tk.IntVar())
         kwargs['variable'] = self.var
-        Tkinter.Checkbutton.__init__(self, *args, **kwargs)
+        tk.Checkbutton.__init__(self, *args, **kwargs)
 
     def is_checked(self):
         return self.var.get()

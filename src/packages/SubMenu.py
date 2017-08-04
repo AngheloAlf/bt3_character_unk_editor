@@ -1,5 +1,9 @@
-import Constants
-import StatMenu
+try:
+    import StatMenu
+    import Constants
+except Exception:
+    import packages.StatMenu as StatMenu
+    import packages.Constants as Constants
 
 
 def getMenuName(submenuData, i):

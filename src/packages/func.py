@@ -1,15 +1,26 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
-import GuiManager
-import CharacterUnkParser
-import StatMenu
-import LanguageManager
-import Tkinter
-import ttk
 import functools
 import os
-import Constants
+try:
+    import GuiManager
+    import CharacterUnkParser
+    import StatMenu
+    import LanguageManager
+    import Constants
+
+    import Tkinter as tk
+    import ttk
+except Exception:
+    import packages.GuiManager as GuiManager
+    import packages.CharacterUnkParser as CharacterUnkParser
+    import packages.StatMenu as StatMenu
+    import packages.LanguageManager as LanguageManager
+    import packages.Constants as Constants
+
+    import tkinter as tk
+    from tkinter import ttk
 
 
 class CharacterData:
@@ -18,7 +29,7 @@ class CharacterData:
 
 
 def comboTransUpdate(event=None):
-    # type: (Tkinter.Event, str) -> None
+    # type: (tk.Event, str) -> None
     language = LanguageManager.LanguageManager(gui.languageFile)
     for i in range(4):
         a = gui.comboboxs["trans"][i].get()
@@ -55,7 +66,7 @@ def comboTransUpdate(event=None):
 
 
 def comboFusUpdate(event=None):
-    # type: (Tkinter.Event) -> None
+    # type: (tk.Event) -> None
     language = LanguageManager.LanguageManager(gui.languageFile)
 
     for i in range(3):
@@ -85,7 +96,7 @@ def comboFusUpdate(event=None):
 
 
 def menusUpdate(event=None):
-    # type: (Tkinter.Event) -> None
+    # type: (tk.Event) -> None
     language = LanguageManager.LanguageManager(gui.languageFile)
     for i in range(8):
         for j in range(7):
@@ -420,7 +431,7 @@ def addMenusTab(tab):
             myframe = ttk.Frame(menuTab, width=880, height=200)
             myframe.place(x=10, y=80)
 
-            canvas = Tkinter.Canvas(myframe)
+            canvas = tk.Canvas(myframe)
             frame = ttk.Frame(canvas)
             myscrollbar = ttk.Scrollbar(myframe, orient="vertical", command=canvas.yview)
             canvas.configure(yscrollcommand=myscrollbar.set)
@@ -512,7 +523,7 @@ def parseUnkFile(fileName):
 
 def popData(data):
     # type: (list) -> None
-    pop = Tkinter.Toplevel()
+    pop = tk.Toplevel()
     for i in range(8):
 
         entry1 = ttk.Entry(pop)

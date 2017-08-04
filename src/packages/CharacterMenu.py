@@ -1,5 +1,9 @@
-import SubMenu
-import Constants
+try:
+    import SubMenu
+    import Constants
+except Exception:
+    import packages.SubMenu as SubMenu
+    import packages.Constants as Constants
 
 
 class CharacterMenu:
@@ -28,7 +32,6 @@ class CharacterMenu:
 
         if len(self.subMenus) <= 2:
             self.unknow = True
-
 
     def isKnow(self):
         # type: () -> bool
