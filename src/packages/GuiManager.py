@@ -94,8 +94,46 @@ def selectFolder(title=None, callback=None):
     return carpeta
 
 
+def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, current=None, command=None, **kwargs):
+    # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, function, **kwargs) ->
+    # None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
+    if wtype == u"Label":
+        widget = ttk.Label(master, **kwargs)
+    elif wtype == u"Combobox":
+        widget = ttk.Combobox(master, state='disabled', values=values, **kwargs)
+        if command:
+            widget.bind("<<ComboboxSelected>>", command)
+    elif wtype == u"Entry":
+        widget = ttk.Entry(master, state='disabled', **kwargs)
+    elif wtype == u"Button":
+        widget = ttk.Button(master, state="disabled", **kwargs)
+    elif wtype == u"CheckButton":
+        widget = CheckButton(master, state="disabled", onvalue=1, offvalue=0, **kwargs)
+        widget.deselect()
+        if command:
+            widget["command"] = command
+    else:
+        return
+    if current:
+        widget.current(current)
+    if posT == u"pack" or posT == u"place":
+        widget.pack()
+        if width:
+            widget.place(x=x, y=y, width=width)
+        else:
+            widget.place(x=x, y=y)
+        widget.place(x=x, y=y)
+    elif posT == u"grid":
+        if width:
+            widget["width"] = width
+        widget.grid(row=x, column=y)
+    else:
+        return
+    return widget
+
+
 class GuiManager:
-    def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):  # , xOffset, yOffSet):
+    def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):
         # type: (unicode, unicode, unicode) -> None
         self.gui = tk.Tk()
         # self.gui.minsize(xOffset, yOffSet)
@@ -286,7 +324,7 @@ class GuiManager:
         self.gui.quit()
 
 
-class MyCheckButton(tk.Checkbutton):
+class CheckButton(tk.Checkbutton):
     def __init__(self, *args, **kwargs):
         self.var = kwargs.get('variable', tk.IntVar())
         kwargs['variable'] = self.var
