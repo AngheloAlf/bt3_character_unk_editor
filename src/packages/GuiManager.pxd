@@ -22,6 +22,9 @@ cpdef list selectMultiplesFiles(unicode title, tuple fileTypes, callback=*)
 cpdef unicode selectFolder(unicode title=*, callback=*)
     # type: (unicode, (unicode, )) -> unicode
 
+# cpdef generateTtkWidget(unicode wtype, master, unicode posT, int x, int y, list values=*, int width=*, int current=*, command=*, **kwargs)
+    # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, function, **kwargs) -> None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
+
 cdef class GuiManager:
     cdef gui
     # gui = Tkinter.Tk()
@@ -76,3 +79,10 @@ cdef class GuiManager:
 
     cpdef quit(self)
         # type: () -> None
+
+
+# cdef class CheckButton:
+#     cdef var
+#
+#     cpdef bint is_checked(self)
+#         # type: () -> bool

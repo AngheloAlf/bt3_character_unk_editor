@@ -136,9 +136,6 @@ class GuiManager:
     def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):
         # type: (unicode, unicode, unicode) -> None
         self.gui = tk.Tk()
-        # self.gui.minsize(xOffset, yOffSet)
-        # self.xOffset = xOffset
-        # self.yOffset = yOffSet
         self.tabsWidth = 900
         self.tabsHeight = 0
         self.panelsAmmount = 0
@@ -331,4 +328,5 @@ class CheckButton(tk.Checkbutton):
         tk.Checkbutton.__init__(self, *args, **kwargs)
 
     def is_checked(self):
-        return self.var.get()
+        # type: () -> bool
+        return bool(self.var.get())
