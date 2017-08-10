@@ -1,8 +1,8 @@
 64 ICON "../resources/icon.ico"
 
 1 VERSIONINFO
-FILEVERSION     0,1,0
-PRODUCTVERSION  0,1,0
+FILEVERSION     0,2,0
+PRODUCTVERSION  0,2,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -10,12 +10,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Arufu Creations"
       VALUE "FileDescription", "'.unk' character file editor for DBZ BT3"
-      VALUE "FileVersion", "0.1.0-beta"
+      VALUE "FileVersion", "0.2.0-beta"
       VALUE "InternalName", "bt3_character_unk_editor"
       VALUE "LegalCopyright", "AngheloAlf"
       VALUE "OriginalFilename", "bt3_character_unk_editor.exe"
       VALUE "ProductName", "BT3 Character Unk Editor"
-      VALUE "ProductVersion", "0.1.0-beta"
+      VALUE "ProductVersion", "0.2.0-beta"
     END
   END
   BLOCK "VarFileInfo"
