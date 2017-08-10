@@ -18,7 +18,10 @@ endOfFile = [0x21, 0x00, 0x46, 0x00, 0x40, 0x00]
 
 startOfutf16Text = [0xFF, 0xFE]
 
+Title = u"BT3 Character 'unk' Editor"
 Version = u"0.2.0-beta"
+
+FileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
 
 statsAmount = 32
 menusAmount = 7

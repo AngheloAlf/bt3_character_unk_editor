@@ -7,7 +7,12 @@ cpdef public list startOfMenuFile
 cpdef public list endOfMenuFile
 cpdef public list endOfFile
 cpdef public list startOfutf16Text
+cpdef public unicode Title
 cpdef public unicode Version
+cpdef public tuple FileTypes
+cpdef public int statsAmount
+cpdef public int menusAmount
+cpdef public int languagesAmount
 
 cpdef str hexListToChar(list hexList)
     # type: (list) -> str

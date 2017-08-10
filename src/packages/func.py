@@ -3,6 +3,7 @@
 
 import functools
 import os
+import sys
 try:
     import GuiManager
     import CharacterUnkParser
@@ -385,7 +386,8 @@ def addMenusTab(tab):
 
             for k in range(Constants.statsAmount):
                 checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1),
-                                                           command=functools.partial(onActiveRowClick, checkbutton, (i, j, k)))
+                                                           command=functools.partial(onActiveRowClick,
+                                                                                     checkbutton, (i, j, k)))
                 gui.checkbuttons["addStat"][-1][-1].append(checkbutton)
 
                 nombreStat = GuiManager.generateTtkWidget(u"Entry", frame, u"grid", k+1, 1, width=50)
@@ -402,7 +404,8 @@ def addMenusTab(tab):
                                                          current=0, command=comboMenusUpdate)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
-                showData = GuiManager.generateTtkWidget(u"Button", frame, u"grid", k+1, 5, text=u"[WIP]Ver data " + unicode(k + 1))
+                showData = GuiManager.generateTtkWidget(u"Button", frame, u"grid", k+1, 5,
+                                                        text=u"[WIP]Ver data " + unicode(k + 1))
                 gui.buttons["showData"][-1][-1].append(showData)
 
             frame.bind("<Configure>", functools.partial(updateScrollbar, canvas, width=860, height=160))
@@ -616,7 +619,7 @@ def updateMenus():
 
 
 def openFileCaller():
-    GuiManager.openFile(u"Abrir archivo", fileTypes, parseUnkFile)
+    GuiManager.openFile(u"Abrir archivo", Constants.FileTypes, parseUnkFile)
 
 
 def saveFile():
@@ -658,7 +661,7 @@ def saveAsUnkFile(fileName):
 
 def saveAsUnkFileCaller():
     if character.data:
-        GuiManager.saveFile(u"Guardar archivo", fileTypes, saveAsUnkFile)
+        GuiManager.saveFile(u"Guardar archivo", Constants.FileTypes, saveAsUnkFile)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
@@ -687,7 +690,7 @@ def updateMultiplesUnkFiles(archivos):
 def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
-        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", fileTypes, updateMultiplesUnkFiles)
+        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.FileTypes, updateMultiplesUnkFiles)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
@@ -709,9 +712,8 @@ def acercaDe():
     GuiManager.popupInfo(titulo, texto)
 
 
-title = u"BT3 Character 'unk' Editor v"+Constants.Version
+title = Constants.Title + u" v" + Constants.Version
 print(title)
-fileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
 character = CharacterData()
 print(u"Inicializando interfaz...")
 gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
@@ -737,6 +739,13 @@ def main():
         gui.addTab(u"Transformaciones", addTrans)
         gui.addTab(u"Fusiones", addFusion)
         gui.addTab(u"Menús de Habilidades", addMenusTab)
+        print(u"Pestañas listas!")
+
+        if len(sys.argv) > 1:
+            archivito = unicode(sys.argv[1])
+            print(u"\nAbriendo " + archivito + u" ...")
+            parseUnkFile(archivito)
+            print(u"Archivo abierto correctamente.\n")
 
         print(u"Iniciando interfaz")
         gui.start()
