@@ -20,6 +20,10 @@ startOfutf16Text = [0xFF, 0xFE]
 
 Version = u"0.1.0-beta"
 
+statsAmount = 32
+menusAmount = 7
+languagesAmount = 8
+
 # u'!1#' <PAD=Ｌ２＋○>
 # u'!2#' <PAD=†上＋†振縦>
 # u'!8#' <PAD=Ｒ１＋○>
