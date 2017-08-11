@@ -272,7 +272,6 @@ class GuiManager:
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
-        print(u"Iniciando\n")
         self.gui.mainloop()
 
     def stop(self):

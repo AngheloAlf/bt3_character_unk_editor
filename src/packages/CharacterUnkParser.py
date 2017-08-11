@@ -30,7 +30,7 @@ def getMenusData(archivo, pointerFile):
 
     lineaArchivo = archivo[pointerFile - 4:pointerFile]
 
-    endOfMenuFile = Constants.endOfMenuFile
+    endOfMenuFile = Constants.FilesConst().endOfMenuFile
 
     while lineaArchivo != "":
         puntero = map(ord, lineaArchivo)
@@ -72,13 +72,13 @@ class CharacterUnkParser:
 
     def parse(self):
         # type: () -> None
-        transformCode = Constants.hexListToChar(Constants.transformCode)
+        transformCode = Constants.hexListToChar(Constants.FilesConst().transformCode)
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
         print(pointerFile)
         self.transObj = getTransformData(self.fullFile, pointerFile, self.printData)
         self.fusionObj = getFusionData(self.fullFile, pointerFile+30, self.printData)
 
-        startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
+        startOfMenuFile = Constants.hexListToChar(Constants.FilesConst().startOfMenuFile)
         starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
         pointer = 0
         while pointer < len(starts):
@@ -90,7 +90,7 @@ class CharacterUnkParser:
 
     def updateFileData(self, src):
         # type: (CharacterUnkParser) -> None
-        transformCode = Constants.hexListToChar(Constants.transformCode)
+        transformCode = Constants.hexListToChar(Constants.FilesConst().transformCode)
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
         
         if src:
@@ -103,8 +103,8 @@ class CharacterUnkParser:
         self.fullFile = setTransformData(self.fullFile, pointerFile, transLines)
         self.fullFile = setFusionData(self.fullFile, pointerFile+30, fusionLine)
 
-        startOfMenuFile = Constants.hexListToChar(Constants.startOfMenuFile)
-        endOfMenuFile = Constants.hexListToChar(Constants.endOfMenuFile)
+        startOfMenuFile = Constants.hexListToChar(Constants.FilesConst().startOfMenuFile)
+        endOfMenuFile = Constants.hexListToChar(Constants.FilesConst().endOfMenuFile)
         starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
         ends = Constants.findDataPos(self.fullFile, endOfMenuFile, 8)
 

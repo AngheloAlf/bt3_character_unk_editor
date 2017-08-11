@@ -99,9 +99,9 @@ def comboFusUpdate(event=None):
 def comboMenusUpdate(event=None):
     # type: (tk.Event) -> None
     if event and event.widget:
-        for i in range(Constants.languagesAmount):
-            for j in range(Constants.menusAmount):
-                for k in range(Constants.statsAmount):
+        for i in range(Constants.AmountConst().languagesAmount):
+            for j in range(Constants.AmountConst().menusAmount):
+                for k in range(Constants.AmountConst().statsAmount):
                     if event.widget == gui.comboboxs["barrasKiMenus"][i][j][k]:
                         if gui.comboboxs["barrasKiMenus"][i][j][k].current() != 0:
                             gui.comboboxs["reservaKi"][i][j][k].current(0)
@@ -114,15 +114,15 @@ def comboMenusUpdate(event=None):
 def menusUpdate(event=None):
     # type: (tk.Event) -> None
     language = LanguageManager.LanguageManager(gui.languageFile)
-    for i in range(Constants.languagesAmount):
-        for j in range(Constants.menusAmount):
+    for i in range(Constants.AmountConst().languagesAmount):
+        for j in range(Constants.AmountConst().menusAmount):
             subMenuLoop = character.data.menusList[i].subMenus
             if j < len(subMenuLoop):
                 if not subMenuLoop[j].isNone():
                     subMenuLoop[j].setMenuName(unicode(gui.entries["nombreMenu"][i][j].get()))
                     stats = subMenuLoop[j].stats
                     k0 = 0
-                    for k in range(Constants.statsAmount):
+                    for k in range(Constants.AmountConst().statsAmount):
                         if gui.checkbuttons["addStat"][i][j][k].is_checked():
                             nombrestat = unicode(gui.entries["nombreStat"][i][j][k].get())
                             maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
@@ -310,7 +310,7 @@ def addMenusTab(tab):
 
     gui.buttons["showData"] = list()
 
-    for i in range(Constants.languagesAmount):
+    for i in range(Constants.AmountConst().languagesAmount):
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
         newTabs.add(subTab, text=u"Idioma " + unicode(i+1))
 
@@ -328,7 +328,7 @@ def addMenusTab(tab):
 
         gui.buttons["showData"].append(list())
 
-        for j in range(Constants.menusAmount):
+        for j in range(Constants.AmountConst().menusAmount):
             menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
             menuNameTab.add(menuTab, text=u"Menu " + unicode(j+1))
 
@@ -384,7 +384,7 @@ def addMenusTab(tab):
             GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 3, text=u"Barras de Ki ocupadas")
             GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 4, text=u"Reservas de Ki ocupadas")
 
-            for k in range(Constants.statsAmount):
+            for k in range(Constants.AmountConst().statsAmount):
                 checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1),
                                                            command=functools.partial(onActiveRowClick,
                                                                                      checkbutton, (i, j, k)))
@@ -596,7 +596,7 @@ def updateMenus():
 
                         k += 1
                         k0 += 1
-                    while k0 < Constants.statsAmount:
+                    while k0 < Constants.AmountConst().statsAmount:
                         # gui.checkbuttons["addStat"][i][j][k0]["state"] = "normal"
                         gui.checkbuttons["addStat"][i][j][k0].deselect()
                         gui.checkbuttons["maxPower"][i][j][k0].deselect()
@@ -609,9 +609,9 @@ def updateMenus():
                         print(u"Error: Mas stats que los esperados:", k)
                     j += 1
             i += 1
-    for i in range(Constants.languagesAmount):
-        for j in range(Constants.menusAmount):
-            for k in range(Constants.statsAmount):
+    for i in range(Constants.AmountConst().languagesAmount):
+        for j in range(Constants.AmountConst().menusAmount):
+            for k in range(Constants.AmountConst().statsAmount):
                 gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
 
     print(u"Pestaña 'Menus' lista")
@@ -619,7 +619,7 @@ def updateMenus():
 
 
 def openFileCaller():
-    GuiManager.openFile(u"Abrir archivo", Constants.FileTypes, parseUnkFile)
+    GuiManager.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes, parseUnkFile)
 
 
 def saveFile():
@@ -661,7 +661,7 @@ def saveAsUnkFile(fileName):
 
 def saveAsUnkFileCaller():
     if character.data:
-        GuiManager.saveFile(u"Guardar archivo", Constants.FileTypes, saveAsUnkFile)
+        GuiManager.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes, saveAsUnkFile)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
@@ -690,7 +690,7 @@ def updateMultiplesUnkFiles(archivos):
 def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
-        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.FileTypes, updateMultiplesUnkFiles)
+        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes, updateMultiplesUnkFiles)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 
@@ -708,11 +708,11 @@ def languageSelectorCaller():
 def acercaDe():
     # type: () -> None
     titulo = u"Acerca de"
-    texto = u"BT3 Character 'unk' Editor v" + Constants.Version + u".\nCreado por AngheloAlf"
+    texto = u"BT3 Character 'unk' Editor v" + Constants.ProgramConst().Version + u".\nCreado por AngheloAlf"
     GuiManager.popupInfo(titulo, texto)
 
 
-title = Constants.Title + u" v" + Constants.Version
+title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Version
 print(title)
 character = CharacterData()
 print(u"Inicializando interfaz...")

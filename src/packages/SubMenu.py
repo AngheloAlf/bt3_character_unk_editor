@@ -11,7 +11,7 @@ def getMenuName(submenuData, i):
     nameData = [submenuData[i:i + 2]]
     i += 2
     menuName = ""
-    while map(ord, submenuData[i:i + 2]) != Constants.endOfLine:
+    while map(ord, submenuData[i:i + 2]) != Constants.FilesConst().endOfLine:
         menuName += submenuData[i]
         i += 1
     nameData.append(menuName)
@@ -20,8 +20,8 @@ def getMenuName(submenuData, i):
 
 def getStat(submenuData, i):
     # type: (str, int) -> (StatMenu.StatMenu, int)
-    endOfLine = Constants.hexListToChar(Constants.endOfLine)
-    statCode = Constants.hexListToChar(Constants.statCode)
+    endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+    statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
 
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
@@ -63,12 +63,12 @@ class SubMenu:
         while i < len(submenuData):
             if i + 5 < len(submenuData):
                 # Nombre del menu
-                if map(ord, submenuData[i:i + 6]) == Constants.menuNameCode:
+                if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().menuNameCode:
                     i += 6
                     self.menuName, i = getMenuName(submenuData, i)
 
                 # Cada stat
-                if map(ord, submenuData[i:i + 6]) == Constants.statCode:
+                if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().statCode:
                     i += 6
                     newStat, i = getStat(submenuData, i)
                     self.stats.append(newStat)
@@ -96,8 +96,8 @@ class SubMenu:
 
     def getAsLine(self):
         # type: () -> str
-        menuNameCode = Constants.hexListToChar(Constants.menuNameCode)
-        endOfLine = Constants.hexListToChar(Constants.endOfLine)
+        menuNameCode = Constants.hexListToChar(Constants.FilesConst().menuNameCode)
+        endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
         line = ""
         if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
