@@ -7,6 +7,7 @@ import sys
 try:
     import GuiManager
     import CharacterUnkParser
+    import SubMenu
     import StatMenu
     import LanguageManager
     import Constants
@@ -16,6 +17,7 @@ try:
 except Exception:
     import packages.GuiManager as GuiManager
     import packages.CharacterUnkParser as CharacterUnkParser
+    import packages.SubMenu as SubMenu
     import packages.StatMenu as StatMenu
     import packages.LanguageManager as LanguageManager
     import packages.Constants as Constants
@@ -113,36 +115,49 @@ def comboMenusUpdate(event=None):
 
 def menusUpdate(event=None):
     # type: (tk.Event) -> None
-    language = LanguageManager.LanguageManager(gui.languageFile)
     for i in range(Constants.AmountConst().languagesAmount):
+        j0 = 0
+        subMenuLoop = character.data.menusList[i].subMenus
         for j in range(Constants.AmountConst().menusAmount):
-            subMenuLoop = character.data.menusList[i].subMenus
-            if j < len(subMenuLoop):
-                if not subMenuLoop[j].isNone():
-                    subMenuLoop[j].setMenuName(unicode(gui.entries["nombreMenu"][i][j].get()))
-                    stats = subMenuLoop[j].stats
-                    k0 = 0
-                    for k in range(Constants.AmountConst().statsAmount):
-                        if gui.checkbuttons["addStat"][i][j][k].is_checked():
-                            nombrestat = unicode(gui.entries["nombreStat"][i][j][k].get())
-                            maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
-                            barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
-                            reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
+            if gui.checkbuttons["menuOn"][i][j].is_checked():
+                # if j < len(subMenuLoop):
+                nombreMenu = unicode(gui.entries["nombreMenu"][i][j].get())
 
-                            if k >= len(stats):
-                                statName = [['', '', ''], '']
-                                # statChars = [["", ""]]
-                                statChars = []
-                                nuevoStat = StatMenu.StatMenu(statName, statChars)
-                                stats.append(nuevoStat)
+                if j < len(subMenuLoop) and subMenuLoop[j].isNone():
+                    raise
+                # if not subMenuLoop[j].isNone():
 
-                            stats[k0].setName(nombrestat)
-                            stats[k0].setMaxPower(maxPower)
-                            stats[k0].setBarrasKi(barrasKi)
-                            stats[k0].setReservaKi(reservaKi)
-                            k0 += 1
-                    del stats[k0:]
-    language.close()
+                if j >= len(subMenuLoop):
+                    nuevoSubMenu = SubMenu.SubMenu("")
+                    subMenuLoop.append(nuevoSubMenu)
+
+                subMenuLoop[j0].setMenuName(nombreMenu)
+                subMenuLoop[j0].setMenuNum(j0)
+                stats = subMenuLoop[j0].stats
+                k0 = 0
+                for k in range(Constants.AmountConst().statsAmount):
+                    if gui.checkbuttons["addStat"][i][j][k].is_checked():
+                        nombrestat = unicode(gui.entries["nombreStat"][i][j][k].get())
+                        maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
+                        barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
+                        reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
+
+                        if k >= len(stats):
+                            statName = [['', '', ''], '']
+                            # statChars = [["", ""]]
+                            statChars = []
+                            nuevoStat = StatMenu.StatMenu(statName, statChars)
+                            stats.append(nuevoStat)
+
+                        stats[k0].setName(nombrestat)
+                        stats[k0].setMaxPower(maxPower)
+                        stats[k0].setBarrasKi(barrasKi)
+                        stats[k0].setReservaKi(reservaKi)
+                        k0 += 1
+                del stats[k0:]
+
+                j0 += 1
+        del subMenuLoop[j0:]
     return
 
 
@@ -242,18 +257,18 @@ def addFusion(tab):
 
         GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[1], yPoss[0], text=u"Tipo de fusión")
         fusType = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[1], yPoss[1],
-                                                 values=fusionsTypes, width=110, command=comboFusUpdate)
+                                               values=fusionsTypes, width=110, command=comboFusUpdate)
         gui.comboboxs["fusType"].append(fusType)
 
         GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[2], yPoss[0],
                                      text=u"Personaje resultante de la fusión")
         fusResul = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[2], yPoss[1],
-                                                 values=charactersNames, width=180, command=comboFusUpdate)
+                                                values=charactersNames, width=180, command=comboFusUpdate)
         gui.comboboxs["fusResul"].append(fusResul)
 
         GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[3], yPoss[0], text=u"Compañero en la animación")
         fusCompa = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[3], yPoss[1],
-                                                 values=charactersNames, width=180, command=comboFusUpdate)
+                                                values=charactersNames, width=180, command=comboFusUpdate)
         gui.comboboxs["fusCompa"].append(fusCompa)
 
         for j in range(4):
@@ -280,7 +295,11 @@ def onActiveRowClick(button, pos):
         gui.entries["nombreStat"][i][j][k]["state"] = "normal"
         gui.checkbuttons["maxPower"][i][j][k]["state"] = "normal"
         gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "readonly"
+        if gui.comboboxs["barrasKiMenus"][i][j][k].current() < 0:
+            gui.comboboxs["barrasKiMenus"][i][j][k].current(0)
         gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
+        if gui.comboboxs["reservaKi"][i][j][k].current() < 0:
+            gui.comboboxs["reservaKi"][i][j][k].current(0)
         gui.buttons["showData"][i][j][k]["state"] = "normal"
     else:
         gui.entries["nombreStat"][i][j][k]["state"] = "disabled"
@@ -288,6 +307,31 @@ def onActiveRowClick(button, pos):
         gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "disabled"
         gui.comboboxs["reservaKi"][i][j][k]["state"] = "disabled"
         gui.buttons["showData"][i][j][k]["state"] = "disabled"
+
+
+def onActiveMenuOn(button, pos):
+    # type: (GuiManager.CheckButton, tuple) -> None
+    i, j = pos
+    if button.is_checked():
+        gui.entries["nombreMenu"][i][j]["state"] = "normal"
+    else:
+        gui.entries["nombreMenu"][i][j]["state"] = "disabled"
+    for k in range(Constants.AmountConst().statsAmount):
+        if button.is_checked():
+            gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
+            if gui.checkbuttons["addStat"][i][j][k].is_checked():
+                gui.entries["nombreStat"][i][j][k]["state"] = "normal"
+                gui.checkbuttons["maxPower"][i][j][k]["state"] = "normal"
+                gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "readonly"
+                gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
+                gui.buttons["showData"][i][j][k]["state"] = "normal"
+        else:
+            gui.checkbuttons["addStat"][i][j][k]["state"] = "disabled"
+            gui.entries["nombreStat"][i][j][k]["state"] = "disabled"
+            gui.checkbuttons["maxPower"][i][j][k]["state"] = "disabled"
+            gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "disabled"
+            gui.comboboxs["reservaKi"][i][j][k]["state"] = "disabled"
+            gui.buttons["showData"][i][j][k]["state"] = "disabled"
 
 
 def addMenusTab(tab):
@@ -343,6 +387,7 @@ def addMenusTab(tab):
 
             checkbutton = GuiManager.generateTtkWidget(u"CheckButton", nameTab, u"place", xPoss[3], yPoss[1]-5,
                                                        text=u"Activar menú")
+            checkbutton["command"] = functools.partial(onActiveMenuOn, checkbutton, (i, j))
             gui.checkbuttons["menuOn"][-1].append(checkbutton)
 
             # label = ttk.Label(nameTab, text="Icono esfera dragon")
@@ -385,9 +430,8 @@ def addMenusTab(tab):
             GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 4, text=u"Reservas de Ki ocupadas")
 
             for k in range(Constants.AmountConst().statsAmount):
-                checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1),
-                                                           command=functools.partial(onActiveRowClick,
-                                                                                     checkbutton, (i, j, k)))
+                checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1))
+                checkbutton["command"] = functools.partial(onActiveRowClick, checkbutton, (i, j, k))
                 gui.checkbuttons["addStat"][-1][-1].append(checkbutton)
 
                 nombreStat = GuiManager.generateTtkWidget(u"Entry", frame, u"grid", k+1, 1, width=50)
@@ -529,6 +573,7 @@ def updateFusions():
     print(u"Pestaña 'Fusiones' lista")
 
 
+# Archivo a interfaz
 def updateMenus():
     i = 0
     for menu in character.data.menusList:
@@ -611,6 +656,7 @@ def updateMenus():
             i += 1
     for i in range(Constants.AmountConst().languagesAmount):
         for j in range(Constants.AmountConst().menusAmount):
+            gui.checkbuttons["menuOn"][i][j]["state"] = "normal"
             for k in range(Constants.AmountConst().statsAmount):
                 gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
 
@@ -690,7 +736,8 @@ def updateMultiplesUnkFiles(archivos):
 def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
-        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes, updateMultiplesUnkFiles)
+        GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes,
+                                        updateMultiplesUnkFiles)
     else:
         GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 

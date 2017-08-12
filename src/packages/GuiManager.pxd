@@ -84,5 +84,5 @@ cdef class GuiManager:
 # cdef class CheckButton:
 #     cdef var
 #
-#     cpdef bint is_checked(self)
-#         # type: () -> bool
+#     cpdef int is_checked(self)
+#         # type: () -> int

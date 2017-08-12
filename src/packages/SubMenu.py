@@ -56,23 +56,26 @@ def getStat(submenuData, i):
 
 class SubMenu:
     def __init__(self, submenuData):
+        # type: (str) -> None
         self.menuName = []
         self.stats = []
         i = 0
+        if submenuData != "":
+            while i < len(submenuData):
+                if i + 5 < len(submenuData):
+                    # Nombre del menu
+                    if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().menuNameCode:
+                        i += 6
+                        self.menuName, i = getMenuName(submenuData, i)
 
-        while i < len(submenuData):
-            if i + 5 < len(submenuData):
-                # Nombre del menu
-                if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().menuNameCode:
-                    i += 6
-                    self.menuName, i = getMenuName(submenuData, i)
-
-                # Cada stat
-                if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().statCode:
-                    i += 6
-                    newStat, i = getStat(submenuData, i)
-                    self.stats.append(newStat)
-            i += 1
+                    # Cada stat
+                    if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().statCode:
+                        i += 6
+                        newStat, i = getStat(submenuData, i)
+                        self.stats.append(newStat)
+                i += 1
+        else:
+            self.menuName = ["", ""]
 
     def isNone(self):
         # type: () -> bool
@@ -82,6 +85,10 @@ class SubMenu:
         # type: () -> int
         return int(unicode(self.menuName[0], "utf-16"))
 
+    def setMenuNum(self, num):
+        # type: (int) -> None
+        self.menuName[0] = str(num).encode("utf-16")[2:]
+
     def getMenuName(self):
         # type: () -> unicode
         return unicode(self.menuName[1], "utf-16")
@@ -90,7 +97,7 @@ class SubMenu:
         # type: (unicode) -> None
         if self.menuName[1] != name.encode("utf-16")[2:]:
             print(u"Cambiando:")
-            print(u"\t", self.menuName[1], u"->", name.encode("utf-16")[2:])
+            print(u"\t" + self.menuName[1] + u"->" + name.encode("utf-16")[2:])
         self.menuName[1] = name.encode("utf-16")[2:]
         return
 

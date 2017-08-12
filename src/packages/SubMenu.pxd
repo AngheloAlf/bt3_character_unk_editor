@@ -16,6 +16,9 @@ cdef class SubMenu:
     cpdef bint isNone(self)
         # type: () -> bool
 
+    cpdef setMenuNum(self, int num)
+        # type: (int) -> None
+
     cpdef int getMenuNum(self)
         # type: () -> int
 

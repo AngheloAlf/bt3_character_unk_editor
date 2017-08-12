@@ -327,5 +327,5 @@ class CheckButton(tk.Checkbutton):
         tk.Checkbutton.__init__(self, *args, **kwargs)
 
     def is_checked(self):
-        # type: () -> bool
-        return bool(self.var.get())
+        # type: () -> int
+        return self.var.get()
