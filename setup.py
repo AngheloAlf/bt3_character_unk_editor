@@ -125,27 +125,6 @@ def compilePyPackages(arguments):
     pyFiles = [(f[:-3], os.path.join(packagesFolder, f)) for f in os.listdir(packagesFolder) if
                os.path.isfile(os.path.join(packagesFolder, f)) and f.lower().endswith(".py") and f != "__init__.py"]
 
-    if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
-        # mkdir = ["mkdir", "out"]
-        # exit_code = runProcess(mkdir, True)
-        # if exit_code:
-        #     print "Error creating the folder 'out'"
-        #     exit(exit_code)
-        os.mkdir(os.path.join(os.getcwd(), "out"))
-        # mkdir = ["mkdir", os.path.join("out", "packages")]
-        # exit_code = runProcess(mkdir, True)
-        # if exit_code:
-        #     print "Error creating the folder 'out\\packages'"
-        #     exit(exit_code)
-        # os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
-    if not os.path.isdir(os.path.join(os.getcwd(), 'out', 'packages')):
-        # mkdir = ["mkdir", os.path.join("out", "packages")]
-        # exit_code = runProcess(mkdir, True)
-        # if exit_code:
-        #     print "Error creating the folder 'out\\packages'"
-        #     exit(exit_code)
-        os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
-
     pythonInclude = getPythonIncludeFolder()
     LIBPL = getLIBPL()
     LIBS = getLIBS()
@@ -159,6 +138,7 @@ def compilePyPackages(arguments):
     if "-Wall" in arguments:
         compileCommand.append("-Wall")
 
+    i = 0
     for py in pyFiles:
         # setup(name=py[0], ext_modules=cythonize([py[1]]))
         soName = os.path.join("out", "packages", py[0])
@@ -188,7 +168,8 @@ def compilePyPackages(arguments):
             print "error 'gcc " + cName + "'"
             exit(exit_code)
 
-        print ""
+        i += 1
+        print "\t"+str(i*100/len(pyFiles))+"%", "\n"
 
     initDir = os.path.join(os.getcwd(), "out", "packages", "__init__.py")
     open(initDir, "w").close()
@@ -433,6 +414,14 @@ def copyFiles():
 
 
 def makeAll(arguments):
+    # type: (list) -> None
+    if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
+        print("mkdir out")
+        os.mkdir(os.path.join(os.getcwd(), "out"))
+    if not os.path.isdir(os.path.join(os.getcwd(), 'out', 'packages')):
+        print("mkdir out/packages")
+        os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
+
     print "\tmain.py -> main.c"
     exit_code = mainPyToC(arguments)
     if exit_code:
