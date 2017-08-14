@@ -133,6 +133,16 @@ class LanguageManager:
         return 0
 
 
+    def getLanguageData(self, key):
+        # type: (unicode) -> unicode
+        self.cursor.execute(u"SELECT name FROM languageData WHERE langKey=?", (key, ))
+        data = self.cursor.fetchone()
+        if data:
+            name = data[0]
+            return name
+        return key
+
+
     def executeScriptsFromFile(self, filename):
         # type: (str) -> None
         # Open and read the file as a single buffer

@@ -768,8 +768,15 @@ gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
 
 def main():
     while True:
-        print(u"Preparando barra superior...")
-        gui.addMenu(["Archivo", "Opciones", "Ayuda"],
+        language = LanguageManager.LanguageManager(gui.languageFile)
+
+        print(u"Preparando menú superior...")
+        cascadeNames = list()
+        cascadeNames.append(language.getLanguageData(u"menu_file"))
+        cascadeNames.append(language.getLanguageData(u"menu_options"))
+        cascadeNames.append(language.getLanguageData(u"menu_help"))
+
+        gui.addMenu(cascadeNames,
                     [
                         [("Abrir", openFileCaller),
                          ("Guardar", saveFile),
@@ -783,9 +790,9 @@ def main():
                     ])
 
         print(u"Preparando pestañas...")
-        gui.addTab(u"Transformaciones", addTrans)
-        gui.addTab(u"Fusiones", addFusion)
-        gui.addTab(u"Menús de Habilidades", addMenusTab)
+        gui.addTab(language.getLanguageData(u"tab_transformations"), addTrans)
+        gui.addTab(language.getLanguageData(u"tab_fusions"), addFusion)
+        gui.addTab(language.getLanguageData(u"tab_menus"), addMenusTab)
         print(u"Pestañas listas!")
 
         if len(sys.argv) > 1:
@@ -793,6 +800,8 @@ def main():
             print(u"\nAbriendo " + archivito + u" ...")
             parseUnkFile(archivito)
             print(u"Archivo abierto correctamente.\n")
+
+        language.close()
 
         print(u"Iniciando interfaz")
         gui.start()
