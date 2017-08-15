@@ -173,16 +173,26 @@ def addTrans(tab):
 
     r3Command = [x[1] for x in language.getR3Command()]
     transformationBonus = [x[1] for x in language.getTransformationBonus()]
+
+    # languageData
+    trans_transformation = language.getLanguageData(u"trans_transformation")
+    trans_ki = language.getLanguageData(u"trans_ki")
+    trans_animation = language.getLanguageData(u"trans_animation")
+    trans_aura = language.getLanguageData(u"trans_aura")
+    trans_absorbed = language.getLanguageData(u"trans_absorbed")
+    trans_r3 = language.getLanguageData(u"trans_r3")
+    trans_bonus = language.getLanguageData(u"trans_bonus")
+
     language.close()
 
     xPoss = [25, 60, 260, 330, 530, 700]
     yPoss = [30, 60, 90, 120, 180, 210]
 
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], 5, text=u"Transformación")
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[2], 5, text=u"Reservas Ki")
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[3], 5, text=u"Animación")
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[4], 5, text=u"Aura")
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[5], 5, text=u"Personaje Absorbido")
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], 5, text=trans_transformation)
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[2], 5, text=trans_ki)
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[3], 5, text=trans_animation)
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[4], 5, text=trans_aura)
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[5], 5, text=trans_absorbed)
 
     gui.comboboxs["trans"] = list()
     gui.comboboxs["barras"] = list()
@@ -213,12 +223,12 @@ def addTrans(tab):
                                              width=180, command=comboTransUpdate)
         gui.comboboxs["absor"].append(absor)
 
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 180, text=u"Al apretar R3: ")
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 180, text=trans_r3+u": ")
     comboR3 = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", 180, 180, values=r3Command,
                                            width=210, command=comboTransUpdate)
     gui.comboboxs["R3"] = comboR3
 
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 210, text=u"Bonus de transformacion: ")
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 210, text=trans_bonus+u": ")
     bonus = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", 180, 210, values=transformationBonus,
                                          width=210, command=comboTransUpdate)
     gui.comboboxs["bonus"] = bonus
@@ -234,7 +244,12 @@ def addFusion(tab):
     charactersNames = [x[1] for x in language.getCharactersNames()]
     barrasKi = range(8)
     fusionsTypes = [x[1] for x in language.getFusionsTypes()]
-    language.close()
+
+    # languageData
+    fus_ki = language.getLanguageData(u"fus_ki")
+    fus_type = language.getLanguageData(u"fus_type")
+    fus_result = language.getLanguageData(u"fus_result")
+    fus_ani_partner = language.getLanguageData(u"fus_ani_partner")
 
     xPoss = [40, 110, 240, 440, 40, 240, 440, 640]
     yPoss = [10, 35, 75, 100]
@@ -248,25 +263,25 @@ def addFusion(tab):
     for i in range(3):
         i += 1
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-        newTabs.add(subTab, text=u"Fusión " + unicode(i))
+        newTabs.add(subTab, text=language.getLanguageData(u"fus_tab_fus_" + unicode(i)))
 
-        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[0], yPoss[0], text=u"Barras")
+        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[0], yPoss[0], text=fus_ki)
         fusBarras = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[0], yPoss[1],
                                                  values=barrasKi, width=50, command=comboFusUpdate)
         gui.comboboxs["fusBarras"].append(fusBarras)
 
-        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[1], yPoss[0], text=u"Tipo de fusión")
+        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[1], yPoss[0], text=fus_type)
         fusType = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[1], yPoss[1],
                                                values=fusionsTypes, width=110, command=comboFusUpdate)
         gui.comboboxs["fusType"].append(fusType)
 
         GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[2], yPoss[0],
-                                     text=u"Personaje resultante de la fusión")
+                                     text=fus_result)
         fusResul = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[2], yPoss[1],
                                                 values=charactersNames, width=180, command=comboFusUpdate)
         gui.comboboxs["fusResul"].append(fusResul)
 
-        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[3], yPoss[0], text=u"Compañero en la animación")
+        GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[3], yPoss[0], text=fus_ani_partner)
         fusCompa = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[3], yPoss[1],
                                                 values=charactersNames, width=180, command=comboFusUpdate)
         gui.comboboxs["fusCompa"].append(fusCompa)
@@ -274,12 +289,14 @@ def addFusion(tab):
         for j in range(4):
             j += 1
             GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[3+j], yPoss[2],
-                                         text=u"Compañero" + unicode(j) + u" en el equipo")
+                                         text=language.getLanguageData(u"fus_character_"+unicode(j)))
             fusEquipo = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[3 + j], yPoss[3],
                                                      values=charactersNames, width=180, command=comboFusUpdate)
             gui.comboboxs["fusEquipo"][i - 1].append(fusEquipo)
 
     newTabs.grid(column=0, row=0)
+
+    language.close()
 
     return xPoss[-1] + 200, yPoss[-1] + 60
 
@@ -336,6 +353,19 @@ def onActiveMenuOn(button, pos):
 
 def addMenusTab(tab):
     # type: (ttk.Frame) -> (int, int)
+
+    language = LanguageManager.LanguageManager(gui.languageFile)
+
+    # languageData
+    menus_name = language.getLanguageData(u"menus_name")
+    menus_activate = language.getLanguageData(u"menus_activate")
+    menus_activate_sub = language.getLanguageData(u"menus_activate_sub")
+    menus_sentence = language.getLanguageData(u"menus_sentence")
+    menus_max_power = language.getLanguageData(u"menus_max_power")
+    menus_ki_bars = language.getLanguageData(u"menus_ki_bars")
+    menus_ki_number = language.getLanguageData(u"menus_ki_number")
+    menus_data = language.getLanguageData(u"menus_data")
+
     newTabs = ttk.Notebook(tab)
 
     xPoss = [5, 20, 180, 240, 440, 40, 240, 440, 640]
@@ -346,7 +376,6 @@ def addMenusTab(tab):
     gui.entries["nombreStat"] = list()
     gui.checkbuttons["menuOn"] = list()
     gui.checkbuttons["addStat"] = list()
-    # gui.comboboxs["dragonballIcon"] = list()
 
     gui.checkbuttons["maxPower"] = list()
     gui.comboboxs["barrasKiMenus"] = list()
@@ -356,7 +385,8 @@ def addMenusTab(tab):
 
     for i in range(Constants.AmountConst().languagesAmount):
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-        newTabs.add(subTab, text=u"Idioma " + unicode(i+1))
+
+        newTabs.add(subTab, text=language.getLanguageData(u"menus_lang_"+unicode(i+1)))
 
         menuNameTab = ttk.Notebook(subTab)
         gui.entries["nombreMenu"].append(list())
@@ -364,7 +394,6 @@ def addMenusTab(tab):
         gui.entries["nombreStat"].append(list())
         gui.checkbuttons["menuOn"].append(list())
         gui.checkbuttons["addStat"].append(list())
-        # gui.comboboxs["dragonballIcon"].append(list())
 
         gui.checkbuttons["maxPower"].append(list())
         gui.comboboxs["barrasKiMenus"].append(list())
@@ -374,32 +403,21 @@ def addMenusTab(tab):
 
         for j in range(Constants.AmountConst().menusAmount):
             menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-            menuNameTab.add(menuTab, text=u"Menu " + unicode(j+1))
+            menuNameTab.add(menuTab, text=language.getLanguageData(u"menus_menu_" + unicode(j+1)))
 
             nameTab = ttk.LabelFrame(menuTab, width=880, height=70)
             nameTab.pack()
             nameTab.place(x=10, y=0)
 
-            GuiManager.generateTtkWidget(u"Label", nameTab, u"place", xPoss[1], yPoss[0], text=u"Nombre del menú")
+            GuiManager.generateTtkWidget(u"Label", nameTab, u"place", xPoss[1], yPoss[0], text=menus_name)
 
             nombreMenu = GuiManager.generateTtkWidget(u"Entry", nameTab, u"place", xPoss[1], yPoss[1], width=150)
             gui.entries["nombreMenu"][-1].append(nombreMenu)
 
             checkbutton = GuiManager.generateTtkWidget(u"CheckButton", nameTab, u"place", xPoss[3], yPoss[1]-5,
-                                                       text=u"Activar menú")
+                                                       text=menus_activate)
             checkbutton["command"] = functools.partial(onActiveMenuOn, checkbutton, (i, j))
             gui.checkbuttons["menuOn"][-1].append(checkbutton)
-
-            # label = ttk.Label(nameTab, text="Icono esfera dragon")
-            # label.pack()
-            # label.place(x=xPoss[2], y=yPoss[0])
-
-            # dragonballIcon = ttk.Combobox(nameTab, state="disabled")
-            # dragonballIcon["values"] = range(7)
-            # fusBarras.bind("<<ComboboxSelected>>", comboFusUpdate)
-            # dragonballIcon.pack()
-            # dragonballIcon.place(x=xPoss[2], y=yPoss[1], width=150)
-            # gui.comboboxs["dragonballIcon"][-1].append(dragonballIcon)
 
             gui.entries["nombreStat"][-1].append(list())
             gui.checkbuttons["addStat"][-1].append(list())
@@ -423,11 +441,11 @@ def addMenusTab(tab):
             canvas.pack(side="left")
             canvas.create_window((0, 1), window=frame, anchor='nw')
 
-            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 0, text=u"Activo")
-            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 1, text=u"Nombre")
-            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 2, text=u"Max. Power")
-            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 3, text=u"Barras de Ki ocupadas")
-            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 4, text=u"Reservas de Ki ocupadas")
+            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 0, text=menus_activate_sub)
+            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 1, text=menus_sentence)
+            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 2, text=menus_max_power)
+            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 3, text=menus_ki_bars)
+            GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 4, text=menus_ki_number)
 
             for k in range(Constants.AmountConst().statsAmount):
                 checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1))
@@ -449,7 +467,7 @@ def addMenusTab(tab):
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
                 showData = GuiManager.generateTtkWidget(u"Button", frame, u"grid", k+1, 5,
-                                                        text=u"[WIP]Ver data " + unicode(k + 1))
+                                                        text=u"[WIP]" + menus_data + u" " + unicode(k + 1))
                 gui.buttons["showData"][-1][-1].append(showData)
 
             frame.bind("<Configure>", functools.partial(updateScrollbar, canvas, width=860, height=160))
@@ -457,6 +475,8 @@ def addMenusTab(tab):
         menuNameTab.grid(column=0, row=0)
 
     newTabs.grid(column=0, row=0)
+
+    language.close()
 
     return 900, yPoss[-1] + 60
 
@@ -770,29 +790,49 @@ def main():
     while True:
         language = LanguageManager.LanguageManager(gui.languageFile)
 
-        print(u"Preparando menú superior...")
-        cascadeNames = list()
-        cascadeNames.append(language.getLanguageData(u"menu_file"))
-        cascadeNames.append(language.getLanguageData(u"menu_options"))
-        cascadeNames.append(language.getLanguageData(u"menu_help"))
+        # languageData
+        mainmenu_file = language.getLanguageData(u"mainmenu_file")
+        mainmenu_options = language.getLanguageData(u"mainmenu_options")
+        mainmenu_help = language.getLanguageData(u"mainmenu_help")
+        mainmenu_open = language.getLanguageData(u"mainmenu_open")
+        mainmenu_save = language.getLanguageData(u"mainmenu_save")
+        mainmenu_save_as = language.getLanguageData(u"mainmenu_save_as")
+        mainmenu_select_unks = language.getLanguageData(u"mainmenu_select_unks")
+        mainmenu_select_unks_folder = language.getLanguageData(u"mainmenu_select_unks_folder")
+        mainmenu_quit = language.getLanguageData(u"mainmenu_quit")
+        mainmenu_language = language.getLanguageData(u"mainmenu_language")
+        mainmenu_about = language.getLanguageData(u"mainmenu_about")
+        tab_transformations = language.getLanguageData(u"tab_transformations")
+        tab_fusions = language.getLanguageData(u"tab_fusions")
+        tab_menus = language.getLanguageData(u"tab_menus")
 
-        gui.addMenu(cascadeNames,
-                    [
-                        [("Abrir", openFileCaller),
-                         ("Guardar", saveFile),
-                         ("Guardar como...", saveAsUnkFileCaller),
-                         ("Aplicar cambios a muchos '.unk'", updateMultiplesUnkFilesCaller),
-                         ("[WIP]Aplicar a todos los '.unk' en capeta", openFolderCaller),
-                         (None, None),
-                         ("Salir", gui.quit)],
-                        [("[WIP]Idioma", languageSelectorCaller)],
-                        [("Acerca de", acercaDe)]
-                    ])
+        language.close()
+
+        print(u"Preparando menú superior...")
+        cascadeNames = [mainmenu_file, mainmenu_options, mainmenu_help]
+        cascadeData = [
+            [
+                (mainmenu_open, openFileCaller),
+                (mainmenu_save, saveFile),
+                (mainmenu_save_as, saveAsUnkFileCaller),
+                (mainmenu_select_unks, updateMultiplesUnkFilesCaller),
+                (u"WIP"+mainmenu_select_unks_folder, openFolderCaller),
+                (None, None),
+                (mainmenu_quit, gui.quit)
+            ],
+            [(u"[WIP]"+mainmenu_language, languageSelectorCaller)],
+            [(mainmenu_about, acercaDe)]
+        ]
+
+        gui.addMenu(cascadeNames, cascadeData)
 
         print(u"Preparando pestañas...")
-        gui.addTab(language.getLanguageData(u"tab_transformations"), addTrans)
-        gui.addTab(language.getLanguageData(u"tab_fusions"), addFusion)
-        gui.addTab(language.getLanguageData(u"tab_menus"), addMenusTab)
+        gui.addTab(tab_transformations, addTrans)
+        print(u"'Transformaciones' lista.")
+        gui.addTab(tab_fusions, addFusion)
+        print(u"'Fusiones' lista.")
+        gui.addTab(tab_menus, addMenusTab)
+        print(u"'Menús' lista")
         print(u"Pestañas listas!")
 
         if len(sys.argv) > 1:
@@ -800,8 +840,6 @@ def main():
             print(u"\nAbriendo " + archivito + u" ...")
             parseUnkFile(archivito)
             print(u"Archivo abierto correctamente.\n")
-
-        language.close()
 
         print(u"Iniciando interfaz")
         gui.start()
