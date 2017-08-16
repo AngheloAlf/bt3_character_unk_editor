@@ -1,7 +1,7 @@
 cimport TransformClass
 cimport FusionClass
 cimport CharacterMenu
-# cimport Constants
+cimport Constants
 
 
 cdef TransformClass.TransformClass getTransformData(str archivo, int pointerFile, bint printData)

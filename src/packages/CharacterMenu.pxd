@@ -1,5 +1,5 @@
 cimport SubMenu
-# cimport Constants
+cimport Constants
 
 cdef class CharacterMenu:
     cpdef public list subMenus

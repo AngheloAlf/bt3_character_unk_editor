@@ -1,4 +1,4 @@
-# cimport Constants
+cimport Constants
 
 cdef class StatMenu:
     cdef str name

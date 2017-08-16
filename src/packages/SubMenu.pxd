@@ -1,5 +1,5 @@
 cimport StatMenu
-# cimport Constants
+cimport Constants
 
 
 cdef tuple getMenuName(str submenuData, int i)
