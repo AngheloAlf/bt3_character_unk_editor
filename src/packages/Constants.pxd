@@ -22,5 +22,5 @@ cdef class AmountConst:
 cpdef str hexListToChar(list hexList)
     # type: (list) -> str
 
-cpdef list findDataPos(str archivo, str data, int maxi=*, inicio=*, int tope=*)
+# cpdef list findDataPos(str archivo, str data, int maxi=*, int inicio=*, int tope=*)
     # type: (str, str, int, int, int) -> list

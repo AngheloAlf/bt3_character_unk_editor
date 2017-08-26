@@ -1,3 +1,4 @@
+cimport StatMenu
 cimport Constants
 
 cdef class StatMenu:
