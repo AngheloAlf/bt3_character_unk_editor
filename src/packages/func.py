@@ -443,7 +443,7 @@ title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Versio
 print(title)
 character = CharacterData()
 print(u"Inicializando interfaz...")
-gui = GuiManager.GuiManager(title, icon=os.path.join(u"resources", u"icon.ico"))
+gui = GuiManager.GuiManager(title,  languageFile=u"spanish.db", icon=os.path.join(u"resources", u"icon.ico"))
 
 
 def main():
