@@ -107,6 +107,11 @@ def getPythonFolder():
     return os.path.split(sys.executable)[0]
 
 
+def folderExists(folder):
+    # type: (str) -> bool
+    return os.path.isdir(folder)
+
+
 # def compilePyPackages():
 #     packagesFolder = os.path.join("src", "packages")
 #     pyFiles = [(f[:-3], os.path.join(packagesFolder, f)) for f in os.listdir(packagesFolder) if
@@ -307,7 +312,7 @@ def copyPythonDependencies():
     # [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
     for x in folders:
         mkdir = os.path.join(os.getcwd(), "out", x)
-        if os.path.isdir(mkdir):
+        if folderExists(mkdir):
             shutil.rmtree(mkdir)
         os.mkdir(mkdir)
     dependencies = [(os.path.join("DLLs", x), os.path.join("DLLs", x)) for x in DLLs]
@@ -333,7 +338,7 @@ def copyPythonDependencies():
 
     # mkdir = ["mkdir", os.path.join("Lib")]
     # runProcess(mkdir, True)
-    if not os.path.isdir(os.path.join(os.getcwd(), "Lib")):
+    if not folderExists(os.path.join(os.getcwd(), "Lib")):
         os.mkdir(os.path.join(os.getcwd(), "Lib"))
 
     LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py',
@@ -354,7 +359,9 @@ def copyPythonDependencies():
     for i in LibDependenciesFolder:
         # mkdir = ["mkdir", os.path.join("Lib", i)]
         # runProcess(mkdir, True)
-        os.mkdir(os.path.join(os.getcwd(), "Lib", i))
+        libFolder = os.path.join(os.getcwd(), "Lib", i)
+        if not folderExists(libFolder):
+            os.mkdir(libFolder)
         for j in os.listdir(os.path.join(folder, "Lib", i)):
             if os.path.isfile(os.path.join(folder, "Lib", i, j)) and j.endswith(".py"):
                 # copy = ["cp", os.path.join(folder, "Lib", i, j), os.path.join("Lib", i)]
@@ -375,7 +382,7 @@ def copyPythonDependencies():
 
 
 def copyFiles():
-    if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
+    if not folderExists(os.path.join(os.getcwd(), 'out')):
         # mkdir = ["mkdir", "out"]
         # exit_code = runProcess(mkdir, True)
         # if exit_code:
@@ -386,14 +393,14 @@ def copyFiles():
     # copy = ["cp", "-a", "lang/", "out/"]
     # exit_code = runProcess(copy, True)
     dst = os.path.join(os.getcwd(), "out", "lang")
-    if os.path.isdir(dst):
+    if folderExists(dst):
         shutil.rmtree(dst)
     shutil.copytree(os.path.join(os.getcwd(), "lang"), dst)
 
     # copy = ["cp", "-a", "resources/", "out/"]
     # exit_code += runProcess(copy, True)
     dst = os.path.join(os.getcwd(), "out", "resources")
-    if os.path.isdir(dst):
+    if folderExists(dst):
         shutil.rmtree(dst)
     shutil.copytree(os.path.join(os.getcwd(), "resources"), dst)
 
@@ -415,10 +422,10 @@ def copyFiles():
 
 def makeAll(arguments):
     # type: (list) -> None
-    if not os.path.isdir(os.path.join(os.getcwd(), 'out')):
+    if not folderExists(os.path.join(os.getcwd(), 'out')):
         print("mkdir out")
         os.mkdir(os.path.join(os.getcwd(), "out"))
-    if not os.path.isdir(os.path.join(os.getcwd(), 'out', 'packages')):
+    if not folderExists(os.path.join(os.getcwd(), 'out', 'packages')):
         print("mkdir out/packages")
         os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
 
