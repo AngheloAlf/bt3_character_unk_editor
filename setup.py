@@ -416,6 +416,10 @@ def copyFiles():
 
         copyPythonDependencies()
 
+        src = os.path.join(os.getcwd(), "src", "start.bat")
+        out = os.path.join(os.getcwd(), "out")
+        shutil.copy2(src, out)
+
     # return exit_code
     return 0
 
