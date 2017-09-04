@@ -132,6 +132,37 @@ def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, curren
     return widget
 
 
+def __cleanData(listData):
+    # type: (list) -> None
+    for data in listData:
+        if type(data) == list:
+            __cleanData(data)
+        else:
+            if data.winfo_class() in ("Button", "TButton"):
+                data.command = None
+                data["state"] = "disabled"
+            elif data.winfo_class() == "Checkbutton":
+                data.deselect()
+                data["state"] = "disabled"
+            elif data.winfo_class() in ("Entry", "TEntry"):
+                data.delete(0, "end")
+                data["state"] = "disabled"
+            elif data.winfo_class() in ("Combobox", "TCombobox"):
+                data.set('')
+                data["state"] = "disabled"
+            else:
+                print u"Error data", data, data.winfo_class()
+    return
+
+
+def cleanData(dictData):
+    # type: (dict) -> None
+    for key, value in dictData.items():
+        # print key, value
+        __cleanData(value)
+    return
+
+
 class GuiManager:
     def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):
         # type: (unicode, unicode, unicode) -> None
@@ -290,6 +321,10 @@ class GuiManager:
 
     def clean(self):
         # type: () -> None
+        cleanData(self.comboboxs)
+        cleanData(self.checkbuttons)
+        cleanData(self.entries)
+        cleanData(self.buttons)
         pass
 
     def putProgressBar(self, maxi):

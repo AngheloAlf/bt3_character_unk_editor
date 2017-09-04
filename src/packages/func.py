@@ -53,11 +53,11 @@ def updateTransObject():
 
         character.data.transObj.setTransformData(i, [a, b, c, d, e], True)
 
-    r3 = gui.comboboxs["R3"].get()
+    r3 = gui.comboboxs["R3"][0].get()
     r3 = language.getR3CommandID(unicode(r3))
     character.data.transObj.setR3Command(r3, True)
 
-    bonus = gui.comboboxs["bonus"].get()
+    bonus = gui.comboboxs["bonus"][0].get()
     bonus = language.getTransformationBonusID(unicode(bonus))
     character.data.transObj.setBonus(bonus, True)
 
@@ -213,13 +213,13 @@ def updateTransTab():
 
     r3 = character.data.transObj.getR3Command(True)
     r3 = language.getR3CommandPos(r3)
-    gui.comboboxs["R3"].current(r3)
-    gui.comboboxs["R3"]["state"] = "readonly"
+    gui.comboboxs["R3"][0].current(r3)
+    gui.comboboxs["R3"][0]["state"] = "readonly"
 
     bonus = character.data.transObj.getBonus(True)
     bonus = language.getTransformationBonusPos(bonus)
-    gui.comboboxs["bonus"].current(bonus)
-    gui.comboboxs["bonus"]["state"] = "readonly"
+    gui.comboboxs["bonus"][0].current(bonus)
+    gui.comboboxs["bonus"][0]["state"] = "readonly"
     language.close()
     print(u"Datos de pestaña 'Transformaciones' lista")
     return
@@ -480,7 +480,10 @@ def main():
                 (None, None),
                 (mainmenu_quit, gui.quit)
             ],
-            [(u"[WIP]"+mainmenu_language, languageSelectorCaller)],
+            [
+                (u"[WIP]"+mainmenu_language, languageSelectorCaller),
+                (u"[WIP]Debug", gui.clean)
+            ],
             [(mainmenu_about, about)]
         ]
         gui.addMenu(cascadeNames, cascadeData)

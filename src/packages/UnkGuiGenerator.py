@@ -95,12 +95,12 @@ def addTrans(gui, tab):
     GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 180, text=trans_r3+u": ")
     comboR3 = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", 180, 180, values=r3Command,
                                            width=210, command=command)
-    gui.comboboxs["R3"] = comboR3
+    gui.comboboxs["R3"] = [comboR3]
 
     GuiManager.generateTtkWidget(u"Label", tab, u"place", 25, 210, text=trans_bonus+u": ")
     bonus = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", 180, 210, values=transformationBonus,
                                          width=210, command=command)
-    gui.comboboxs["bonus"] = bonus
+    gui.comboboxs["bonus"] = [bonus]
 
     return xPoss[-1] + 200, yPoss[-1] + 60
 

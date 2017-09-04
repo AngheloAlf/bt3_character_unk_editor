@@ -25,6 +25,12 @@ cpdef unicode selectFolder(unicode title=*, callback=*)
 # cpdef generateTtkWidget(unicode wtype, master, unicode posT, int x, int y, list values=*, int width=*, int current=*, command=*, **kwargs)
     # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, function, **kwargs) -> None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
 
+cdef void __cleanData(list listData)
+    # type: (list) -> None
+
+cdef void cleanData(dict dictData)
+    # type: (dict) -> None
+
 cdef class GuiManager:
     cdef gui
     # gui = Tkinter.Tk()
