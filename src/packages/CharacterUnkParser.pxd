@@ -29,10 +29,10 @@ cdef class CharacterUnkParser:
     cdef public FusionClass.FusionClass fusionObj
     cdef bint printData
 
-    cpdef parse(self)
+    cpdef void parse(self)
         # type: () -> None
 
-    cdef updateFileData(self, CharacterUnkParser src)
+    cdef void updateFileData(self, CharacterUnkParser src)
         # type: (CharacterUnkParser) -> None
 
     cpdef saveFile(self, unicode filename=*, CharacterUnkParser src=*)

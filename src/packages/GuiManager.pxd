@@ -1,13 +1,13 @@
-cpdef popupInfo(unicode title, unicode text)
+cpdef void popupInfo(unicode title, unicode text)
     # type: (unicode, unicode) -> None
 
-cpdef popupWarning(title, text)
+cpdef void popupWarning(title, text)
     # type: (unicode, unicode) -> None
 
-cpdef popupError(title, text)
+cpdef void popupError(title, text)
     # type: (unicode, unicode) -> None
 
-cpdef addMsgToText(txtWid, str msg)
+cpdef void addMsgToText(txtWid, str msg)
     # type: (Tkinter.Text, str) -> None
 
 cpdef unicode openFile(unicode title, tuple fileTypes, callback=*)
@@ -53,37 +53,37 @@ cdef class GuiManager:
     cpdef public unicode languageFile
     cdef unicode icon
 
-    cpdef addTab(self, unicode tabName, tabCallback)
+    cpdef void addTab(self, unicode tabName, tabCallback)
         # type: (unicode, (ttk.Frame, dict, dict, dict, dict)) -> None
 
-    cpdef addMenu(self, list cascadeNames, list cascadeData)
+    cpdef void addMenu(self, list cascadeNames, list cascadeData)
         # type: (list, list) -> None
 
     cpdef dict getEntries(self)
         # type: () -> dict
 
-    cpdef start(self, unicode title=*, unicode icon=*)
+    cpdef void start(self, unicode title=*, unicode icon=*)
         # type: (unicode, unicode) -> None
 
-    cpdef stop(self)
+    cpdef void stop(self)
         # type: () -> None
 
     cpdef bint isClose(self)
         # type: () -> bool
 
-    cpdef putProgressBar(self, int maxi)
+    cpdef void putProgressBar(self, int maxi)
         # type: (int) -> None
 
-    cpdef restartProgressBar(self)
+    cpdef void restartProgressBar(self)
         # type: () -> None
 
-    cpdef updateProgressBar(self)
+    cpdef void updateProgressBar(self)
         # type: () -> None
 
     cpdef bint isRestart(self)
         # type: () -> bool
 
-    cpdef quit(self)
+    cpdef void quit(self)
         # type: () -> None
 
 

@@ -9,25 +9,25 @@ cdef class StatMenu:
     cpdef unicode getName(self)
         # type: () -> unicode
 
-    cpdef setName(self, unicode name)
+    cpdef void setName(self, unicode name)
         # type: (unicode) -> None
 
     cpdef int getMaxPower(self)
         # type: () -> int
 
-    cpdef setMaxPower(self, int data)
+    cpdef void setMaxPower(self, int data)
         # type: (int) -> None
 
     cpdef unicode getBarrasKi(self)
         # type: () -> unicode
 
-    cpdef setBarrasKi(self, str data)
+    cpdef void setBarrasKi(self, str data)
         # type: (str) -> None
 
     cpdef unicode getReservaKi(self)
         # type: () -> unicode
 
-    cpdef setReservaKi(self, str data)
+    cpdef void setReservaKi(self, str data)
         # type: (str) -> None
 
     cpdef list getStatChars(self)

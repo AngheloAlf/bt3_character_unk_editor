@@ -66,8 +66,8 @@ cdef class LanguageManager:
         # type: (int) -> int
 
 
-    cdef executeScriptsFromFile(self, str filename)
+    cdef void executeScriptsFromFile(self, str filename)
         # type: (str) -> None
 
-    cpdef close(self)
+    cpdef void close(self)
         # type: () -> None

@@ -16,7 +16,7 @@ cdef class SubMenu:
     cpdef bint isNone(self)
         # type: () -> bool
 
-    cpdef setMenuNum(self, int num)
+    cpdef void setMenuNum(self, int num)
         # type: (int) -> None
 
     cpdef int getMenuNum(self)
@@ -25,7 +25,7 @@ cdef class SubMenu:
     cpdef unicode getMenuName(self)
         # type: () -> unicode
 
-    cpdef setMenuName(self, unicode name)
+    cpdef void setMenuName(self, unicode name)
         # type: (unicode) -> None
 
     cpdef str getAsLine(self)
