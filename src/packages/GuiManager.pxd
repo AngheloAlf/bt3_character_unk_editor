@@ -36,7 +36,6 @@ cdef class GuiManager:
     # gui = Tkinter.Tk()
     cdef int tabsWidth
     cdef int tabsHeight
-    cdef int panelsAmmount
     cdef int height
     cdef int width
     cdef bint running
@@ -48,7 +47,7 @@ cdef class GuiManager:
     cpdef public dict comboboxs
     cpdef public dict checkbuttons
     cpdef public dict buttons
-    cdef list progressBar
+    # cdef list progressBar
     cdef bint restart
     cpdef public unicode languageFile
     cdef unicode icon
@@ -71,14 +70,20 @@ cdef class GuiManager:
     cpdef bint isClose(self)
         # type: () -> bool
 
-    cpdef void putProgressBar(self, int maxi)
-        # type: (int) -> None
-
-    cpdef void restartProgressBar(self)
+    cpdef void clean(self)
         # type: () -> None
 
-    cpdef void updateProgressBar(self)
-        # type: () -> None
+    cpdef void overrideClose(self, callback)
+        # type: (()) -> None
+
+    # cpdef void putProgressBar(self, int maxi)
+    #     # type: (int) -> None
+    #
+    # cpdef void restartProgressBar(self)
+    #     # type: () -> None
+    #
+    # cpdef void updateProgressBar(self)
+    #     # type: () -> None
 
     cpdef bint isRestart(self)
         # type: () -> bool

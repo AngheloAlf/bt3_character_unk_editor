@@ -489,11 +489,14 @@ def main():
         gui.addMenu(cascadeNames, cascadeData)
 
         print(u"Preparando pestañas...")
-        gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, gui))
+        # gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, gui))
+        gui.addTab(tab_transformations, UnkGuiGenerator.addTrans)
         print(u"'Transformaciones' lista.")
-        gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, gui))
+        # gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, gui))
+        gui.addTab(tab_fusions, UnkGuiGenerator.addFusion)
         print(u"'Fusiones' lista.")
-        gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, gui))
+        # gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, gui))
+        gui.addTab(tab_menus, UnkGuiGenerator.addMenusTab)
         print(u"'Menús' lista")
         print(u"Pestañas listas!")
 

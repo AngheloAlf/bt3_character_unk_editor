@@ -169,7 +169,6 @@ class GuiManager:
         self.gui = tk.Tk()
         self.tabsWidth = 900
         self.tabsHeight = 0
-        self.panelsAmmount = 0
         self.height = 0
         self.width = 210
         self.running = False
@@ -180,71 +179,17 @@ class GuiManager:
         self.entries = dict()
         self.checkbuttons = dict()
         self.buttons = dict()
-        self.progressBar = list()
+        # self.progressBar = list()
         self.restart = False
         self.languageFile = languageFile
         self.icon = icon
-
-    # def addPanel(self, frameName, labels, inputs, button):
-    #     # type: (str, list, list, list) -> GuiManager
-    #     frame = ttk.LabelFrame(self.gui, text=frameName)
-    #     frame.pack(fill="both", expand="yes", side=tk.LEFT)
-
-    #     yPos = []
-
-    #     # inputs = [("Entry", "DefaultText")]
-    #     x = 75
-    #     y = 0
-    #     for i in range(len(inputs)):
-    #         yPos.append(y)
-    #         if inputs[i][0] == "Entry":
-    #             en = ttk.Entry(frame)
-    #             en.insert(0, inputs[i][1])
-    #             en.place(x=x, y=y)
-    #             self.entries[labels[i]] = en
-    #             y += 25
-    #         elif inputs[i][0] == "Text":
-    #             # sc = tk.Scrollbar(frame)
-    #             # sc.place(x=x, y=y)
-
-    #             te = tk.Text(frame, state="normal", width="38", height="12")  # , yscrollcommand = sc.set)
-    #             te.insert(tk.INSERT, inputs[i][1])
-    #             te.place(x=x, y=y)
-    #             # te.pack(side = tk.LEFT, fill = tk.BOTH)
-    #             self.entries[labels[i]] = te
-
-    #             # sc.config(command = te.yview)
-    #             te["state"] = "disabled"
-
-    #             y += 200
-    #             if self.width < 400:
-    #                 self.width = 400
-
-    #     # labels = ["ip", "port", "usuario"]
-    #     x = 0
-    #     for l in range(len(labels)):
-    #         la = ttk.Label(frame, text=labels[l])
-    #         la.place(x=x, y=yPos[l])
-
-    #     yMax = yPos[-1] + 25
-
-    #     # button = ["logear"]
-    #     bu = ttk.Button(frame, text=button[0], command=button[1])
-    #     bu.place(x=75, y=yMax+25)
-
-    #     if yMax + 25 > self.height:
-    #         self.height = yMax + 50
-
-    #     self.panelsAmmount += 1
-
-    #     return self
 
     def addTab(self, tabName, tabCallback):
         # type: (unicode, (ttk.Frame, )) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
-        newX, newY = tabCallback(tab)
+        newX, newY = tabCallback(self, tab)
 
         tab["width"] = newX
         tab["height"] = newY
@@ -310,7 +255,6 @@ class GuiManager:
         self.gui.destroy()
         # del self.gui
         self.entries = dict()
-        self.panelsAmmount = 0
         self.height = 0
         self.gui = tk.Tk()
         self.running = False
@@ -327,24 +271,29 @@ class GuiManager:
         cleanData(self.buttons)
         pass
 
-    def putProgressBar(self, maxi):
-        # type: (int) -> None
-        pb = ttk.Progressbar(self.gui, orient="horizontal", length=self.tabsWidth, mode="determinate", maximum=maxi)
-        pb.grid(column=0, row=1)
-        self.progressBar = [pb, maxi]
+    def overrideClose(self, callback):
+        # type: (()) -> None
+        self.gui.protocol("WM_DELETE_WINDOW", callback)
+        return
 
-    def restartProgressBar(self):
-        # type: () -> None
-        if self.progressBar:
-            self.progressBar[0]["value"] = 0
-
-    def updateProgressBar(self):
-        # type: () -> None
-        if self.progressBar is None:
-            return
-        if self.progressBar[0]["value"] > self.progressBar[1]:
-            self.progressBar[0]["value"] = 0
-        self.progressBar[0]["value"] += 1
+    # def putProgressBar(self, maxi):
+    #     # type: (int) -> None
+    #     pb = ttk.Progressbar(self.gui, orient="horizontal", length=self.tabsWidth, mode="determinate", maximum=maxi)
+    #     pb.grid(column=0, row=1)
+    #     self.progressBar = [pb, maxi]
+    #
+    # def restartProgressBar(self):
+    #     # type: () -> None
+    #     if self.progressBar:
+    #         self.progressBar[0]["value"] = 0
+    #
+    # def updateProgressBar(self):
+    #     # type: () -> None
+    #     if self.progressBar is None:
+    #         return
+    #     if self.progressBar[0]["value"] > self.progressBar[1]:
+    #         self.progressBar[0]["value"] = 0
+    #     self.progressBar[0]["value"] += 1
 
     def isRestart(self):
         # type: () -> bool
