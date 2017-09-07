@@ -20,33 +20,12 @@ class FilesConst:
 
         self.startOfutf16Text = [0xFF, 0xFE]
 
-    # menuNameCode = [0x21, 0x00, 0x46, 0x00, 0x24, 0x00]
-    # endOfLine = [0x0a, 0x00]
-    #
-    # statCode = [0x21, 0x00, 0x46, 0x00, 0x2A, 0x00]
-    #
-    # # numberSign = [0x23, 0x00]
-    #
-    # transformCode = [0xa0, 0x86, 0x01, 0x00]
-    #
-    # startOfMenuFile = [0xFF, 0xFE, 0x21, 0x00]
-    # endOfMenuFile = [0x46, 0x00, 0x40, 0x00]
-    #
-    # endOfFile = [0x21, 0x00, 0x46, 0x00, 0x40, 0x00]
-    #
-    # startOfutf16Text = [0xFF, 0xFE]
-
 
 class ProgramConst:
     def __init__(self):
         self.Title = u"BT3 Character 'unk' Editor"
         self.Version = u"0.2.0-beta"
         self.FileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
-    #
-    # Title = u"BT3 Character 'unk' Editor"
-    # Version = u"0.2.0-beta"
-    #
-    # FileTypes = ((u"Archivos 'unk' de personajes", u"*.unk"), (u"Todos los archivos", u"*.*"))
 
 
 class AmountConst:
@@ -54,18 +33,24 @@ class AmountConst:
         self.statsAmount = 32
         self.menusAmount = 7
         self.languagesAmount = 8
-    #
-    # statsAmount = 32
-    # menusAmount = 7
-    # languagesAmount = 8
 
-# u'!1#' <PAD=Ｌ２＋○>
-# u'!2#' <PAD=†上＋†振縦>
-# u'!8#' <PAD=Ｒ１＋○>
-# u'!4#' <PAD=Ｌ１＋○>
 
-# u'!F%' 0Partner: Goku (End) / 1Chargeable
-# u'!D#' <PAD=□△♂>
+class CharsTypes:
+    def __init__(self):
+        self.text = "!\x00F\x00%\x00"
+        self.unknown1 = "!\x001\x00#\x00"
+        self.unknown2 = "!\x002\x00#\x00"
+        self.unknown8 = "!\x008\x00#\x00"
+        self.unknown4 = "!\x004\x00#\x00"
+        self.unknownD = "!\x00D\x00#\x00"
+
+        # u'!1#' <PAD=Ｌ２＋○>
+        # u'!2#' <PAD=†上＋†振縦>
+        # u'!8#' <PAD=Ｒ１＋○>
+        # u'!4#' <PAD=Ｌ１＋○>
+
+        # u'!F%' 0Partner: Goku (End) / 1Chargeable
+        # u'!D#' <PAD=□△♂>
 
 
 def hexListToChar(hexList):

@@ -1,4 +1,4 @@
-cimport StatMenu
+cimport StatChars
 cimport Constants
 
 cdef class StatMenu:

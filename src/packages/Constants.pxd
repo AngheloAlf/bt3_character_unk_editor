@@ -19,6 +19,14 @@ cdef class AmountConst:
     cpdef public int menusAmount
     cpdef public int languagesAmount
 
+cdef class CharsTypes:
+    cpdef public str text
+    cpdef public str unknown1
+    cpdef public str unknown2
+    cpdef public str unknown8
+    cpdef public str unknown4
+    cpdef public str unknownD
+
 cpdef str hexListToChar(list hexList)
     # type: (list) -> str
 

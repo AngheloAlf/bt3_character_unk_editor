@@ -1,14 +1,18 @@
 try:
     import Constants
+    import StatChars
 except Exception:
     import packages.Constants as Constants
+    import packages.StatChars as StatChars
 
 
 class StatMenu:
     def __init__(self, statName, statChars):
         self.name = statName[1]
         self.data = statName[0]  # MaxPower, BarrasKiOcupa, KiOcupa
-        self.statChars = statChars
+        self.statChars = []
+        for i in statChars:
+            self.statChars.append(StatChars.StatChars(i))
 
     def getName(self):
         # type: () -> unicode
@@ -48,7 +52,8 @@ class StatMenu:
 
     def getStatChars(self):
         # type: () -> list
-        return [[unicode(y, "utf-16") for y in x] for x in self.statChars]
+        # return [[unicode(y, "utf-16") for y in x] for x in self.statChars]
+        return [x.getUnicodeList() for x in self.statChars]
 
     # def setStatChars(self, data):
     #    a = map(lambda x: [y.encode("utf-16")[2:] for y in x], data)
@@ -61,7 +66,8 @@ class StatMenu:
         statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
         endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
         line = statCode + "".join(self.data) + self.name + endOfLine
-        line += "".join(["".join(x) + endOfLine for x in self.statChars])
+        # line += "".join(["".join(x) + endOfLine for x in self.statChars])
+        line += "".join([x.getAsLine() for x in self.statChars])
         return line
 
     def __str__(self):
