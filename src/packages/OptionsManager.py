@@ -8,7 +8,7 @@ def writeDefaultOptions(openFile):
     return
 
 
-class Options:
+class OptionsManager:
     def __init__(self, name):
         # type: (unicode) -> None
         self.name = name
