@@ -108,3 +108,4 @@ ENV/
 /packages/
 *.html
 *.res
+options.ini

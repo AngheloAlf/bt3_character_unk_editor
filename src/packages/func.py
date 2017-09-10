@@ -12,6 +12,7 @@ try:
     import LanguageManager
     import Constants
     import UnkGuiGenerator
+    import Options
 
     import Tkinter as tk
     import ttk
@@ -23,6 +24,7 @@ except Exception:
     import packages.LanguageManager as LanguageManager
     import packages.Constants as Constants
     import packages.UnkGuiGenerator as UnkGuiGenerator
+    import packages.Options as Configurations
 
     import tkinter as tk
     from tkinter import ttk
@@ -442,8 +444,10 @@ def about():
 title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Version
 print(title)
 character = CharacterData()
+print(u"Cargando opciones...")
+conf = Options.Options(u"options.ini")
 print(u"Inicializando interfaz...")
-gui = GuiManager.GuiManager(title,  languageFile=u"spanish.db", icon=os.path.join(u"resources", u"icon.ico"))
+gui = GuiManager.GuiManager(title,  languageFile=conf[u"language"], icon=os.path.join(u"resources", u"icon.ico"))
 
 
 def main():
