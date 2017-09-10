@@ -3,6 +3,7 @@ try:
     import LanguageManager
     import GuiManager
     import Constants
+    import OptionsManager
 
     import Tkinter as tk
     import ttk
@@ -10,6 +11,7 @@ except Exception:
     import packages.LanguageManager as LanguageManager
     import packages.GuiManager as GuiManager
     import packages.Constants as Constants
+    import packages.OptionsManager as OptionsManager
 
     import tkinter as tk
     from tkinter import ttk
@@ -28,10 +30,10 @@ def comboTransUpdate(gui, event):
     return
 
 
-def addTrans(gui, tab):
-    # type: (GuiManager.GuiManager, ttk.Frame) -> (int, int)
+def addTrans(gui, tab, conf):
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
     barras = range(8)  # [x[1] for x in language.get()]
     animations = [x[1] for x in language.getAnimations()]
@@ -113,11 +115,11 @@ def comboFusUpdate(gui, event):
     return
 
 
-def addFusion(gui, tab):
-    # type: (GuiManager.GuiManager, ttk.Frame) -> (int, int)
+def addFusion(gui, tab, conf):
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
     newTabs = ttk.Notebook(tab)
 
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
     barrasKi = range(8)
     fusionsTypes = [x[1] for x in language.getFusionsTypes()]
@@ -249,10 +251,10 @@ def comboMenusUpdate(gui, event):
     return
 
 
-def addMenusTab(gui, tab):
-    # type: (GuiManager.GuiManager, ttk.Frame) -> (int, int)
+def addMenusTab(gui, tab, conf):
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
 
     # languageData
     menus_name = language.getLanguageData(u"menus_name")

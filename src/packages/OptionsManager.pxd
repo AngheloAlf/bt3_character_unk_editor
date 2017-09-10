@@ -2,7 +2,7 @@ cdef void writeDefaultOptions(openFile)
     # type: (file) -> None
 
 
-cdef class Options:
+cdef class OptionsManager:
     cdef unicode name
     cdef dict options
 

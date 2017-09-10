@@ -278,16 +278,6 @@ def updateMenusTab():
 
                     gui.checkbuttons["menuOn"][i][j].select()
 
-                    # entries["nombreMenu"][i][j]["state"] = "disabled"
-
-                    # if menuNum < 7:
-                    #     comboboxs["dragonballIcon"][i][j].current(menuNum)
-                    # else:
-                    #     comboboxs["dragonballIcon"][i][j]["value"] = list(
-                    #         comboboxs["dragonballIcon"][i][j]["value"]) + [menuNum]
-                    #     comboboxs["dragonballIcon"][i][j].current(len(comboboxs["dragonballIcon"][i][j]["value"]) - 1)
-                    #     comboboxs["dragonballIcon"][i][j]["state"] = "disabled"
-
                     k, k0 = 0, 0
                     statsInesperados = False
                     for stat in submenu.stats:
@@ -429,9 +419,57 @@ def openFolderCaller():
     GuiManager.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
 
 
-def languageSelectorCaller():
+def WIP():
     # type: () -> None
     GuiManager.popupInfo(u"WIP", u"Work in progress.")
+    return
+
+
+def optionsTab(gui, tab):
+    # type: (GuiManager.GuiManager, ttk.Frame) -> (int, int)
+    language = LanguageManager.LanguageManager(gui.languageFile)
+    language.close()
+
+    xPoss = [25, 60, 260, 330, 530, 700]
+    yPoss = [30, 60, 90, 120, 180, 210]
+
+    gui.comboboxs["lang"] = list()
+    gui.buttons["optionsConfirm"] = list()
+
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], yPoss[0]-20, text=u"Idioma")
+
+    try:
+        langFolder = os.path.join(os.getcwd(), "lang")
+        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                          if os.path.isfile(os.path.join(langFolder, f))]
+    except OSError:
+        langFolder = os.path.join(os.getcwd(), "..", "lang")
+        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                          if os.path.isfile(os.path.join(langFolder, f))]
+
+    langIndex = languagesFiles.index(".".join(gui.languageFile.split(".")[:-1]))
+
+    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], values=languagesFiles,
+                                             width=180, current=langIndex)
+    langCombo["state"] = "readonly"
+    gui.comboboxs["lang"].append(langCombo)
+
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[1], yPoss[3], text=u"Confirmar",
+                                                  command=WIP)
+    confirmOptions["state"] = "normal"
+    gui.buttons["optionsConfirm"].append(confirmOptions)
+    return xPoss[3], yPoss[4]
+
+
+def optionsCaller():
+    # type: () -> None
+    if subGui[0]:
+        subGui[0].stop()
+    else:
+        subGui[0] = GuiManager.GuiManager(u"Opciones", conf[u"language"], icon)
+    subGui[0].addTab(u"Opciones", optionsTab)
+    subGui[0].start()
+    return
 
 
 def about():
@@ -447,7 +485,9 @@ character = CharacterData()
 print(u"Cargando opciones...")
 conf = OptionsManager.OptionsManager(u"options.ini")
 print(u"Inicializando interfaz...")
-gui = GuiManager.GuiManager(title,  languageFile=conf[u"language"], icon=os.path.join(u"resources", u"icon.ico"))
+icon = os.path.join(u"resources", u"icon.ico")
+gui = GuiManager.GuiManager(title,  languageFile=conf[u"language"], icon=icon)
+subGui = [None]
 
 
 def main():
@@ -485,7 +525,7 @@ def main():
                 (mainmenu_quit, gui.quit)
             ],
             [
-                (u"[WIP]"+mainmenu_language, languageSelectorCaller),
+                (u"[WIP]"+mainmenu_language, optionsCaller),
                 (u"[WIP]Debug", gui.clean)
             ],
             [(mainmenu_about, about)]
@@ -493,14 +533,14 @@ def main():
         gui.addMenu(cascadeNames, cascadeData)
 
         print(u"Preparando pestañas...")
-        # gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, gui))
-        gui.addTab(tab_transformations, UnkGuiGenerator.addTrans)
+        gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, conf=conf))
+        # gui.addTab(tab_transformations, UnkGuiGenerator.addTrans)
         print(u"'Transformaciones' lista.")
-        # gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, gui))
-        gui.addTab(tab_fusions, UnkGuiGenerator.addFusion)
+        gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, conf=conf))
+        # gui.addTab(tab_fusions, UnkGuiGenerator.addFusion)
         print(u"'Fusiones' lista.")
-        # gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, gui))
-        gui.addTab(tab_menus, UnkGuiGenerator.addMenusTab)
+        gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, conf=conf))
+        # gui.addTab(tab_menus, UnkGuiGenerator.addMenusTab)
         print(u"'Menús' lista")
         print(u"Pestañas listas!")
 

@@ -11,7 +11,7 @@ class LanguageManager:
         try:
             self.connection = sqlite3.connect(dbFolder)
             self.dbFolder = dbFolder
-        except:
+        except sqlite3.OperationalError:
             self.connection = sqlite3.connect(dbFolder2)
             self.dbFolder = dbFolder2
         self.cursor = self.connection.cursor()

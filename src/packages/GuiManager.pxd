@@ -58,9 +58,6 @@ cdef class GuiManager:
     cpdef void addMenu(self, list cascadeNames, list cascadeData)
         # type: (list, list) -> None
 
-    cpdef dict getEntries(self)
-        # type: () -> dict
-
     cpdef void start(self, unicode title=*, unicode icon=*)
         # type: (unicode, unicode) -> None
 

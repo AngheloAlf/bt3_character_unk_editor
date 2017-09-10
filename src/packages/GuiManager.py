@@ -95,8 +95,7 @@ def selectFolder(title=None, callback=None):
 
 
 def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, current=None, command=None, **kwargs):
-    # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, function, **kwargs) ->
-    # None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
+    # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, (), **kwargs) -> None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
     if wtype == u"Label":
         widget = ttk.Label(master, **kwargs)
     elif wtype == u"Combobox":
@@ -107,6 +106,8 @@ def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, curren
         widget = ttk.Entry(master, state='disabled', **kwargs)
     elif wtype == u"Button":
         widget = ttk.Button(master, state="disabled", **kwargs)
+        if command:
+            widget["command"] = command
     elif wtype == u"CheckButton":
         widget = CheckButton(master, state="disabled", onvalue=1, offvalue=0, **kwargs)
         widget.deselect()
@@ -167,7 +168,7 @@ class GuiManager:
     def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):
         # type: (unicode, unicode, unicode) -> None
         self.gui = tk.Tk()
-        self.tabsWidth = 900
+        self.tabsWidth = 0
         self.tabsHeight = 0
         self.height = 0
         self.width = 210
@@ -185,7 +186,7 @@ class GuiManager:
         self.icon = icon
 
     def addTab(self, tabName, tabCallback):
-        # type: (unicode, (ttk.Frame, )) -> None
+        # type: (unicode, (GuiManager, ttk.Frame)) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
@@ -221,10 +222,6 @@ class GuiManager:
 
         self.gui.config(menu=menuVar)
 
-    def getEntries(self):
-        # type: () -> dict
-        return self.entries
-
     def start(self, title=None, icon=None):
         # type: (unicode, unicode) -> None
         if icon:
@@ -244,7 +241,6 @@ class GuiManager:
             self.title = title
         self.gui.title(self.title)
 
-        # self.gui.minsize(self.width * self.panelsAmmount, self.height + 20 + 25)
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
@@ -255,8 +251,8 @@ class GuiManager:
         self.gui.destroy()
         # del self.gui
         self.entries = dict()
-        self.height = 0
         self.gui = tk.Tk()
+        self.tabs = ttk.Notebook(self.gui)
         self.running = False
 
     def isClose(self):
