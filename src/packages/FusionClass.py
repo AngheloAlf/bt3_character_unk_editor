@@ -15,7 +15,7 @@ class FusionClass:
             print(u"tipoFusion:", map(ord, self.tipoFusion))
             print(u"resultado:", map(ord, self.resultado))
             print(u"compaAni:", map(ord, self.compaAni))
-            print(u"compaEquipo", map(lambda x: map(ord, x), self.compaEquipo))
+            print(u"compaEquipo", [map(ord, x) for x in self.compaEquipo])
             print(u"\n")
 
     def getFusionData(self, fusionNumb, asOrd=False):
