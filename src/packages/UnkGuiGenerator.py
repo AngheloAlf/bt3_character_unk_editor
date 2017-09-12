@@ -399,21 +399,7 @@ def optionsTab(gui, tab, conf):
 
     GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], yPoss[0]-20, text=u"Idioma")
 
-    try:
-        langFolder = os.path.join(os.getcwd(), "lang")
-        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
-                          if os.path.isfile(os.path.join(langFolder, f))]
-    except OSError:
-        langFolder = os.path.join(os.getcwd(), "..", "lang")
-        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
-                          if os.path.isfile(os.path.join(langFolder, f))]
-
-    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
-    languagesFiles = [x.capitalize() for x in languagesFiles]
-
-    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], values=languagesFiles,
-                                             width=180, current=langIndex)
-    langCombo["state"] = "readonly"
+    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], width=180)
     gui.comboboxs["lang"].append(langCombo)
 
     confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[1], yPoss[3], text=u"[WIP]Confirmar")

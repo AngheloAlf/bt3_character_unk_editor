@@ -429,6 +429,27 @@ def WIP():
     return
 
 
+def onOptionsOpen():
+    # type: () -> None
+    try:
+        langFolder = os.path.join(os.getcwd(), "lang")
+        os.listdir(langFolder)
+    except OSError:
+        langFolder = os.path.join(os.getcwd(), "..", "lang")
+        os.listdir(langFolder)
+
+    languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                      if os.path.isfile(os.path.join(langFolder, f))]
+
+    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
+    languagesFiles = [x.capitalize() for x in languagesFiles]
+
+    subGui[0].comboboxs["lang"][0]["state"] = "readonly"
+    subGui[0].comboboxs["lang"][0]["values"] = languagesFiles
+    subGui[0].comboboxs["lang"][0].current(langIndex)
+    return
+
+
 def optionsCaller():
     # type: () -> None
     if subGui[0] and subGui[0].isRunning():
@@ -436,6 +457,7 @@ def optionsCaller():
     else:
         subGui[0] = GuiManager.GuiManager(u"Opciones", icon)
     subGui[0].addTab(u"Opciones", functools.partial(UnkGuiGenerator.optionsTab, conf=conf))
+    onOptionsOpen()
     subGui[0].start(u"Opciones")
     return
 

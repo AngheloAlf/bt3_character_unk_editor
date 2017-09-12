@@ -255,6 +255,7 @@ class GuiManager:
 
     def stop(self):
         # type: () -> None
+        self.clean()
         self.gui.destroy()
         # del self.gui
         # self.entries = dict()
@@ -275,8 +276,11 @@ class GuiManager:
         pass
 
     def overrideClose(self, callback):
-        # type: (function) -> None
-        self.gui.protocol("WM_DELETE_WINDOW", callback)
+        # type: (()) -> None
+        def subCallback():
+            self.gui.eval('::ttk::CancelRepeat')
+            callback()
+        self.gui.protocol("WM_DELETE_WINDOW", subCallback)
         self.closeOverrided = True
         return
 
