@@ -37,7 +37,7 @@ class CharacterData:
 
 def updateTransObject():
     # type: () -> None
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(4):
         a = gui.comboboxs["trans"][i].get()
         a = language.getCharactersNamesID(unicode(a))
@@ -69,7 +69,7 @@ def updateTransObject():
 
 def updateFusObject():
     # type: () -> None
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
 
     for i in range(3):
         fusBarras = gui.comboboxs["fusBarras"][i].current()
@@ -187,7 +187,7 @@ def popData(data):
 
 def updateTransTab():
     # type: () -> None
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(4):
         transformData = character.data.transObj.getTransformData(i, True)
 
@@ -228,7 +228,7 @@ def updateTransTab():
 
 
 def updateFusionsTab():
-    language = LanguageManager.LanguageManager(gui.languageFile)
+    language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(3):
         fusionData = character.data.fusionObj.getFusionData(i, True)
 
@@ -425,50 +425,14 @@ def WIP():
     return
 
 
-def optionsTab(gui, tab):
-    # type: (GuiManager.GuiManager, ttk.Frame) -> (int, int)
-    language = LanguageManager.LanguageManager(gui.languageFile)
-    language.close()
-
-    xPoss = [25, 60, 260, 330, 530, 700]
-    yPoss = [30, 60, 90, 120, 180, 210]
-
-    gui.comboboxs["lang"] = list()
-    gui.buttons["optionsConfirm"] = list()
-
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], yPoss[0]-20, text=u"Idioma")
-
-    try:
-        langFolder = os.path.join(os.getcwd(), "lang")
-        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
-                          if os.path.isfile(os.path.join(langFolder, f))]
-    except OSError:
-        langFolder = os.path.join(os.getcwd(), "..", "lang")
-        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
-                          if os.path.isfile(os.path.join(langFolder, f))]
-
-    langIndex = languagesFiles.index(".".join(gui.languageFile.split(".")[:-1]))
-
-    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], values=languagesFiles,
-                                             width=180, current=langIndex)
-    langCombo["state"] = "readonly"
-    gui.comboboxs["lang"].append(langCombo)
-
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[1], yPoss[3], text=u"Confirmar",
-                                                  command=WIP)
-    confirmOptions["state"] = "normal"
-    gui.buttons["optionsConfirm"].append(confirmOptions)
-    return xPoss[3], yPoss[4]
-
-
 def optionsCaller():
     # type: () -> None
-    if subGui[0]:
+    if subGui[0] and subGui[0].isRunning():
         subGui[0].stop()
     else:
-        subGui[0] = GuiManager.GuiManager(u"Opciones", conf[u"language"], icon)
-    subGui[0].addTab(u"Opciones", optionsTab)
-    subGui[0].start()
+        subGui[0] = GuiManager.GuiManager(u"Opciones", icon)
+    subGui[0].addTab(u"Opciones", functools.partial(UnkGuiGenerator.optionsTab, conf=conf))
+    subGui[0].start(u"Opciones")
     return
 
 
@@ -477,6 +441,15 @@ def about():
     titulo = u"Acerca de"
     texto = u"BT3 Character 'unk' Editor v" + Constants.ProgramConst().Version + u".\nCreado por AngheloAlf"
     GuiManager.popupInfo(titulo, texto)
+    return
+
+
+def onMainClose():
+    # type: () -> None
+    if subGui[0] and subGui[0].isRunning():
+        subGui[0].quit()
+    gui.quit()
+    return
 
 
 title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Version
@@ -486,13 +459,13 @@ print(u"Cargando opciones...")
 conf = OptionsManager.OptionsManager(u"options.ini")
 print(u"Inicializando interfaz...")
 icon = os.path.join(u"resources", u"icon.ico")
-gui = GuiManager.GuiManager(title,  languageFile=conf[u"language"], icon=icon)
+gui = GuiManager.GuiManager(title, icon=icon)
 subGui = [None]
 
 
 def main():
     while True:
-        language = LanguageManager.LanguageManager(gui.languageFile)
+        language = LanguageManager.LanguageManager(conf[u"language"])
 
         # languageData
         mainmenu_file = language.getLanguageData(u"mainmenu_file")
@@ -522,10 +495,10 @@ def main():
                 (mainmenu_select_unks, updateMultiplesUnkFilesCaller),
                 (u"[WIP]"+mainmenu_select_unks_folder, openFolderCaller),
                 (None, None),
-                (mainmenu_quit, gui.quit)
+                (mainmenu_quit, onMainClose)
             ],
             [
-                (u"[WIP]"+mainmenu_language, optionsCaller),
+                (u"[WIP]"+mainmenu_options, optionsCaller),
                 (u"[WIP]Debug", gui.clean)
             ],
             [(mainmenu_about, about)]
@@ -549,6 +522,8 @@ def main():
             print(u"\nAbriendo " + archivito + u" ...")
             parseUnkFile(archivito)
             print(u"Archivo abierto correctamente.\n")
+
+        gui.overrideClose(onMainClose)
 
         print(u"Iniciando interfaz")
         gui.start()

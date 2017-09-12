@@ -1,4 +1,5 @@
 import functools
+import os
 try:
     import LanguageManager
     import GuiManager
@@ -381,3 +382,40 @@ def addMenusTab(gui, tab, conf):
     language.close()
 
     return 900, yPoss[-1] + 60
+
+
+def optionsTab(gui, tab, conf):
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
+    # TODO: Quitar textos hardcodeados
+    language = LanguageManager.LanguageManager(conf[u"language"])
+    language.close()
+
+    xPoss = [25, 60, 260, 330, 530, 700]
+    yPoss = [30, 60, 90, 120, 180, 210]
+
+    gui.comboboxs["lang"] = list()
+    gui.buttons["optionsConfirm"] = list()
+
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], yPoss[0]-20, text=u"Idioma")
+
+    try:
+        langFolder = os.path.join(os.getcwd(), "lang")
+        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                          if os.path.isfile(os.path.join(langFolder, f))]
+    except OSError:
+        langFolder = os.path.join(os.getcwd(), "..", "lang")
+        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                          if os.path.isfile(os.path.join(langFolder, f))]
+
+    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
+    languagesFiles = [x.capitalize() for x in languagesFiles]
+
+    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], values=languagesFiles,
+                                             width=180, current=langIndex)
+    langCombo["state"] = "readonly"
+    gui.comboboxs["lang"].append(langCombo)
+
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[1], yPoss[3], text=u"[WIP]Confirmar")
+    confirmOptions["state"] = "normal"
+    gui.buttons["optionsConfirm"].append(confirmOptions)
+    return xPoss[3], yPoss[4]

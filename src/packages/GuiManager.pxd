@@ -49,8 +49,8 @@ cdef class GuiManager:
     cpdef public dict buttons
     # cdef list progressBar
     cdef bint restart
-    cpdef public unicode languageFile
     cdef unicode icon
+    cdef bint closeOverrided
 
     cpdef void addTab(self, unicode tabName, tabCallback)
         # type: (unicode, (ttk.Frame, dict, dict, dict, dict)) -> None
@@ -64,7 +64,7 @@ cdef class GuiManager:
     cpdef void stop(self)
         # type: () -> None
 
-    cpdef bint isClose(self)
+    cpdef bint isRunning(self)
         # type: () -> bool
 
     cpdef void clean(self)

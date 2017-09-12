@@ -102,6 +102,8 @@ def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, curren
         widget = ttk.Combobox(master, state='disabled', values=values, **kwargs)
         if command:
             widget.bind("<<ComboboxSelected>>", command)
+        if current is not None:
+            widget.current(current)
     elif wtype == u"Entry":
         widget = ttk.Entry(master, state='disabled', **kwargs)
     elif wtype == u"Button":
@@ -115,8 +117,6 @@ def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, curren
             widget["command"] = command
     else:
         return
-    if current:
-        widget.current(current)
     if posT == u"pack" or posT == u"place":
         widget.pack()
         if width:
@@ -165,8 +165,8 @@ def cleanData(dictData):
 
 
 class GuiManager:
-    def __init__(self, title=u"Tk", languageFile=u"spanish.db", icon=None):
-        # type: (unicode, unicode, unicode) -> None
+    def __init__(self, title=u"Tk", icon=None):
+        # type: (unicode, unicode) -> None
         self.gui = tk.Tk()
         self.tabsWidth = 0
         self.tabsHeight = 0
@@ -182,8 +182,8 @@ class GuiManager:
         self.buttons = dict()
         # self.progressBar = list()
         self.restart = False
-        self.languageFile = languageFile
         self.icon = icon
+        self.closeOverrided = False
 
     def addTab(self, tabName, tabCallback):
         # type: (unicode, (GuiManager, ttk.Frame)) -> None
@@ -244,20 +244,22 @@ class GuiManager:
         self.gui.minsize(self.tabsWidth, self.tabsHeight+25)
         self.running = True
         self.tabs.grid(column=0, row=0)
+        if not self.closeOverrided:
+            self.overrideClose(self.quit)
         self.gui.mainloop()
 
     def stop(self):
         # type: () -> None
         self.gui.destroy()
         # del self.gui
-        self.entries = dict()
+        # self.entries = dict()
         self.gui = tk.Tk()
         self.tabs = ttk.Notebook(self.gui)
         self.running = False
 
-    def isClose(self):
+    def isRunning(self):
         # type: () -> bool
-        return not self.running
+        return self.running
 
     def clean(self):
         # type: () -> None
@@ -268,8 +270,9 @@ class GuiManager:
         pass
 
     def overrideClose(self, callback):
-        # type: (()) -> None
+        # type: (function) -> None
         self.gui.protocol("WM_DELETE_WINDOW", callback)
+        self.closeOverrided = True
         return
 
     # def putProgressBar(self, maxi):
@@ -297,7 +300,9 @@ class GuiManager:
 
     def quit(self):
         # type: () -> None
-        self.gui.quit()
+        self.gui.destroy()
+        self.running = False
+        return
 
 
 class CheckButton(tk.Checkbutton):

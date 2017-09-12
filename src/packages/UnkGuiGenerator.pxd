@@ -7,13 +7,13 @@ cimport Constants
 cpdef void comboTransUpdate(GuiManager.GuiManager gui, event)
     # type: (GuiManager.GuiManager, tk.Event) -> None
 
-cpdef tuple addTrans(GuiManager.GuiManager gui, tab, conf)
+cpdef tuple addTrans(GuiManager.GuiManager gui, tab, OptionsManager.OptionsManager conf)
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
 cpdef void comboFusUpdate(GuiManager.GuiManager gui, event)
     # type: (GuiManager.GuiManager, tk.Event) -> None
 
-cpdef tuple addFusion(GuiManager.GuiManager gui, tab, conf)
+cpdef tuple addFusion(GuiManager.GuiManager gui, tab, OptionsManager.OptionsManager conf)
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
 cpdef void updateScrollbar(canvas, event, int width=*, int height=*)
@@ -28,5 +28,8 @@ cpdef void onActiveMenuOn(GuiManager.GuiManager gui, button, tuple pos)
 cpdef void comboMenusUpdate(GuiManager.GuiManager gui, event)
     # type: (GuiManager.GuiManager, tk.Event) -> None
 
-cpdef tuple addMenusTab(GuiManager.GuiManager gui, tab, conf)
+cpdef tuple addMenusTab(GuiManager.GuiManager gui, tab, OptionsManager.OptionsManager conf)
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
+
+cpdef tuple optionsTab(GuiManager.GuiManager gui, tab, OptionsManager.OptionsManager conf)
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
