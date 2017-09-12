@@ -1,3 +1,8 @@
+try:
+    unicode("a")
+except NameError:
+    unicode = str
+
 defaults = {"language": "spanish.db"}
 
 

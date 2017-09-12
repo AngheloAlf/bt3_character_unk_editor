@@ -29,6 +29,8 @@ except Exception:
     import tkinter as tk
     from tkinter import ttk
 
+    unicode = str
+
 
 class CharacterData:
     def __init__(self):
@@ -161,6 +163,7 @@ def parseUnkFile(fileName):
             raise
     except Exception as err:
         print(err)
+        character.data = None
         GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
         raise
 
@@ -356,6 +359,7 @@ def saveFile():
             raise
     else:
         GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
+    return
 
 
 def saveAsUnkFile(fileName):
@@ -530,3 +534,5 @@ def main():
 
         if not gui.isRestart():
             break
+
+    return

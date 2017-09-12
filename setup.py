@@ -11,14 +11,14 @@ import py_compile
 def runProcess(proc, showCommand=False):
     # type: (list, bool) -> int
     if showCommand:
-        print " ".join(proc)
+        print(" ".join(proc))
     try:
         process = Popen(proc, stdout=PIPE)
         # process = Popen(proc)
         (output, err) = process.communicate()
         return process.wait()
     except OSError as err:
-        print "\tFatal error " + str(err.errno) + ": " + proc[0] + " not found"
+        print("\tFatal error " + str(err.errno) + ": " + proc[0] + " not found")
         exit(err.errno)
 
 
@@ -44,7 +44,7 @@ def getLIBPL():
         if isWindows():
             LIBPL = "C:\\Python27\\libs"
         else:
-            print "sysconfig.get_config_var('LIBPL') returned None"
+            print("sysconfig.get_config_var('LIBPL') returned None")
             exit(1)
     return LIBPL
 
@@ -57,7 +57,7 @@ def getLIBS():
         if isWindows():
             LIBS = "-lpython27 -lpthread"
         else:
-            print "sysconfig.get_config_var('LIBS') returned None"
+            print("sysconfig.get_config_var('LIBS') returned None")
             exit(1)
 
     if isLinux():
@@ -77,7 +77,7 @@ def getPYLIBRARY():
         if isWindows():
             PYLIB = "m"
         else:
-            print "sysconfig.get_config_var('LIBRARY') returned None"
+            print("sysconfig.get_config_var('LIBRARY') returned None")
             exit(1)
 
     if isLinux():
@@ -97,7 +97,7 @@ def getPythonDll():
 
     for process in win32process.EnumProcessModules(-1):
         name = win32process.GetModuleFileNameEx(-1, process)
-        # print name
+        # print(name)
         if "python" in name and name.endswith(".dll"):
             dll.append(name)
     return dll
@@ -157,7 +157,7 @@ def compilePyPackages(arguments):
         # cy = ["cython", py[1]]
         exit_code = runProcess(cy, True)
         if exit_code:
-            print "Error 'cythonize " + py[1] + "'"
+            print("Error 'cythonize " + py[1] + "'")
             exit(exit_code)
 
         # compileCommand = ["gcc", "-shared", "-fwrapv", "-fno-strict-aliasing", "-I", pythonInclude, "-L", LIBPL, "-o",
@@ -170,11 +170,11 @@ def compilePyPackages(arguments):
 
         exit_code = runProcess(compileCommand, True)
         if exit_code:
-            print "error 'gcc " + cName + "'"
+            print("error 'gcc " + cName + "'")
             exit(exit_code)
 
         i += 1
-        print "\t"+str(i*100/len(pyFiles))+"%", "\n"
+        print("\t"+str(i*100/len(pyFiles))+"%\n")
 
     initDir = os.path.join(os.getcwd(), "out", "packages", "__init__.py")
     open(initDir, "w").close()
@@ -253,15 +253,13 @@ def cToBinary(arguments):
         rcCompilate = ["windres", os.path.join("src", "winRc.rc"), "-O", "coff", "-o", resResult]
         exit_code = runProcess(rcCompilate, True)
         if exit_code:
-            print "Error compilating winRc.rc"
+            print("Error compilating winRc.rc")
         else:
             compileCommandList.append(resResult)
 
     compileCommandList += LIBS + ["-l" + PYLIBRARY]
     if "-Wall" in arguments:
         compileCommandList.append("-Wall")
-    # compileCommandList = ["gcc", "-I", pythonInclude, "-L", LIBPL, "-o", os.path.join("out", finalName), "src/main.c"] + \
-    #                      LIBS + ["-l" + PYLIBRARY]
     return runProcess(compileCommandList, True)
 
 
@@ -327,17 +325,15 @@ def copyPythonDependencies():
     for depend in dependencies:
         # copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
         # if runProcess(copy, True):
-        #     print "\terror: " + " ".join(copy)
-        src =  os.path.join(folder, depend[0])
+        #     print("\terror: " + " ".join(copy))
+        src = os.path.join(folder, depend[0])
         dst = os.path.join(os.getcwd(), "out", depend[1])
-        print "cp", src, dst
+        print("cp " + src + " " + dst)
         if os.path.isfile(src):
             shutil.copy2(src, dst)
         else:
             shutil.copytree(src, dst)
 
-    # mkdir = ["mkdir", os.path.join("Lib")]
-    # runProcess(mkdir, True)
     if not folderExists(os.path.join(os.getcwd(), "Lib")):
         os.mkdir(os.path.join(os.getcwd(), "Lib"))
 
@@ -386,7 +382,7 @@ def copyFiles():
         # mkdir = ["mkdir", "out"]
         # exit_code = runProcess(mkdir, True)
         # if exit_code:
-        #     print "Error creating the folder 'out'"
+        #     print("Error creating the folder 'out'")
         #     exit(exit_code)
         os.mkdir(os.path.join(os.getcwd(), "out"))
 
@@ -412,7 +408,7 @@ def copyFiles():
             # exit2 += runProcess(copy, True)
             shutil.copy2(dll, os.path.join(os.getcwd(), "out"))
         if exit2:
-            print "\terror copying python dlls"
+            print("\terror copying python dlls")
 
         copyPythonDependencies()
 
@@ -433,30 +429,30 @@ def makeAll(arguments):
         print("mkdir out/packages")
         os.mkdir(os.path.join(os.getcwd(), "out", "packages"))
 
-    print "\tmain.py -> main.c"
+    print("\tmain.py -> main.c")
     exit_code = mainPyToC(arguments)
     if exit_code:
-        print "Error embedding the main.py"
+        print("Error embedding the main.py")
         exit(exit_code)
-    print "\tmain.c ready\n\n"
+    print("\tmain.c ready\n\n")
 
-    print "\tcompiling main.c -> binary"
+    print("\tcompiling main.c -> binary")
     exit_code = cToBinary(arguments)
     if exit_code:
-        print "Error compilling main.c"
+        print("Error compilling main.c")
         exit(exit_code)
-    print "\tmain.c->binary ready\n\n"
+    print("\tmain.c->binary ready\n\n")
 
-    print "\tcompiling packages -> 'shared object'"
+    print("\tcompiling packages -> 'shared object'")
     compilePyPackages(arguments)
-    print "\t'shared object' files ready\n\n"
+    print("\t'shared object' files ready\n\n")
 
-    print "\tcopying files -> out/"
+    print("\tcopying files -> out/")
     exit_code = copyFiles()
     if exit_code:
-        print "Error copying files"
+        print("Error copying files")
         exit(exit_code)
-    print "\tfiles copied\n\n"
+    print("\tfiles copied\n\n")
 
 
 def execBulid(arguments):
@@ -465,7 +461,7 @@ def execBulid(arguments):
         program += ".exe"
     exit_code = runProcess([program], True)
     if exit_code:
-        print "error executing:", program
+        print("error executing: " + program)
         exit(exit_code)
 
 
@@ -524,9 +520,9 @@ def main():
         cleanAll(args)
 
     if 'make' not in args and 'clean' not in args and 'cleanAll' not in args:
-        print "\tmake\n\texec\n\tclean\n\tcleanAll\n"
+        print("\tmake\n\texec\n\tclean\n\tcleanAll\n")
 
-    print "\n\tREADY"
+    print("\n\tREADY")
 
 
 finalName = "bt3_character_unk_editor"

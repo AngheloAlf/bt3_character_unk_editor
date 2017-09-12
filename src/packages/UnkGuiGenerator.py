@@ -16,6 +16,7 @@ except Exception:
 
     import tkinter as tk
     from tkinter import ttk
+    unicode = str
 
 
 def comboTransUpdate(gui, event):

@@ -10,6 +10,8 @@ except Exception:
     from tkinter import filedialog as tkFileDialog
     from tkinter import messagebox as tkMessageBox
 
+    unicode = str
+
 
 def popupInfo(title, text):
     # type: (unicode, unicode) -> None
@@ -152,7 +154,10 @@ def __cleanData(listData):
                 data.set('')
                 data["state"] = "disabled"
             else:
-                print u"Error data", data, data.winfo_class()
+                print(u"Error data")
+                print(data)
+                print(data.winfo_class())
+                print("")
     return
 
 
