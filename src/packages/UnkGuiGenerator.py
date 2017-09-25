@@ -402,7 +402,7 @@ def optionsTab(gui, tab, conf):
     langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[1], width=150)
     gui.comboboxs["lang"].append(langCombo)
 
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], text=u"[WIP]Confirmar",
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], text=u"Confirmar",
                                                   width=150)
     confirmOptions["state"] = "normal"
     gui.buttons["optionsConfirm"].append(confirmOptions)

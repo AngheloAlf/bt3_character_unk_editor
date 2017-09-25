@@ -1,11 +1,14 @@
 cpdef void popupInfo(unicode title, unicode text)
     # type: (unicode, unicode) -> None
 
-cpdef void popupWarning(title, text)
+cpdef void popupWarning(unicode title, unicode text)
     # type: (unicode, unicode) -> None
 
-cpdef void popupError(title, text)
+cpdef void popupError(unicode title, unicode text)
     # type: (unicode, unicode) -> None
+
+cpdef popupYesNo(unicode title, unicode text)
+    # type: (unicode, unicode) -> bool
 
 cpdef void addMsgToText(txtWid, str msg)
     # type: (Tkinter.Text, str) -> None
@@ -29,6 +32,18 @@ cdef void __cleanData(list listData)
     # type: (list) -> None
 
 cdef void cleanData(dict dictData)
+    # type: (dict) -> None
+
+cpdef void __disableData(list listData)
+    # type: (list) -> None
+
+cpdef void disableData(dict dictData)
+    # type: (dict) -> None
+
+cpdef void __enableData(list listData)
+    # type: (list) -> None
+
+cpdef void enableData(dict dictData)
     # type: (dict) -> None
 
 cdef class GuiManager:
@@ -66,6 +81,12 @@ cdef class GuiManager:
         # type: () -> bool
 
     cpdef void clean(self)
+        # type: () -> None
+
+    cpdef void disableAll(self)
+        # type: () -> None
+
+    cpdef void enableAll(self)
         # type: () -> None
 
     cpdef void overrideClose(self, callback)

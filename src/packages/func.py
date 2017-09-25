@@ -440,13 +440,21 @@ def undoOptionsChange():
 
 def acceptOptionsChange():
     # type: () -> None
-    langSelected = subGui[0].comboboxs["lang"][0].get() + u".db"
-    print(langSelected)
-    conf[u"language"] = unicode(langSelected.lower())
-    subGui[0].quit()
-    gui.setRestart(True)
-    # gui.stop()
-    conf.updateFile()
+    subGui[0].disableAll()
+    restart = GuiManager.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
+    if restart:
+        print(u"\n")
+        langSelected = subGui[0].comboboxs["lang"][0].get() + u".db"
+        print(u"Idioma: " + langSelected)
+        conf[u"language"] = unicode(langSelected.lower())
+        # subGui[0].quit()
+        gui.setRestart(True)
+        # gui.quit()
+        conf.updateFile()
+        print(u"\n")
+        onMainClose()
+    else:
+        subGui[0].enableAll()
     return
 
 
@@ -502,7 +510,16 @@ def onMainClose():
     # type: () -> None
     if subGui[0] and subGui[0].isRunning():
         subGui[0].quit()
+    print(u"\nCerrando...\n")
     gui.quit()
+    return
+
+
+def debugMain():
+    rest = gui.isRestart()
+    print(u"Modo:", rest)
+    print(u"Seteando:", not rest)
+    gui.setRestart(not rest)
     return
 
 
@@ -554,7 +571,7 @@ def main():
             ],
             [
                 (u"[WIP]"+mainmenu_options, optionsCaller),
-                (u"[WIP]Debug", gui.clean)
+                (u"[WIP]Debug", debugMain)
             ],
             [(mainmenu_about, about)]
         ]
@@ -585,7 +602,9 @@ def main():
 
         if not gui.isRestart():
             break
+            # return
 
         print(u"\nReiniciando...\n")
+        gui.stop()
 
     return

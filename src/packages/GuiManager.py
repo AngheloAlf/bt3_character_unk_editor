@@ -28,6 +28,11 @@ def popupError(title, text):
     tkMessageBox.showerror(title, text)
 
 
+def popupYesNo(title, text):
+    # type: (unicode, unicode) -> bool
+    return tkMessageBox.askyesno(title, text)
+
+
 # askokcancel(text1, text2) -> bool
 # askyesno(a, b) -> bool
 #    ask yes or no
@@ -143,21 +148,19 @@ def __cleanData(listData):
         else:
             if data.winfo_class() in ("Button", "TButton"):
                 data.command = None
-                data["state"] = "disabled"
-            elif data.winfo_class() == "Checkbutton":
+            elif data.winfo_class() in ("Checkbutton", ):
                 data.deselect()
-                data["state"] = "disabled"
             elif data.winfo_class() in ("Entry", "TEntry"):
                 data.delete(0, "end")
-                data["state"] = "disabled"
             elif data.winfo_class() in ("Combobox", "TCombobox"):
                 data.set('')
-                data["state"] = "disabled"
             else:
                 print(u"Error data")
                 print(data)
                 print(data.winfo_class())
                 print("")
+                return
+            data["state"] = "disabled"
     return
 
 
@@ -166,6 +169,55 @@ def cleanData(dictData):
     for key, value in dictData.items():
         # print key, value
         __cleanData(value)
+    return
+
+
+def __disableData(listData):
+    # type: (list) -> None
+    for data in listData:
+        if type(data) == list:
+            __cleanData(data)
+        else:
+            if data.winfo_class() in ("Button", "TButton"):
+                data["state"] = "normal"
+            elif data.winfo_class() in ("Checkbutton", ):
+                data["state"] = "normal"
+            elif data.winfo_class() in ("Entry", "TEntry"):
+                data["state"] = "normal"
+            elif data.winfo_class() in ("Combobox", "TCombobox"):
+                data["state"] = "readonly"
+            else:
+                print(u"Error data")
+                print(data)
+                print(data.winfo_class())
+                print("")
+                return
+    return
+
+
+def disableData(dictData):
+    # type: (dict) -> None
+    for key, value in dictData.items():
+        # print key, value
+        __disableData(value)
+    return
+
+
+def __enableData(listData):
+    # type: (list) -> None
+    for data in listData:
+        if type(data) == list:
+            __cleanData(data)
+        else:
+            data["state"] = "disabled"
+    return
+
+
+def enableData(dictData):
+    # type: (dict) -> None
+    for key, value in dictData.items():
+        # print key, value
+        __enableData(value)
     return
 
 
@@ -253,8 +305,9 @@ class GuiManager:
 
     def stop(self):
         # type: () -> None
-        self.clean()
-        self.gui.destroy()
+        if self.running:
+            self.clean()
+            self.gui.destroy()
         # del self.gui
         # self.entries = dict()
         self.closeOverrided = False
@@ -262,6 +315,7 @@ class GuiManager:
         self.gui = tk.Tk()
         self.tabs = ttk.Notebook(self.gui)
         self.running = False
+        self.restart = False
 
     def isRunning(self):
         # type: () -> bool
@@ -273,7 +327,23 @@ class GuiManager:
         cleanData(self.checkbuttons)
         cleanData(self.entries)
         cleanData(self.buttons)
-        pass
+        return
+
+    def disableAll(self):
+        # type: () -> None
+        disableData(self.comboboxs)
+        disableData(self.checkbuttons)
+        disableData(self.entries)
+        disableData(self.buttons)
+        return
+
+    def enableAll(self):
+        # type: () -> None
+        enableData(self.comboboxs)
+        enableData(self.checkbuttons)
+        enableData(self.entries)
+        enableData(self.buttons)
+        return
 
     def overrideClose(self, callback):
         # type: (()) -> None
@@ -314,7 +384,8 @@ class GuiManager:
 
     def quit(self):
         # type: () -> None
-        self.gui.destroy()
+        if self.running:
+            self.gui.destroy()
         self.running = False
         return
 
