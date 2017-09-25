@@ -36,8 +36,6 @@ cdef class GuiManager:
     # gui = Tkinter.Tk()
     cdef int tabsWidth
     cdef int tabsHeight
-    cdef int height
-    cdef int width
     cdef bint running
     cdef unicode title
     cdef tabs

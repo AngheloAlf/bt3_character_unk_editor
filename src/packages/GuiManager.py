@@ -175,8 +175,6 @@ class GuiManager:
         self.gui = tk.Tk()
         self.tabsWidth = 0
         self.tabsHeight = 0
-        self.height = 0
-        self.width = 210
         self.running = False
         self.title = title
         self.tabs = ttk.Notebook(self.gui)
@@ -259,6 +257,8 @@ class GuiManager:
         self.gui.destroy()
         # del self.gui
         # self.entries = dict()
+        self.closeOverrided = False
+        self.tabsData = dict()
         self.gui = tk.Tk()
         self.tabs = ttk.Notebook(self.gui)
         self.running = False
@@ -306,6 +306,11 @@ class GuiManager:
     def isRestart(self):
         # type: () -> bool
         return self.restart
+
+    def setRestart(self, restart):
+        # type: (bool) -> None
+        self.restart = restart
+        return
 
     def quit(self):
         # type: () -> None

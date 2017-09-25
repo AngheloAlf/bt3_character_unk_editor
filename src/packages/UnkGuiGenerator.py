@@ -391,18 +391,30 @@ def optionsTab(gui, tab, conf):
     language = LanguageManager.LanguageManager(conf[u"language"])
     language.close()
 
-    xPoss = [25, 60, 260, 330, 530, 700]
-    yPoss = [30, 60, 90, 120, 180, 210]
+    xPoss = [x*150 + 30 for x in range(0, 10)]
+    yPoss = [y*30 + 25 for y in range(0, 10)]
 
     gui.comboboxs["lang"] = list()
     gui.buttons["optionsConfirm"] = list()
 
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[1], yPoss[0]-20, text=u"Idioma")
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[0], text=u"Idioma")
 
-    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[0], width=180)
+    langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[1], width=150)
     gui.comboboxs["lang"].append(langCombo)
 
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[1], yPoss[3], text=u"[WIP]Confirmar")
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], text=u"[WIP]Confirmar",
+                                                  width=150)
     confirmOptions["state"] = "normal"
     gui.buttons["optionsConfirm"].append(confirmOptions)
-    return xPoss[3], yPoss[4]
+
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[5], text=u"Cancelar",
+                                                  width=150)
+    confirmOptions["state"] = "normal"
+    gui.buttons["optionsConfirm"].append(confirmOptions)
+
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[6],
+                                                  text=u"Deshacer cambios", width=150)
+    confirmOptions["state"] = "normal"
+    gui.buttons["optionsConfirm"].append(confirmOptions)
+
+    return xPoss[1] + 30, yPoss[8]

@@ -429,6 +429,27 @@ def WIP():
     return
 
 
+def undoOptionsChange():
+    # type: () -> None
+    languagesFiles = subGui[0].comboboxs["lang"][0]["values"]
+    languagesFiles = [x.lower() for x in languagesFiles]
+    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
+    subGui[0].comboboxs["lang"][0].current(langIndex)
+    return
+
+
+def acceptOptionsChange():
+    # type: () -> None
+    langSelected = subGui[0].comboboxs["lang"][0].get() + u".db"
+    print(langSelected)
+    conf[u"language"] = unicode(langSelected.lower())
+    subGui[0].quit()
+    gui.setRestart(True)
+    # gui.stop()
+    conf.updateFile()
+    return
+
+
 def onOptionsOpen():
     # type: () -> None
     try:
@@ -447,6 +468,13 @@ def onOptionsOpen():
     subGui[0].comboboxs["lang"][0]["state"] = "readonly"
     subGui[0].comboboxs["lang"][0]["values"] = languagesFiles
     subGui[0].comboboxs["lang"][0].current(langIndex)
+
+    # Accept button
+    subGui[0].buttons["optionsConfirm"][0]["command"] = acceptOptionsChange
+    # Cancel button
+    subGui[0].buttons["optionsConfirm"][1]["command"] = subGui[0].quit
+    # Redo button
+    subGui[0].buttons["optionsConfirm"][2]["command"] = undoOptionsChange
     return
 
 
@@ -493,6 +521,7 @@ def main():
     while True:
         language = LanguageManager.LanguageManager(conf[u"language"])
 
+        print(u"Cargando idioma...")
         # languageData
         mainmenu_file = language.getLanguageData(u"mainmenu_file")
         mainmenu_options = language.getLanguageData(u"mainmenu_options")
@@ -556,5 +585,7 @@ def main():
 
         if not gui.isRestart():
             break
+
+        print(u"\nReiniciando...\n")
 
     return
