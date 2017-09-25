@@ -4,7 +4,7 @@ try:
     import ttk
     import tkFileDialog
     import tkMessageBox
-except Exception:
+except ImportError:
     import tkinter as tk
     from tkinter import ttk
     from tkinter import filedialog as tkFileDialog

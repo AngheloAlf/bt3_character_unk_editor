@@ -1,9 +1,7 @@
-try:
-    import SubMenu
-    import Constants
-except Exception:
-    import packages.SubMenu as SubMenu
-    import packages.Constants as Constants
+from __future__ import absolute_import
+
+import packages.SubMenu as SubMenu
+import packages.Constants as Constants
 
 
 class CharacterMenu:

@@ -1,11 +1,8 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
-
-try:
-    import Constants
-except Exception:
-    import packages.Constants as Constants
+from __future__ import absolute_import
+import packages.Constants as Constants
 
 
 class StatChars:

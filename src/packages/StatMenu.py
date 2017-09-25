@@ -1,9 +1,7 @@
-try:
-    import Constants
-    import StatChars
-except Exception:
-    import packages.Constants as Constants
-    import packages.StatChars as StatChars
+from __future__ import absolute_import
+
+import packages.Constants as Constants
+import packages.StatChars as StatChars
 
 
 class StatMenu:

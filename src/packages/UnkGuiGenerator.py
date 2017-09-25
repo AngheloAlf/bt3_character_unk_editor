@@ -1,19 +1,17 @@
+from __future__ import absolute_import
+
 import functools
 import os
-try:
-    import LanguageManager
-    import GuiManager
-    import Constants
-    import OptionsManager
 
+import packages.LanguageManager as LanguageManager
+import packages.GuiManager as GuiManager
+import packages.Constants as Constants
+import packages.OptionsManager as OptionsManager
+
+try:
     import Tkinter as tk
     import ttk
-except Exception:
-    import packages.LanguageManager as LanguageManager
-    import packages.GuiManager as GuiManager
-    import packages.Constants as Constants
-    import packages.OptionsManager as OptionsManager
-
+except ImportError:
     import tkinter as tk
     from tkinter import ttk
     unicode = str

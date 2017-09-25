@@ -1,13 +1,9 @@
-try:
-    import TransformClass
-    import FusionClass
-    import CharacterMenu
-    import Constants
-except Exception:
-    import packages.TransformClass as TransformClass
-    import packages.FusionClass as FusionClass
-    import packages.CharacterMenu as CharacterMenu
-    import packages.Constants as Constants
+from __future__ import absolute_import
+
+import packages.TransformClass as TransformClass
+import packages.FusionClass as FusionClass
+import packages.CharacterMenu as CharacterMenu
+import packages.Constants as Constants
 
 
 def getTransformData(archivo, pointerFile, printData):
