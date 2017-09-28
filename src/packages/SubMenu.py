@@ -14,11 +14,8 @@ def getMenuName(submenuData, i):
     i += 6
     nameData = [submenuData[i:i + 2]]
     i += 2
-    # menuName = b""
-    name = submenuData.find(Constants.FilesConst().endOfLine, i)
-    # while submenuData[i:i + 2] != Constants.FilesConst().endOfLine:
-    #     menuName += submenuData[i]
-    #     i += 1
+    filesConst = Constants.FilesConst()
+    name = submenuData.find(filesConst.endOfLine, i)
     nameData.append(submenuData[i:name])
     return nameData
 
@@ -26,10 +23,9 @@ def getMenuName(submenuData, i):
 def getStat(submenuData, i):
     # type: (str, int) -> StatMenu.StatMenu
     i += 6
-    # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
-    endOfLine = Constants.FilesConst().endOfLine
-    # statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
-    statCode = Constants.FilesConst().statCode
+    filesConst = Constants.FilesConst()
+    endOfLine = filesConst.endOfLine
+    statCode = filesConst.statCode
 
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
@@ -69,8 +65,9 @@ class SubMenu:
         self.stats = []
 
         if submenuData != b"":
-            menuNameCode = Constants.FilesConst().menuNameCode
-            statCode = Constants.FilesConst().statCode
+            filesConst = Constants.FilesConst()
+            menuNameCode = filesConst.menuNameCode
+            statCode = filesConst.statCode
 
             # Nombre del menu
             menuNamePos = submenuData.find(menuNameCode)
@@ -110,8 +107,9 @@ class SubMenu:
 
     def getAsLine(self):
         # type: () -> str
-        menuNameCode = Constants.FilesConst().menuNameCode
-        endOfLine = Constants.FilesConst().endOfLine
+        filesConst = Constants.FilesConst()
+        menuNameCode = filesConst.menuNameCode
+        endOfLine = filesConst.endOfLine
         line = b""
         if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine

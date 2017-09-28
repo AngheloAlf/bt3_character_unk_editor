@@ -10,7 +10,8 @@ class CharacterMenu:
         self.subMenus = []
         self.unknow = False
 
-        menuNameCode = Constants.FilesConst().menuNameCode
+        filesConst = Constants.FilesConst
+        menuNameCode = filesConst.menuNameCode
 
         indices = Constants.findDataPos(menuData, menuNameCode)
         for i in range(len(indices)):
@@ -30,8 +31,10 @@ class CharacterMenu:
     def getAsLine(self):
         # type: () -> str
         line = b""
-        startOfutf16Text = Constants.FilesConst().startOfutf16Text
-        endOfFile = Constants.FilesConst().endOfFile
+        filesConst = Constants.FilesConst()
+        startOfutf16Text = filesConst.startOfutf16Text
+        endOfFile = filesConst.endOfFile
+
         for i in self.subMenus:
             line += i.getAsLine()
         return startOfutf16Text + line + endOfFile

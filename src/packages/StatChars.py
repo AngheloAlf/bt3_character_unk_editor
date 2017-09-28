@@ -30,8 +30,8 @@ class StatChars:
 
     def getAsLine(self):
         # type: () -> str
-        # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
-        endOfLine = Constants.FilesConst().endOfLine
+        filesConst = Constants.FilesConst()
+        endOfLine = filesConst.endOfLine
         line = self.type
         if self.type == Constants.CharsTypes().text:
             line += self.textType + self.text

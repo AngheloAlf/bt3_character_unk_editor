@@ -66,10 +66,9 @@ class StatMenu:
 
     def getAsLine(self):
         # type: () -> str
-        # statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
-        statCode = Constants.FilesConst().statCode
-        # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
-        endOfLine = Constants.FilesConst().endOfLine
+        filesConst = Constants.FilesConst()
+        statCode = filesConst.statCode
+        endOfLine = filesConst.endOfLine
         line = statCode + b"".join(self.data) + self.name + endOfLine
         # line += "".join(["".join(x) + endOfLine for x in self.statChars])
         line += b"".join([x.getAsLine() for x in self.statChars])
