@@ -24,7 +24,7 @@ except ImportError:
     import tkinter as tk
     from tkinter import ttk
 
-    # unicode = str
+    unicode = str
 
 
 class CharacterData:
@@ -486,7 +486,7 @@ def optionsCaller():
     if subGui[0] and subGui[0].isRunning():
         subGui[0].stop()
     else:
-        subGui[0] = GM.GM(u"Opciones", icon)
+        subGui[0] = GM.GuiManager(u"Opciones", icon)
     subGui[0].addTab(u"Opciones", functools.partial(UnkGuiGenerator.optionsTab, conf=conf))
     onOptionsOpen()
     subGui[0].start(u"Opciones")

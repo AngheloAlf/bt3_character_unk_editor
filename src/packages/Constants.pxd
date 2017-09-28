@@ -27,8 +27,5 @@ cdef class CharsTypes:
     cpdef public str unknown4
     cpdef public str unknownD
 
-cpdef str hexListToChar(list hexList)
-    # type: (list) -> str
-
 # cpdef list findDataPos(str archivo, str data, int maxi=*, int inicio=*, int tope=*)
     # type: (str, str, int, int, int) -> list

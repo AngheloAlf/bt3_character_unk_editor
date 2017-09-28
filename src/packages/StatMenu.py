@@ -3,6 +3,11 @@ from __future__ import absolute_import
 import packages.Constants as Constants
 import packages.StatChars as StatChars
 
+try:
+    unicode("a")
+except NameError:
+    unicode = str
+
 
 class StatMenu:
     def __init__(self, statName, statChars):
@@ -61,8 +66,10 @@ class StatMenu:
 
     def getAsLine(self):
         # type: () -> str
-        statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
-        endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+        # statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
+        statCode = Constants.FilesConst().statCode
+        # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+        endOfLine = Constants.FilesConst().endOfLine
         line = statCode + "".join(self.data) + self.name + endOfLine
         # line += "".join(["".join(x) + endOfLine for x in self.statChars])
         line += "".join([x.getAsLine() for x in self.statChars])
@@ -70,4 +77,4 @@ class StatMenu:
 
     def __str__(self):
         # type: () -> str
-        return "StatMenu <" + self.name[1][::2] + ">"
+        return "StatMenu <" + self.name[::2] + ">"

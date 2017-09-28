@@ -35,7 +35,7 @@ def addTrans(gui, tab, conf):
 
     language = LanguageManager.LanguageManager(conf[u"language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
-    barras = range(8)  # [x[1] for x in language.get()]
+    barras = list(range(8))  # [x[1] for x in language.get()]
     animations = [x[1] for x in language.getAnimations()]
     auras = [x[1] for x in language.getAuras()]
     absorbed = [x[1] for x in language.getCharactersNames()]
@@ -121,7 +121,7 @@ def addFusion(gui, tab, conf):
 
     language = LanguageManager.LanguageManager(conf[u"language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
-    barrasKi = range(8)
+    barrasKi = list(range(8))
     fusionsTypes = [x[1] for x in language.getFusionsTypes()]
 
     # languageData
@@ -360,11 +360,11 @@ def addMenusTab(gui, tab, conf):
                 maxPower = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 2)
                 gui.checkbuttons["maxPower"][-1][-1].append(maxPower)
 
-                barrasKiMenus = GuiManager.generateTtkWidget(u"Combobox", frame, u"grid", k+1, 3, values=range(6),
+                barrasKiMenus = GuiManager.generateTtkWidget(u"Combobox", frame, u"grid", k+1, 3, values=list(range(6)),
                                                              current=0, command=commandCombo)
                 gui.comboboxs["barrasKiMenus"][-1][-1].append(barrasKiMenus)
 
-                reservaKi = GuiManager.generateTtkWidget(u"Combobox", frame, u"grid", k+1, 4, values=range(8),
+                reservaKi = GuiManager.generateTtkWidget(u"Combobox", frame, u"grid", k+1, 4, values=list(range(8)),
                                                          current=0, command=commandCombo)
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 

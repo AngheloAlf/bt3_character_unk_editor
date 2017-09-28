@@ -10,24 +10,16 @@ class CharacterMenu:
         self.subMenus = []
         self.unknow = False
 
-        menuNameCode = Constants.hexListToChar(Constants.FilesConst().menuNameCode)
+        menuNameCode = Constants.FilesConst().menuNameCode
 
-        subMenu = ""
-
-        for i in range(len(menuData)):
-            byte = menuData[i]
-            if i + 5 < len(menuData):
-                line = menuData[i:i + 6]
-                # if line == menuNameCode or line == endOfFile:
-                if line == menuNameCode:
-                    # if line == endOfFile:
-                    if len(subMenu) > 4:
-                        self.subMenus.append(SubMenu.SubMenu(subMenu))
-                        subMenu = ""
-            subMenu += byte
-
-        self.subMenus.append(SubMenu.SubMenu(subMenu))
-
+        indices = Constants.findDataPos(menuData, menuNameCode)
+        for i in range(len(indices)):
+            if i+1 == len(indices):
+                subMenu = menuData[indices[i]:]
+            else:
+                subMenu = menuData[indices[i]:indices[i+1]]
+            self.subMenus.append(SubMenu.SubMenu(subMenu))
+            
         if len(self.subMenus) <= 2:
             self.unknow = True
 
@@ -38,8 +30,8 @@ class CharacterMenu:
     def getAsLine(self):
         # type: () -> str
         line = ""
-        startOfutf16Text = Constants.hexListToChar(Constants.FilesConst().startOfutf16Text)
-        endOfFile = Constants.hexListToChar(Constants.FilesConst().endOfFile)
+        startOfutf16Text = Constants.FilesConst().startOfutf16Text
+        endOfFile = Constants.FilesConst().endOfFile
         for i in self.subMenus:
             line += i.getAsLine()
         return startOfutf16Text + line + endOfFile

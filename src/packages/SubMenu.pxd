@@ -2,11 +2,11 @@ cimport StatMenu
 cimport Constants
 
 
-cdef tuple getMenuName(str submenuData, int i)
-    # type: (str, int) -> (list, int)
+cdef list getMenuName(str submenuData, int i)
+    # type: (str, int) -> list
 
-cdef tuple getStat(str submenuData, int i)
-    # type: (str, int) -> (StatMenu.StatMenu, int)
+cdef StatMenu.StatMenu getStat(str submenuData, int i)
+    # type: (str, int) -> StatMenu.StatMenu
 
 
 cdef class SubMenu:

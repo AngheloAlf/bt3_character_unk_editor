@@ -12,11 +12,11 @@ class TransformClass:
         self.bonus = line2[13]
         if printData:
             print(u"Transform:")
-            print(u"unknowFirst:", map(ord, list(self.unknowFirst)))
-            print(u"trans:", map(ord, self.trans))
-            print(u"barras:", map(ord, self.barras))
-            print(u"ani:", map(ord, self.aniCam))
-            print(u"abs:", map(ord, self.abs))
+            print(u"unknowFirst:", list(map(ord, list(self.unknowFirst))))
+            print(u"trans:", list(map(ord, self.trans)))
+            print(u"barras:", list(map(ord, self.barras)))
+            print(u"ani:", list(map(ord, self.aniCam)))
+            print(u"abs:", list(map(ord, self.abs)))
             print(u"r3command:", [ord(self.command)])
             print(u"bonus:", [ord(self.bonus)])
             print(u"\n")
@@ -24,6 +24,8 @@ class TransformClass:
     def getR3Command(self, asOrd=False):
         # type: (bool) -> int|str
         if asOrd:
+            if type(self.command) == int:
+                return self.command
             return ord(self.command)
         return self.command
 
@@ -47,11 +49,13 @@ class TransformClass:
         if charNumb < 0 or charNumb > 3:
             return list()
 
-        data = [self.trans[charNumb]] + [self.barras[charNumb]] + [self.aniCam[charNumb]] + [self.aura[charNumb]] + [
-            self.abs[charNumb]]
+        data = [self.trans[charNumb], self.barras[charNumb], self.aniCam[charNumb], self.aura[charNumb],
+                self.abs[charNumb]]
 
         if asOrd:
-            return map(ord, data)
+            if type(data[0]) == int:
+                return data
+            return list(map(ord, data))
 
         return data
 
@@ -68,7 +72,7 @@ class TransformClass:
                 return False
 
         if asOrd:
-            data = map(chr, data)
+            data = list(map(chr, data))
 
         self.trans[charNumb] = data[0]
         self.barras[charNumb] = data[1]
@@ -81,6 +85,8 @@ class TransformClass:
     def getBonus(self, asOrd=False):
         # type: (bool) -> int|str
         if asOrd:
+            if type(self.bonus) == int:
+                return self.bonus
             return ord(self.bonus)
         return self.bonus
 

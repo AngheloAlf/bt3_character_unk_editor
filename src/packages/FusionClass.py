@@ -11,11 +11,11 @@ class FusionClass:
 
         if printData:
             print(u"Fusion:")
-            print(u"barras:", map(ord, self.barras))
-            print(u"tipoFusion:", map(ord, self.tipoFusion))
-            print(u"resultado:", map(ord, self.resultado))
-            print(u"compaAni:", map(ord, self.compaAni))
-            print(u"compaEquipo", [map(ord, x) for x in self.compaEquipo])
+            print(u"barras:", list(map(ord, self.barras)))
+            print(u"tipoFusion:", list(map(ord, self.tipoFusion)))
+            print(u"resultado:", list(map(ord, self.resultado)))
+            print(u"compaAni:", list(map(ord, self.compaAni)))
+            print(u"compaEquipo", [list(map(ord, x)) for x in self.compaEquipo])
             print(u"\n")
 
     def getFusionData(self, fusionNumb, asOrd=False):
@@ -23,14 +23,14 @@ class FusionClass:
         if fusionNumb < 0 or fusionNumb > 2:
             return list()
 
-        data = [self.barras[fusionNumb]]
-        data += [self.tipoFusion[fusionNumb]]
-        data += [self.resultado[fusionNumb]]
-        data += [self.compaAni[fusionNumb]]
+        data = [self.barras[fusionNumb], self.tipoFusion[fusionNumb], self.resultado[fusionNumb],
+                self.compaAni[fusionNumb]]
         data += self.compaEquipo[fusionNumb]
 
         if asOrd:
-            data = map(ord, data)
+            if type(data[0]) == int:
+                return data
+            data = list(map(ord, data))
 
         return data
 
@@ -47,7 +47,7 @@ class FusionClass:
                 return False
 
         if asOrd:
-            data = map(chr, data)
+            data = list(map(chr, data))
 
         self.barras[fusionNumb] = data[0]
         self.tipoFusion[fusionNumb] = data[1]

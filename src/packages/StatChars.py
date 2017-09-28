@@ -4,6 +4,11 @@
 from __future__ import absolute_import
 import packages.Constants as Constants
 
+try:
+    unicode("a")
+except NameError:
+    unicode = str
+
 
 class StatChars:
     def __init__(self, chars):
@@ -25,7 +30,8 @@ class StatChars:
 
     def getAsLine(self):
         # type: () -> str
-        endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+        # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+        endOfLine = Constants.FilesConst().endOfLine
         line = self.type
         if self.type == Constants.CharsTypes().text:
             line += self.textType + self.text

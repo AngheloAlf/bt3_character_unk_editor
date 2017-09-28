@@ -79,7 +79,7 @@ def selectMultiplesFiles(title, fileTypes, callback=None):
     archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
     if type(archivos) != tuple:
         return list()
-    archivos = map(unicode, archivos)
+    archivos = list(map(unicode, archivos))
     try:
         print(archivos)
     except UnicodeEncodeError:

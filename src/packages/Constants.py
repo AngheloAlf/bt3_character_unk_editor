@@ -4,21 +4,29 @@
 
 class FilesConst:
     def __init__(self):
-        self.menuNameCode = [0x21, 0x00, 0x46, 0x00, 0x24, 0x00]
-        self.endOfLine = [0x0a, 0x00]
+        # self.menuNameCode = [0x21, 0x00, 0x46, 0x00, 0x24, 0x00]
+        self.menuNameCode = b"\x21\x00\x46\x00\x24\x00"
+        # self.endOfLine = [0x0a, 0x00]
+        self.endOfLine = b"\x0a\x00"
 
-        self.statCode = [0x21, 0x00, 0x46, 0x00, 0x2A, 0x00]
+        # self.statCode = [0x21, 0x00, 0x46, 0x00, 0x2A, 0x00]
+        self.statCode = b"\x21\x00\x46\x00\x2A\x00"
 
         # numberSign = [0x23, 0x00]
 
-        self.transformCode = [0xa0, 0x86, 0x01, 0x00]
+        # self.transformCode = [0xa0, 0x86, 0x01, 0x00]
+        self.transformCode = b"\xa0\x86\x01\x00"
 
-        self.startOfMenuFile = [0xFF, 0xFE, 0x21, 0x00]
-        self.endOfMenuFile = [0x46, 0x00, 0x40, 0x00]
+        # self.startOfMenuFile = [0xFF, 0xFE, 0x21, 0x00]
+        self.startOfMenuFile = b"\xFF\xFE\x21\x00"
+        # self.endOfMenuFile = [0x46, 0x00, 0x40, 0x00]
+        self.endOfMenuFile = b"\x46\x00\x40\x00"
 
-        self.endOfFile = [0x21, 0x00, 0x46, 0x00, 0x40, 0x00]
+        # self.endOfFile = [0x21, 0x00, 0x46, 0x00, 0x40, 0x00]
+        self.endOfFile = b"\x21\x00\x46\x00\x40\x00"
 
-        self.startOfutf16Text = [0xFF, 0xFE]
+        # self.startOfutf16Text = [0xFF, 0xFE]
+        self.startOfutf16Text = b"\xFF\xFE]"
 
 
 class ProgramConst:
@@ -37,12 +45,12 @@ class AmountConst:
 
 class CharsTypes:
     def __init__(self):
-        self.text = "!\x00F\x00%\x00"
-        self.unknown1 = "!\x001\x00#\x00"
-        self.unknown2 = "!\x002\x00#\x00"
-        self.unknown8 = "!\x008\x00#\x00"
-        self.unknown4 = "!\x004\x00#\x00"
-        self.unknownD = "!\x00D\x00#\x00"
+        self.text = b"!\x00F\x00%\x00"
+        self.unknown1 = b"!\x001\x00#\x00"
+        self.unknown2 = b"!\x002\x00#\x00"
+        self.unknown8 = b"!\x008\x00#\x00"
+        self.unknown4 = b"!\x004\x00#\x00"
+        self.unknownD = b"!\x00D\x00#\x00"
 
         # u'!1#' <PAD=Ｌ２＋○>
         # u'!2#' <PAD=†上＋†振縦>
@@ -51,11 +59,6 @@ class CharsTypes:
 
         # u'!F%' 0Partner: Goku (End) / 1Chargeable
         # u'!D#' <PAD=□△♂>
-
-
-def hexListToChar(hexList):
-    # type: (list) -> str
-    return "".join(map(chr, hexList))
 
 
 def findDataPos(archivo, data, maxi=-1, inicio=0, tope=-1):

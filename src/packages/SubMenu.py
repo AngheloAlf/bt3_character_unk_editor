@@ -3,23 +3,33 @@ from __future__ import absolute_import
 import packages.StatMenu as StatMenu
 import packages.Constants as Constants
 
+try:
+    unicode("a")
+except NameError:
+    unicode = str
+
 
 def getMenuName(submenuData, i):
-    # type: (str, int) -> (list, int)
+    # type: (str, int) -> list
+    i += 6
     nameData = [submenuData[i:i + 2]]
     i += 2
-    menuName = ""
-    while map(ord, submenuData[i:i + 2]) != Constants.FilesConst().endOfLine:
-        menuName += submenuData[i]
-        i += 1
-    nameData.append(menuName)
-    return nameData, i
+    # menuName = b""
+    name = submenuData.find(Constants.FilesConst().endOfLine, i)
+    # while submenuData[i:i + 2] != Constants.FilesConst().endOfLine:
+    #     menuName += submenuData[i]
+    #     i += 1
+    nameData.append(submenuData[i:name])
+    return nameData
 
 
 def getStat(submenuData, i):
-    # type: (str, int) -> (StatMenu.StatMenu, int)
-    endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
-    statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
+    # type: (str, int) -> StatMenu.StatMenu
+    i += 6
+    # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+    endOfLine = Constants.FilesConst().endOfLine
+    # statCode = Constants.hexListToChar(Constants.FilesConst().statCode)
+    statCode = Constants.FilesConst().statCode
 
     statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
     i += 6
@@ -47,9 +57,9 @@ def getStat(submenuData, i):
             description = submenuData[end:ends[endI+1]]
             statChars.append([subStatFirst, description])
 
-        return StatMenu.StatMenu([statNumbers, statName], statChars), ends[-1] + 1
+        return StatMenu.StatMenu([statNumbers, statName], statChars)
     else:
-        return StatMenu.StatMenu([statNumbers, statName], statChars), i + 1
+        return StatMenu.StatMenu([statNumbers, statName], statChars)
 
 
 class SubMenu:
@@ -57,23 +67,22 @@ class SubMenu:
         # type: (str) -> None
         self.menuName = []
         self.stats = []
-        i = 0
-        if submenuData != "":
-            while i < len(submenuData):
-                if i + 5 < len(submenuData):
-                    # Nombre del menu
-                    if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().menuNameCode:
-                        i += 6
-                        self.menuName, i = getMenuName(submenuData, i)
 
-                    # Cada stat
-                    if map(ord, submenuData[i:i + 6]) == Constants.FilesConst().statCode:
-                        i += 6
-                        newStat, i = getStat(submenuData, i)
-                        self.stats.append(newStat)
-                i += 1
+        if submenuData != b"":
+            menuNameCode = Constants.FilesConst().menuNameCode
+            statCode = Constants.FilesConst().statCode
+
+            # Nombre del menu
+            menuNamePos = submenuData.find(menuNameCode)
+            self.menuName = getMenuName(submenuData, menuNamePos)
+
+            # Cada stat
+            eachStatPos = Constants.findDataPos(submenuData, statCode) + [len(submenuData)]
+            for i in range(len(eachStatPos) - 1):
+                j = eachStatPos[i]
+                self.stats.append(getStat(submenuData, j))
         else:
-            self.menuName = ["", ""]
+            self.menuName = [b"", b""]
 
     def isNone(self):
         # type: () -> bool
@@ -101,8 +110,8 @@ class SubMenu:
 
     def getAsLine(self):
         # type: () -> str
-        menuNameCode = Constants.hexListToChar(Constants.FilesConst().menuNameCode)
-        endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
+        menuNameCode = Constants.FilesConst().menuNameCode
+        endOfLine = Constants.FilesConst().endOfLine
         line = ""
         if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
