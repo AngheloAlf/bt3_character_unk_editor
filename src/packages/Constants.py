@@ -26,7 +26,7 @@ class FilesConst:
         self.endOfFile = b"\x21\x00\x46\x00\x40\x00"
 
         # self.startOfutf16Text = [0xFF, 0xFE]
-        self.startOfutf16Text = b"\xFF\xFE]"
+        self.startOfutf16Text = b"\xFF\xFE"
 
 
 class ProgramConst:

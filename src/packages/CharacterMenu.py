@@ -19,7 +19,7 @@ class CharacterMenu:
             else:
                 subMenu = menuData[indices[i]:indices[i+1]]
             self.subMenus.append(SubMenu.SubMenu(subMenu))
-            
+
         if len(self.subMenus) <= 2:
             self.unknow = True
 
@@ -29,7 +29,7 @@ class CharacterMenu:
 
     def getAsLine(self):
         # type: () -> str
-        line = ""
+        line = b""
         startOfutf16Text = Constants.FilesConst().startOfutf16Text
         endOfFile = Constants.FilesConst().endOfFile
         for i in self.subMenus:

@@ -112,7 +112,7 @@ class SubMenu:
         # type: () -> str
         menuNameCode = Constants.FilesConst().menuNameCode
         endOfLine = Constants.FilesConst().endOfLine
-        line = ""
+        line = b""
         if len(self.menuName) == 2:
             line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
         else:

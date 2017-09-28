@@ -1,25 +1,25 @@
 cdef class TransformClass:
-    cdef str unknowFirst
-    cdef list trans, barras, aniCam, aura, abs
-    cdef str command, bonus
+    cdef bytes unknowFirst
+    cdef bytes trans, barras, aniCam, aura, abs
+    cdef bytes command, bonus
 
-    # def getR3Command(self, asOrd=False):
-        # type: (bool) -> int|str
+    cpdef int getR3Command(self)
+        # type: () -> int
 
-    # def setR3Command(self, command, asOrd=False):
-        # type: (int|str, bool) -> bool
+    cpdef bint setR3Command(self, int command)
+        # type: (int) -> bool
 
-    cpdef list getTransformData(self, int charNumb, bint asOrd=*)
-        # type: (int, bool) -> list
+    cpdef list getTransformData(self, int charNumb)
+        # type: (int) -> list
 
-    cpdef bint setTransformData(self, int charNumb, list data, bint asOrd=*)
-        # type: (int, list, bool) -> bool
+    cpdef bint setTransformData(self, int charNumb, list data)
+        # type: (int, list) -> bool
 
-    # def getBonus(self, asOrd=False):
-        # type: (bool) -> int|str
+    cpdef int getBonus(self)
+        # type: () -> int
 
-    # def setBonus(self, bonus, asOrd=False):
-        # type: (int|str, bool) -> bool
+    cpdef bint setBonus(self, int bonus)
+        # type: (int) -> bool
 
     cpdef list getAsLines(self)
         # type: () -> list

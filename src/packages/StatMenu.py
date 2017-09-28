@@ -70,9 +70,9 @@ class StatMenu:
         statCode = Constants.FilesConst().statCode
         # endOfLine = Constants.hexListToChar(Constants.FilesConst().endOfLine)
         endOfLine = Constants.FilesConst().endOfLine
-        line = statCode + "".join(self.data) + self.name + endOfLine
+        line = statCode + b"".join(self.data) + self.name + endOfLine
         # line += "".join(["".join(x) + endOfLine for x in self.statChars])
-        line += "".join([x.getAsLine() for x in self.statChars])
+        line += b"".join([x.getAsLine() for x in self.statChars])
         return line
 
     def __str__(self):

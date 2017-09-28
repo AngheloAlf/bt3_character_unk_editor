@@ -1,25 +1,25 @@
 class FusionClass:
     def __init__(self, datos, printData=False):
-        # type: (str, bool) -> None
+        # type: (bytes, bool) -> None
         if len(datos) != 24:
             print(1 / 0)
-        self.barras = list(datos[0:3])
-        self.tipoFusion = list(datos[3:6])
-        self.resultado = list(datos[6:9])
-        self.compaAni = list(datos[9:12])
-        self.compaEquipo = [list(datos[12:16]), list(datos[16:20]), list(datos[20:24])]
+        self.barras = datos[0:3]
+        self.tipoFusion = datos[3:6]
+        self.resultado = datos[6:9]
+        self.compaAni = datos[9:12]
+        self.compaEquipo = [datos[12:16], datos[16:20], datos[20:24]]
 
         if printData:
             print(u"Fusion:")
-            print(u"barras:", list(map(ord, self.barras)))
-            print(u"tipoFusion:", list(map(ord, self.tipoFusion)))
-            print(u"resultado:", list(map(ord, self.resultado)))
-            print(u"compaAni:", list(map(ord, self.compaAni)))
-            print(u"compaEquipo", [list(map(ord, x)) for x in self.compaEquipo])
+            print(u"barras:", self.barras)
+            print(u"tipoFusion:", self.tipoFusion)
+            print(u"resultado:", self.resultado)
+            print(u"compaAni:", self.compaAni)
+            print(u"compaEquipo", self.compaEquipo)
             print(u"\n")
 
-    def getFusionData(self, fusionNumb, asOrd=False):
-        # type: (int, bool) -> list
+    def getFusionData(self, fusionNumb):
+        # type: (int) -> list
         if fusionNumb < 0 or fusionNumb > 2:
             return list()
 
@@ -27,44 +27,38 @@ class FusionClass:
                 self.compaAni[fusionNumb]]
         data += self.compaEquipo[fusionNumb]
 
-        if asOrd:
-            if type(data[0]) == int:
-                return data
-            data = list(map(ord, data))
+        if type(data[0]) == int:
+            return data
+        return list(map(ord, data))
 
-        return data
-
-    def setFusionData(self, fusionNumb, data, asOrd=False):
-        # type: (int, list, bool) -> bool
+    def setFusionData(self, fusionNumb, data):
+        # type: (int, list) -> bool
         if fusionNumb < 0 or fusionNumb > 3 or len(data) != 8:
             return False
 
         for i in range(8):
             j = data[i]
-            if asOrd and (j < 0 or j > 255):
-                return False
-            if not asOrd and (ord(j) < 0 or ord(j) > 255):
+            if j < 0 or j > 255:
                 return False
 
-        if asOrd:
+        if type(self.barras[fusionNumb]) != int:
             data = list(map(chr, data))
 
-        self.barras[fusionNumb] = data[0]
-        self.tipoFusion[fusionNumb] = data[1]
-        self.resultado[fusionNumb] = data[2]
-        self.compaAni[fusionNumb] = data[3]
-        self.compaEquipo[fusionNumb] = data[4:8]
+        if type(data[0]) == int:
+            data = [bytes([x]) for x in data]
+
+        self.barras = self.barras[:fusionNumb] + data[0] + self.barras[fusionNumb+1:]
+        self.tipoFusion = self.tipoFusion[:fusionNumb] + data[1] + self.tipoFusion[fusionNumb+1:]
+        self.resultado = self.resultado[:fusionNumb] + data[2] + self.resultado[fusionNumb+1:]
+        self.compaAni = self.compaAni[:fusionNumb] + data[3] + self.compaAni[fusionNumb+1:]
+        self.compaEquipo[fusionNumb] = b"".join(data[4:8])
 
         return True
 
     def getAsLines(self):
-        # type: () -> str
-        line = "".join(self.barras)
-        line += "".join(self.tipoFusion)
-        line += "".join(self.resultado)
-        line += "".join(self.compaAni)
-        for i in range(3):
-            line += "".join(self.compaEquipo[i])
+        # type: () -> bytes
+        line = self.barras + self.tipoFusion + self.resultado + self.compaAni
+        line += b"".join(self.compaEquipo)
         return line
 
     def __str__(self):

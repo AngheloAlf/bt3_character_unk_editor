@@ -50,15 +50,15 @@ def updateTransObject():
         e = gui.comboboxs["absor"][i].get()
         e = language.getCharactersNamesID(unicode(e))
 
-        character.data.transObj.setTransformData(i, [a, b, c, d, e], True)
+        character.data.transObj.setTransformData(i, [a, b, c, d, e])
 
     r3 = gui.comboboxs["R3"][0].get()
     r3 = language.getR3CommandID(unicode(r3))
-    character.data.transObj.setR3Command(r3, True)
+    character.data.transObj.setR3Command(r3)
 
     bonus = gui.comboboxs["bonus"][0].get()
     bonus = language.getTransformationBonusID(unicode(bonus))
-    character.data.transObj.setBonus(bonus, True)
+    character.data.transObj.setBonus(bonus)
 
     language.close()
     return
@@ -85,7 +85,7 @@ def updateFusObject():
         for j in gui.comboboxs["fusEquipo"][i]:
             fusionData.append(language.getCharactersNamesID(unicode(j.get())))
 
-        character.data.fusionObj.setFusionData(i, fusionData, True)
+        character.data.fusionObj.setFusionData(i, fusionData)
 
     language.close()
     return
@@ -187,7 +187,7 @@ def updateTransTab():
     # type: () -> None
     language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(4):
-        transformData = character.data.transObj.getTransformData(i, True)
+        transformData = character.data.transObj.getTransformData(i)
 
         char = language.getCharactersNamesPos(transformData[0])
         gui.comboboxs["trans"][i].current(char)
@@ -211,12 +211,12 @@ def updateTransTab():
         else:
             gui.comboboxs["absor"][i]["state"] = "disabled"
 
-    r3 = character.data.transObj.getR3Command(True)
+    r3 = character.data.transObj.getR3Command()
     r3 = language.getR3CommandPos(r3)
     gui.comboboxs["R3"][0].current(r3)
     gui.comboboxs["R3"][0]["state"] = "readonly"
 
-    bonus = character.data.transObj.getBonus(True)
+    bonus = character.data.transObj.getBonus()
     bonus = language.getTransformationBonusPos(bonus)
     gui.comboboxs["bonus"][0].current(bonus)
     gui.comboboxs["bonus"][0]["state"] = "readonly"
@@ -228,7 +228,7 @@ def updateTransTab():
 def updateFusionsTab():
     language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(3):
-        fusionData = character.data.fusionObj.getFusionData(i, True)
+        fusionData = character.data.fusionObj.getFusionData(i)
 
         gui.comboboxs["fusBarras"][i].current(fusionData[0])
         gui.comboboxs["fusBarras"][i]["state"] = "readonly"
