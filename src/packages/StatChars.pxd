@@ -1,13 +1,13 @@
-cimport Constants
+from . cimport Constants
 
 
 cdef class StatChars:
-    cdef str type
-    cdef str textType
-    cdef str text
+    cdef bytes type
+    cdef bytes textType
+    cdef bytes text
 
     cpdef list getUnicodeList(self)
         # type: () -> list
 
-    cpdef str getAsLine(self)
+    cpdef bytes getAsLine(self)
         # type: () -> str

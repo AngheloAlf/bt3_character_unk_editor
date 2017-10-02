@@ -1,11 +1,11 @@
-cimport StatMenu
-cimport Constants
+from . cimport StatMenu
+from . cimport Constants
 
 
-cdef list getMenuName(str submenuData, int i)
+cdef list getMenuName(bytes submenuData, int i)
     # type: (str, int) -> list
 
-cdef StatMenu.StatMenu getStat(str submenuData, int i)
+cdef StatMenu.StatMenu getStat(bytes submenuData, int i)
     # type: (str, int) -> StatMenu.StatMenu
 
 
@@ -28,5 +28,5 @@ cdef class SubMenu:
     cpdef void setMenuName(self, unicode name)
         # type: (unicode) -> None
 
-    cpdef str getAsLine(self)
+    cpdef bytes getAsLine(self)
         # type: () -> str

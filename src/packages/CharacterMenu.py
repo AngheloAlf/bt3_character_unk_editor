@@ -10,7 +10,7 @@ class CharacterMenu:
         self.subMenus = []
         self.unknow = False
 
-        filesConst = Constants.FilesConst
+        filesConst = Constants.FilesConst()
         menuNameCode = filesConst.menuNameCode
 
         indices = Constants.findDataPos(menuData, menuNameCode)

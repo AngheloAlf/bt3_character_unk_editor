@@ -1,7 +1,7 @@
-cimport LanguageManager
-cimport GuiManager
-cimport OptionsManager
-cimport Constants
+from . cimport LanguageManager
+from . cimport GuiManager
+from . cimport OptionsManager
+from . cimport Constants
 
 
 cpdef void comboTransUpdate(GuiManager.GuiManager gui, event)

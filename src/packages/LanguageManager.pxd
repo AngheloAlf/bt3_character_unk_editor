@@ -66,7 +66,7 @@ cdef class LanguageManager:
         # type: (int) -> int
 
 
-    cdef void executeScriptsFromFile(self, str filename)
+    cdef void executeScriptsFromFile(self, unicode filename)
         # type: (str) -> None
 
     cpdef void close(self)

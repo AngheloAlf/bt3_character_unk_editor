@@ -91,6 +91,7 @@ class CharacterUnkParser:
             fusionLine = self.fusionObj.getAsLines()
         
         self.fullFile = setTransformData(self.fullFile, pointerFile, transLines)
+
         self.fullFile = setFusionData(self.fullFile, pointerFile+30, fusionLine)
 
         starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)

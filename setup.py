@@ -1,4 +1,4 @@
-#! python2
+#! python3
 import os
 import shutil
 from distutils import sysconfig
@@ -22,6 +22,16 @@ def runProcess(proc, showCommand=False):
         exit(err.errno)
 
 
+def getPythonVersion():
+    # type: () -> tuple
+    return sys.version_info[:2]
+
+
+def getPythonFolder():
+    # type: () -> str
+    return os.path.join(*os.path.split(sys.executable)[:-1])
+
+
 def isWindows():
     # type: () -> bool
     return sys.platform == "win32"
@@ -42,7 +52,7 @@ def getLIBPL():
     LIBPL = sysconfig.get_config_var('LIBPL')
     if not LIBPL:
         if isWindows():
-            LIBPL = "C:\\Python27\\libs"
+            LIBPL = os.path.join(getPythonFolder(), "libs")
         else:
             print("sysconfig.get_config_var('LIBPL') returned None")
             exit(1)
@@ -55,7 +65,10 @@ def getLIBS():
 
     if not LIBS:
         if isWindows():
-            LIBS = "-lpython27 -lpthread"
+            version = getPythonVersion()
+            LIBS = "-lpython"
+            LIBS += "".join(map(str, version))
+            LIBS += " -lpthread"
         else:
             print("sysconfig.get_config_var('LIBS') returned None")
             exit(1)
@@ -103,10 +116,6 @@ def getPythonDll():
     return dll
 
 
-def getPythonFolder():
-    return os.path.split(sys.executable)[0]
-
-
 def folderExists(folder):
     # type: (str) -> bool
     return os.path.isdir(folder)
@@ -137,6 +146,9 @@ def compilePyPackages(arguments):
     cy = ["cython", ""]
     if "-a" in arguments:
         cy.append("-a")
+
+    ver = "-" + str(getPythonVersion()[0])
+    cy.append(ver)
 
     compileCommand = ["gcc", "-shared", "-fPIC", "-fno-strict-aliasing", "-I", pythonInclude, "-L", LIBPL, "-o", "", ""]
     compileCommand += LIBS
@@ -178,9 +190,8 @@ def compilePyPackages(arguments):
 
     initDir = os.path.join(os.getcwd(), "out", "packages", "__init__.py")
     open(initDir, "w").close()
-    py_compile.compile(initDir)
-    # runProcess(["rm", initDir])
-    os.remove(initDir)
+    # py_compile.compile(initDir)
+    # os.remove(initDir)
 
     return 0
 
@@ -188,11 +199,23 @@ def compilePyPackages(arguments):
 def generateNoSiteMain(mainName):
     # type: (str) -> int
     zipName = 'pythonLib.zip'
-    folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3"), os.path.join("Lib", "lib-tk")]
+    # folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3"), os.path.join("Lib", "lib-tk")]
+    folders = ["DLLs", "Lib", "tcl", os.path.join("Lib", "sqlite3")]
+    ver = getPythonVersion()[0]
+    if ver == 2:
+        folders.append(os.path.join("Lib", "lib-tk"))
+    elif ver == 3:
+        folders.append(os.path.join("Lib", "tkinter"))
+    else:
+        # dunno
+        folders.append(os.path.join("Lib", "tkinter"))
+
     pyzip = ['.', zipName]
     for fld in folders:
         pyzip.append(os.path.join(zipName, fld))
-    pyzip.append("DLLs")
+    for fld in folders:
+        pyzip.append(fld)
+    # pyzip.append("DLLs")
 
     arch = open(mainName + ".py")
     mainData = ""
@@ -233,6 +256,8 @@ def mainPyToC(arguments):
         cythonizeCommand = ["cython", "--embed", "-o", mainName + ".c", mainName + ".py"]
         if "-a" in arguments:
             cythonizeCommand.append("-a")
+        ver = "-"+str(getPythonVersion()[0])
+        cythonizeCommand.append(ver)
         return runProcess(cythonizeCommand, True)
 
 
@@ -246,7 +271,8 @@ def cToBinary(arguments):
     #                      ["-l" + PYLIBRARY]
 
     compileCommandList = ["gcc", "-I", pythonInclude, "-L", LIBPL]
-    compileCommandList += ["-o", os.path.join("out", finalName), os.path.join("src", "main.c")]
+    mainSrc = os.path.join("src", "main.c")
+    compileCommandList += ["-o", os.path.join("out", finalName), mainSrc]
 
     if isWindows():
         resResult = os.path.join("src", "winRc.res")
@@ -260,6 +286,12 @@ def cToBinary(arguments):
     compileCommandList += LIBS + ["-l" + PYLIBRARY]
     if "-Wall" in arguments:
         compileCommandList.append("-Wall")
+
+    with open(mainSrc) as openedFile:
+        mainStr = openedFile.read().replace("wmain", "main")
+    with open(mainSrc, "w") as openedFile:
+        openedFile.write(mainStr)
+
     return runProcess(compileCommandList, True)
 
 
@@ -302,31 +334,49 @@ def zipdir(path, ziph):
 
 
 def copyPythonDependencies():
-    folder = getPythonFolder()
-    DLLs = ["_sqlite3.pyd", "_tkinter.pyd", "sqlite3.dll", "tcl85.dll", "tk85.dll"]
-    tcl85 = ["encoding/"]
-    tk85 = ["ttk/"]
-    folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
+    pyFolder = getPythonFolder()
+    # DLLs = ["_sqlite3.pyd", "_tkinter.pyd", "sqlite3.dll", "tcl85.dll", "tk85.dll"]
+    DLLs = ["_sqlite3.pyd", "_tkinter.pyd"]
+    for dllFile in os.listdir(os.path.join(pyFolder, "DLLs")):
+        fileRoute = os.path.join(pyFolder, "DLLs", dllFile)
+        if os.path.isfile(fileRoute) and fileRoute.lower().endswith(".dll"):
+           DLLs.append(dllFile)
+
+    # tcl85 = ["encoding/"]
+    # tk85 = ["ttk/"]
+    # folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
+    folders = ["DLLs", "tcl"]
+
     # [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
     for x in folders:
         mkdir = os.path.join(os.getcwd(), "out", x)
         if folderExists(mkdir):
+            print("rm", mkdir)
             shutil.rmtree(mkdir)
+        print("mkdir", mkdir)
         os.mkdir(mkdir)
     dependencies = [(os.path.join("DLLs", x), os.path.join("DLLs", x)) for x in DLLs]
-    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in tcl85]
-    dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in
-                     os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if
-                     os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
-    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in tk85]
-    dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in
-                     os.listdir(os.path.join(folder, "tcl", "tk8.5")) if
-                     os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
+    for dirName in os.listdir(os.path.join(pyFolder, "tcl")):
+        if folderExists(os.path.join(pyFolder, "tcl", dirName)):
+            lowered = dirName.lower()
+            if (lowered.startswith("tcl") or lowered.startswith("tk")) and "." in lowered:
+                dependencies.append((os.path.join("tcl", dirName), os.path.join("tcl", dirName)))
+
+    # dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in tcl85]
+    # dependencies += [(os.path.join("tcl", "tcl8.5", x), os.path.join("tcl", "tcl8.5", x)) for x in
+    #                  os.listdir(os.path.join(folder, "tcl", "tcl8.5")) if
+    #                  os.path.isfile(os.path.join(folder, "tcl", "tcl8.5", x))]
+
+    # dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in tk85]
+    # dependencies += [(os.path.join("tcl", "tk8.5", x), os.path.join("tcl", "tk8.5", x)) for x in
+    #                  os.listdir(os.path.join(folder, "tcl", "tk8.5")) if
+    #                  os.path.isfile(os.path.join(folder, "tcl", "tk8.5", x))]
+
     for depend in dependencies:
         # copy = ["cp", "-r", os.path.join(folder, depend[0]), os.path.join("out", depend[1])]
         # if runProcess(copy, True):
         #     print("\terror: " + " ".join(copy))
-        src = os.path.join(folder, depend[0])
+        src = os.path.join(pyFolder, depend[0])
         dst = os.path.join(os.getcwd(), "out", depend[1])
         print("cp " + src + " " + dst)
         if os.path.isfile(src):
@@ -337,20 +387,42 @@ def copyPythonDependencies():
     if not folderExists(os.path.join(os.getcwd(), "Lib")):
         os.mkdir(os.path.join(os.getcwd(), "Lib"))
 
-    LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py',
+    # LibDependencies = ['abc.py', 'codecs.py', 'collections.py', 'copy_reg.py', 'functools.py', 'genericpath.py',
+    #                    'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py',
+    #                    'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py',
+    #                    'warnings.py', '_abcoll.py', '_weakrefset.py', '__future__.py']
+    LibDependencies = ['abc.py', 'codecs.py', 'functools.py', 'genericpath.py',
                        'heapq.py', 'keyword.py', 'linecache.py', 'ntpath.py', 'os.py', 're.py', 'sre_compile.py',
-                       'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py', 'UserDict.py',
-                       'warnings.py', '_abcoll.py', '_weakrefset.py']
-    LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
+                       'sre_constants.py', 'sre_parse.py', 'stat.py', 'traceback.py', 'types.py',
+                       'warnings.py', '_weakrefset.py', '__future__.py']
 
+    # LibDependenciesFolder = ['encodings', 'lib-tk', 'sqlite3']
+    LibDependenciesFolder = ['encodings', 'sqlite3']
+
+    ver = getPythonVersion()[0]
+    if ver == 2:
+        LibDependencies += ['collections.py', 'copy_reg.py', 'UserDict.py', '_abcoll.py']
+        LibDependenciesFolder += ['lib-tk']
+    elif ver == 3:
+        LibDependencies += ['copyreg.py', 'io.py', 'site.py', '_collections_abc.py', '_sitebuiltins.py', 'sysconfig.py',
+                            'operator.py', 'reprlib.py', 'weakref.py', 'enum.py', 'fnmatch.py', 'posixpath.py',
+                            'datetime.py', 'tokenize.py']
+        LibDependenciesFolder += ["collections", "tkinter"]
+    else:
+        # dunno
+        LibDependencies += ['copyreg.py', 'io.py', 'site.py', '_collections_abc.py', '_sitebuiltins.py', 'sysconfig.py',
+                            'operator.py', 'reprlib.py', 'weakref.py', 'enum.py', 'fnmatch.py', 'posixpath.py',
+                            'datetime.py', 'tokenize.py']
+        LibDependenciesFolder += ["collections", "tkinter"]
+
+    destination = os.path.join(os.getcwd(), "Lib/")
     for i in LibDependencies:
-        # copy = ["cp", os.path.join(folder, "Lib", i), os.path.join("Lib/")]
-        # runProcess(copy)
-        shutil.copy2(os.path.join(folder, "Lib", i), os.path.join(os.getcwd(), "Lib/"))
-        py_compile.compile(os.path.join(os.getcwd(), "Lib", i))
-        # rm = ["rm", os.path.join("Lib", i)]
-        # runProcess(rm)
-        os.remove(os.path.join(os.getcwd(), "Lib", i))
+        srcFile = os.path.join(pyFolder, "Lib", i)
+        print("cp", srcFile, destination, "\n")
+        shutil.copy2(srcFile, destination)
+        outFile = os.path.join(os.getcwd(), "Lib", i)
+        # py_compile.compile(outFile)
+        # os.remove(outFile)
 
     for i in LibDependenciesFolder:
         # mkdir = ["mkdir", os.path.join("Lib", i)]
@@ -358,22 +430,17 @@ def copyPythonDependencies():
         libFolder = os.path.join(os.getcwd(), "Lib", i)
         if not folderExists(libFolder):
             os.mkdir(libFolder)
-        for j in os.listdir(os.path.join(folder, "Lib", i)):
-            if os.path.isfile(os.path.join(folder, "Lib", i, j)) and j.endswith(".py"):
-                # copy = ["cp", os.path.join(folder, "Lib", i, j), os.path.join("Lib", i)]
-                # runProcess(copy, True)
-                shutil.copy2(os.path.join(folder, "Lib", i, j), os.path.join(os.getcwd(), "Lib", i))
-                py_compile.compile(os.path.join("Lib", i, j))
-                # rm = ["rm", os.path.join("Lib", i, j)]
-                # runProcess(rm)
-                os.remove(os.path.join(os.getcwd(), "Lib", i, j))
+        for j in os.listdir(os.path.join(pyFolder, "Lib", i)):
+            if os.path.isfile(os.path.join(pyFolder, "Lib", i, j)) and j.endswith(".py"):
+                print("cp", os.path.join(pyFolder, "Lib", i, j), os.path.join(os.getcwd(), "Lib", i))
+                shutil.copy2(os.path.join(pyFolder, "Lib", i, j), os.path.join(os.getcwd(), "Lib", i))
+                # py_compile.compile(os.path.join("Lib", i, j))
+                # os.remove(os.path.join(os.getcwd(), "Lib", i, j))
 
     zipf = zipfile.ZipFile(os.path.join('out', 'pythonLib.zip'), 'w', zipfile.ZIP_DEFLATED)
     zipdir('Lib', zipf)
     zipf.close()
 
-    # rm = ["rm", "-r", "Lib"]
-    # runProcess(rm, True)
     shutil.rmtree(os.path.join(os.getcwd(), "Lib"))
 
 

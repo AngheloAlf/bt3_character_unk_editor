@@ -1,13 +1,13 @@
 cdef class FilesConst:
-    cpdef public list menuNameCode
-    cpdef public list endOfLine
-    cpdef public list statCode
+    cpdef public bytes menuNameCode
+    cpdef public bytes endOfLine
+    cpdef public bytes statCode
     # cpdef public list numberSign
-    cpdef public list transformCode
-    cpdef public list startOfMenuFile
-    cpdef public list endOfMenuFile
-    cpdef public list endOfFile
-    cpdef public list startOfutf16Text
+    cpdef public bytes transformCode
+    cpdef public bytes startOfMenuFile
+    cpdef public bytes endOfMenuFile
+    cpdef public bytes endOfFile
+    cpdef public bytes startOfutf16Text
 
 cdef class ProgramCons:
     cpdef public unicode Title
@@ -20,12 +20,12 @@ cdef class AmountConst:
     cpdef public int languagesAmount
 
 cdef class CharsTypes:
-    cpdef public str text
-    cpdef public str unknown1
-    cpdef public str unknown2
-    cpdef public str unknown8
-    cpdef public str unknown4
-    cpdef public str unknownD
+    cpdef public bytes text
+    cpdef public bytes unknown1
+    cpdef public bytes unknown2
+    cpdef public bytes unknown8
+    cpdef public bytes unknown4
+    cpdef public bytes unknownD
 
 # cpdef list findDataPos(str archivo, str data, int maxi=*, int inicio=*, int tope=*)
     # type: (str, str, int, int, int) -> list

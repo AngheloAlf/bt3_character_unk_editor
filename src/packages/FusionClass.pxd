@@ -1,5 +1,5 @@
 cdef class FusionClass:
-    cdef bytes barras, tipoFusion, resultado, compaAni\
+    cdef bytes barras, tipoFusion, resultado, compaAni
     cdef list compaEquipo
 
     cpdef list getFusionData(self, int fusionNumb)

@@ -1,5 +1,5 @@
-cimport SubMenu
-cimport Constants
+from . cimport SubMenu
+from . cimport Constants
 
 cdef class CharacterMenu:
     cpdef public list subMenus
@@ -8,6 +8,6 @@ cdef class CharacterMenu:
     cpdef bint isKnow(self)
         # type: () -> bool
 
-    cpdef str getAsLine(self)
+    cpdef bytes getAsLine(self)
         # type: () -> str
     

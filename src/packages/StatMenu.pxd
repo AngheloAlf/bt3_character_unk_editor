@@ -1,8 +1,8 @@
-cimport StatChars
-cimport Constants
+from . cimport StatChars
+from . cimport Constants
 
 cdef class StatMenu:
-    cdef str name
+    cdef bytes name
     cdef list data  #MaxPower, BarrasKiOcupa, KiOcupa
     cdef list statChars
 
@@ -21,13 +21,13 @@ cdef class StatMenu:
     cpdef unicode getBarrasKi(self)
         # type: () -> unicode
 
-    cpdef void setBarrasKi(self, str data)
+    cpdef void setBarrasKi(self, unicode data)
         # type: (str) -> None
 
     cpdef unicode getReservaKi(self)
         # type: () -> unicode
 
-    cpdef void setReservaKi(self, str data)
+    cpdef void setReservaKi(self, unicode data)
         # type: (str) -> None
 
     cpdef list getStatChars(self)
@@ -35,6 +35,6 @@ cdef class StatMenu:
 
     # cpdef setStatChars(self, list data)
 
-    cpdef str getAsLine(self)
+    cpdef bytes getAsLine(self)
         # type: () -> str
 
