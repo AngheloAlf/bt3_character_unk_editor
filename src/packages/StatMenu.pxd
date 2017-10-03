@@ -33,8 +33,6 @@ cdef class StatMenu:
     cpdef list getStatChars(self)
         # type: () -> list
 
-    # cpdef setStatChars(self, list data)
-
     cpdef bytes getAsLine(self)
         # type: () -> str
 

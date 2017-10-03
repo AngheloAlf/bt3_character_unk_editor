@@ -1,16 +1,11 @@
 from __future__ import absolute_import
+from __future__ import print_function
 
-import packages.StatMenu as StatMenu
-import packages.Constants as Constants
-
-try:
-    unicode("a")
-except NameError:
-    unicode = str
+from . import StatMenu, Constants
 
 
 def getMenuName(submenuData, i):
-    # type: (str, int) -> list
+    # type: (bytes, int) -> list
     i += 6
     nameData = [submenuData[i:i + 2]]
     i += 2
@@ -21,7 +16,7 @@ def getMenuName(submenuData, i):
 
 
 def getStat(submenuData, i):
-    # type: (str, int) -> StatMenu.StatMenu
+    # type: (bytes, int) -> StatMenu.StatMenu
     i += 6
     filesConst = Constants.FilesConst()
     endOfLine = filesConst.endOfLine
@@ -60,7 +55,7 @@ def getStat(submenuData, i):
 
 class SubMenu:
     def __init__(self, submenuData):
-        # type: (str) -> None
+        # type: (bytes) -> None
         self.menuName = []
         self.stats = []
 
@@ -87,21 +82,21 @@ class SubMenu:
 
     def getMenuNum(self):
         # type: () -> int
-        return int(unicode(self.menuName[0], "utf-16"))
+        return int(self.menuName[0].decode("utf-16"))
 
     def setMenuNum(self, num):
         # type: (int) -> None
         self.menuName[0] = str(num).encode("utf-16")[2:]
 
     def getMenuName(self):
-        # type: () -> unicode
-        return unicode(self.menuName[1], "utf-16")
+        # type: () -> str
+        return self.menuName[1].decode("utf-16")
 
     def setMenuName(self, name):
-        # type: (unicode) -> None
+        # type: (str) -> None
         if self.menuName[1] != name.encode("utf-16")[2:]:
             print(u"Cambiando:")
-            print(u"\t" + self.menuName[1] + u"->" + name.encode("utf-16")[2:])
+            print("\t" + self.menuName[1].decode("utf-16") + "->" + name.encode("utf-16").decode("utf-16"))
         self.menuName[1] = name.encode("utf-16")[2:]
         return
 
@@ -122,6 +117,6 @@ class SubMenu:
 
     def __str__(self):
         if len(self.menuName) >= 2:
-            return "SubMenu <" + self.menuName[1][::2] + ">"
+            return "SubMenu <" + self.menuName[1].decode("utf-16") + ">"
         else:
             return "SubMenu <None>"

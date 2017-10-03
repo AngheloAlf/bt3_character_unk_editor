@@ -62,7 +62,7 @@ class CharsTypes:
 
 
 def findDataPos(archivo, data, maxi=-1, inicio=0, tope=-1):
-    # type: (str, str, int, int, int) -> list
+    # type: (bytes, bytes, int, int, int) -> list
     i = 0
     l = list()
     while i < maxi or maxi == -1:

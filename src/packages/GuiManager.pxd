@@ -7,7 +7,7 @@ cpdef void popupWarning(unicode title, unicode text)
 cpdef void popupError(unicode title, unicode text)
     # type: (unicode, unicode) -> None
 
-cpdef popupYesNo(unicode title, unicode text)
+cpdef bint popupYesNo(unicode title, unicode text)
     # type: (unicode, unicode) -> bool
 
 cpdef void addMsgToText(txtWid, str msg)

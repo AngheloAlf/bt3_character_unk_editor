@@ -4,24 +4,7 @@ from . cimport CharacterMenu
 from . cimport Constants
 
 
-cdef TransformClass.TransformClass getTransformData(bytes archivo, int pointerFile, bint printData)
-    # type: (str, int, bool) -> TransformClass.TransformClass
-
-cdef FusionClass.FusionClass getFusionData(bytes archivo, int pointerFile, bint printData)
-    # type: (str, int, bool) -> FusionClass.FusionClass
-
-cdef CharacterMenu.CharacterMenu getMenusData(bytes archivo, int pointerFile)
-    # type: (str, int) -> CharacterMenu.CharacterMenu
-
-cdef bytes setTransformData(bytes archivo, int pointerFile, list transLines)
-    # type: (str, int, list) -> str
-
-cdef bytes setFusionData(bytes archivo, int pointerFile, bytes fusionLine)
-    # type: (str, int, str) -> str
-
 cdef class CharacterUnkParser:
-    # cdef public
-    # cdef readonly
     cdef unicode filename
     cdef bytes fullFile
     cdef public list menusList
@@ -29,8 +12,26 @@ cdef class CharacterUnkParser:
     cdef public FusionClass.FusionClass fusionObj
     cdef bint printData
 
+    cdef TransformClass.TransformClass __getTransformData(self)
+        # type: () -> TransformClass.TransformClass
+
+    cdef FusionClass.FusionClass __getFusionData(self)
+        # type: () -> FusionClass.FusionClass
+
+    cdef list __getMenusData(self)
+        # type: () -> list
+
     cpdef void parse(self)
         # type: () -> None
+
+    cdef bytes __setTransformData(self, CharacterUnkParser src)
+        # type: (CharacterUnkParser) -> bytes
+
+    cdef bytes __setFusionData(self, CharacterUnkParser src)
+        # type: (CharacterUnkParser) -> bytes
+
+    cdef bytes __setMenuData(self, CharacterUnkParser src)
+        # type: (CharacterUnkParser) -> bytes
 
     cdef void updateFileData(self, CharacterUnkParser src)
         # type: (CharacterUnkParser) -> None

@@ -2,16 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import packages.Constants as Constants
-
-try:
-    unicode("a")
-except NameError:
-    unicode = str
+from . import Constants
 
 
 class StatChars:
     def __init__(self, chars):
+        # type: (list) -> None
         self.type = chars[0]
         self.textType = chars[1][:2]
         if self.type == Constants.CharsTypes().text:
@@ -21,15 +17,15 @@ class StatChars:
 
     def getUnicodeList(self):
         # type: () -> list
-        data = [unicode(self.type, "utf-16")]
+        data = [self.type.decode("utf-16")]
         if self.type == Constants.CharsTypes().text:
-            data.append(unicode(self.textType + self.text, "utf-16"))
+            data.append((self.textType + self.text).decode("utf-16"))
         else:
-            data.append(unicode(self.text, "utf-16"))
+            data.append(self.text.decode("utf-16"))
         return data
 
     def getAsLine(self):
-        # type: () -> str
+        # type: () -> bytes
         filesConst = Constants.FilesConst()
         endOfLine = filesConst.endOfLine
         line = self.type

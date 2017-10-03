@@ -1,12 +1,8 @@
 from __future__ import absolute_import
 
 import functools
-import os
 
-import packages.LanguageManager as LanguageManager
-import packages.GuiManager as GuiManager
-import packages.Constants as Constants
-import packages.OptionsManager as OptionsManager
+from . import LanguageManager, GuiManager, Constants, OptionsManager
 
 try:
     import Tkinter as tk
@@ -14,7 +10,6 @@ try:
 except ImportError:
     import tkinter as tk
     from tkinter import ttk
-    unicode = str
 
 
 def comboTransUpdate(gui, event):
@@ -72,7 +67,7 @@ def addTrans(gui, tab, conf):
     command = functools.partial(comboTransUpdate, gui)
 
     for i in range(4):
-        GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[i], text=unicode(i + 1) + u": ")
+        GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[i], text=str(i + 1) + u": ")
 
         trans = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[i], values=charactersNames,
                                              width=180, command=command)
@@ -144,7 +139,7 @@ def addFusion(gui, tab, conf):
     for i in range(3):
         i += 1
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-        newTabs.add(subTab, text=language.getLanguageData(u"fus_tab_fus_" + unicode(i)))
+        newTabs.add(subTab, text=language.getLanguageData(u"fus_tab_fus_" + str(i)))
 
         GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[0], yPoss[0], text=fus_ki)
         fusBarras = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[0], yPoss[1],
@@ -170,7 +165,7 @@ def addFusion(gui, tab, conf):
         for j in range(4):
             j += 1
             GuiManager.generateTtkWidget(u"Label", subTab, u"place", xPoss[3+j], yPoss[2],
-                                         text=language.getLanguageData(u"fus_character_"+unicode(j)))
+                                         text=language.getLanguageData(u"fus_character_"+str(j)))
             fusEquipo = GuiManager.generateTtkWidget(u"Combobox", subTab, u"place", xPoss[3 + j], yPoss[3],
                                                      values=charactersNames, width=180, command=command)
             gui.comboboxs["fusEquipo"][i - 1].append(fusEquipo)
@@ -288,7 +283,7 @@ def addMenusTab(gui, tab, conf):
     for i in range(Constants.AmountConst().languagesAmount):
         subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
 
-        newTabs.add(subTab, text=language.getLanguageData(u"menus_lang_"+unicode(i+1)))
+        newTabs.add(subTab, text=language.getLanguageData(u"menus_lang_"+str(i+1)))
 
         menuNameTab = ttk.Notebook(subTab)
         gui.entries["nombreMenu"].append(list())
@@ -305,7 +300,7 @@ def addMenusTab(gui, tab, conf):
 
         for j in range(Constants.AmountConst().menusAmount):
             menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
-            menuNameTab.add(menuTab, text=language.getLanguageData(u"menus_menu_" + unicode(j+1)))
+            menuNameTab.add(menuTab, text=language.getLanguageData(u"menus_menu_" + str(j+1)))
 
             nameTab = ttk.LabelFrame(menuTab, width=880, height=70)
             nameTab.pack()
@@ -350,7 +345,7 @@ def addMenusTab(gui, tab, conf):
             GuiManager.generateTtkWidget(u"Label", frame, u"grid", 0, 4, text=menus_ki_number)
 
             for k in range(Constants.AmountConst().statsAmount):
-                checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=unicode(k+1))
+                checkbutton = GuiManager.generateTtkWidget(u"CheckButton", frame, u"grid", k+1, 0, text=str(k+1))
                 checkbutton["command"] = functools.partial(onActiveRowClick, gui, checkbutton, (i, j, k))
                 gui.checkbuttons["addStat"][-1][-1].append(checkbutton)
 
@@ -369,7 +364,7 @@ def addMenusTab(gui, tab, conf):
                 gui.comboboxs["reservaKi"][-1][-1].append(reservaKi)
 
                 showData = GuiManager.generateTtkWidget(u"Button", frame, u"grid", k+1, 5,
-                                                        text=u"[WIP]" + menus_data + u" " + unicode(k + 1))
+                                                        text=u"[WIP]" + menus_data + u" " + str(k + 1))
                 gui.buttons["showData"][-1][-1].append(showData)
 
             frame.bind("<Configure>", functools.partial(updateScrollbar, canvas, width=860, height=160))

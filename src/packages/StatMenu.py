@@ -1,12 +1,6 @@
 from __future__ import absolute_import
 
-import packages.Constants as Constants
-import packages.StatChars as StatChars
-
-try:
-    unicode("a")
-except NameError:
-    unicode = str
+from . import Constants, StatChars
 
 
 class StatMenu:
@@ -18,26 +12,26 @@ class StatMenu:
             self.statChars.append(StatChars.StatChars(i))
 
     def getName(self):
-        # type: () -> unicode
-        return unicode(self.name, "utf-16")
+        # type: () -> str
+        return self.name.decode("utf-16")
 
     def setName(self, name):
-        # type: (unicode) -> None
+        # type: (str) -> None
         self.name = name.encode("utf-16")[2:]
         return
 
     def getMaxPower(self):
         # type: () -> int
-        return int(unicode(self.data[0], "utf-16"))
+        return int(self.data[0].decode("utf-16"))
 
     def setMaxPower(self, data):
         # type: (int) -> None
-        self.data[0] = unicode(data).encode("utf-16")[2:]
+        self.data[0] = str(data).encode("utf-16")[2:]
         return
 
     def getBarrasKi(self):
-        # type: () -> unicode
-        return unicode(self.data[1], "utf-16")
+        # type: () -> str
+        return self.data[1].decode("utf-16")
 
     def setBarrasKi(self, data):
         # type: (str) -> None
@@ -45,8 +39,8 @@ class StatMenu:
         return
 
     def getReservaKi(self):
-        # type: () -> unicode
-        return unicode(self.data[2], "utf-16")
+        # type: () -> str
+        return self.data[2].decode("utf-16")
 
     def setReservaKi(self, data):
         # type: (str) -> None
@@ -55,14 +49,7 @@ class StatMenu:
 
     def getStatChars(self):
         # type: () -> list
-        # return [[unicode(y, "utf-16") for y in x] for x in self.statChars]
         return [x.getUnicodeList() for x in self.statChars]
-
-    # def setStatChars(self, data):
-    #    a = map(lambda x: [y.encode("utf-16")[2:] for y in x], data)
-    #    print a
-    #    print self.statChars
-    #    return a == self.statChars
 
     def getAsLine(self):
         # type: () -> str
@@ -70,7 +57,6 @@ class StatMenu:
         statCode = filesConst.statCode
         endOfLine = filesConst.endOfLine
         line = statCode + b"".join(self.data) + self.name + endOfLine
-        # line += "".join(["".join(x) + endOfLine for x in self.statChars])
         line += b"".join([x.getAsLine() for x in self.statChars])
         return line
 

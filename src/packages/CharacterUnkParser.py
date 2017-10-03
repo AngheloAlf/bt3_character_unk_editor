@@ -1,130 +1,126 @@
-from __future__ import absolute_import
-
-import packages.TransformClass as TransformClass
-import packages.FusionClass as FusionClass
-import packages.CharacterMenu as CharacterMenu
-import packages.Constants as Constants
-
-
-def getTransformData(archivo, pointerFile, printData):
-    # type: (str, int, bool) -> TransformClass.TransformClass
-    line1 = archivo[pointerFile:pointerFile + 16]
-    pointerFile += 16
-    line2 = archivo[pointerFile:pointerFile + 14]
-    return TransformClass.TransformClass(line1, line2, printData)
-
-
-def getFusionData(archivo, pointerFile, printData):
-    # type: (str, int, bool) -> FusionClass.FusionClass
-    return FusionClass.FusionClass(archivo[pointerFile:pointerFile + 24], printData)
-
-
-def getMenusData(archivo, pointerFile):
-    # type: (str, int) -> CharacterMenu.CharacterMenu
-    filesConst = Constants.FilesConst()
-    endOfMenuFile = filesConst.endOfMenuFile
-
-    pos = archivo.find(endOfMenuFile, pointerFile-4)
-    menu = archivo[pointerFile-4:pos]
-
-    return CharacterMenu.CharacterMenu(menu)
-
-
-def setTransformData(archivo, pointerFile, transLines):
-    # type: (str, int, list) -> str
-    archivo = archivo[:pointerFile] + transLines[0] + transLines[1] + archivo[pointerFile + 30:]
-    return archivo
-
-
-def setFusionData(archivo, pointerFile, fusionLine):
-    # type: (str, int, str) -> str
-    archivo = archivo[:pointerFile] + fusionLine + archivo[pointerFile + 24:]
-    return archivo
+from __future__ import absolute_import, print_function
+from . import TransformClass, FusionClass, CharacterMenu, Constants
 
 
 class CharacterUnkParser:
     def __init__(self, name, printData=False):
-        # type: (unicode, bool) -> None
+        # type: (str, bool) -> None
         self.filename = name
         self.transObj = None
         self.fusionObj = None
         self.menusList = list()
         self.printData = printData
 
-        archivo = open(self.filename, "rb")
-        self.fullFile = archivo.read()
-        archivo.close()
+        fullFile = open(self.filename, "rb")
+        self.fullFile = fullFile.read()
+        fullFile.close()
+        return
 
-    def parse(self):
-        # type: () -> None
+    def __getTransformData(self):
+        # type: () -> TransformClass.TransformClass
         filesConst = Constants.FilesConst()
         transformCode = filesConst.transformCode
-        startOfMenuFile = filesConst.startOfMenuFile
-
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
-        print(pointerFile)
-        self.transObj = getTransformData(self.fullFile, pointerFile, self.printData)
-        self.fusionObj = getFusionData(self.fullFile, pointerFile+30, self.printData)
+
+        line1 = self.fullFile[pointerFile:pointerFile + 16]
+        pointerFile += 16
+        line2 = self.fullFile[pointerFile:pointerFile + 14]
+        self.transObj = TransformClass.TransformClass(line1, line2, self.printData)
+        return self.transObj
+
+    def __getFusionData(self):
+        # type: () -> FusionClass.FusionClass
+        filesConst = Constants.FilesConst()
+        transformCode = filesConst.transformCode
+        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
+        pointerFile += 30
+
+        self.fusionObj = FusionClass.FusionClass(self.fullFile[pointerFile:pointerFile + 24], self.printData)
+        return self.fusionObj
+
+    def __getMenusData(self):
+        # type: () -> list
+        filesConst = Constants.FilesConst()
+        startOfMenuFile = filesConst.startOfMenuFile
+        endOfMenuFile = filesConst.endOfMenuFile
 
         starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
         pointer = 0
         while pointer < len(starts):
-            charMenuObj = getMenusData(self.fullFile, starts[pointer]+2)
-            self.menusList.append(charMenuObj)
+            pointerFile = starts[pointer]-2
+            pos = self.fullFile.find(endOfMenuFile, pointerFile)
+            menu = self.fullFile[pointerFile:pos]
+            self.menusList.append(CharacterMenu.CharacterMenu(menu))
             pointer += 1
+
+        return self.menusList
+
+    def parse(self):
+        # type: () -> None
+        self.__getTransformData()
+        self.__getFusionData()
+        self.__getMenusData()
         return
 
-    def updateFileData(self, src):
-        # type: (CharacterUnkParser) -> None
+    def __setTransformData(self, src):
+        # type: (CharacterUnkParser) -> bytes
+        filesConst = Constants.FilesConst()
+        transformCode = filesConst.transformCode
+        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
+
+        transLines = src.transObj.getAsLines()
+        return self.fullFile[:pointerFile] + transLines[0] + transLines[1] + self.fullFile[pointerFile + 30:]
+
+    def __setFusionData(self, src):
+        # type: (CharacterUnkParser) -> bytes
+        filesConst = Constants.FilesConst()
+        transformCode = filesConst.transformCode
+        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
+        pointerFile += 30
+
+        fusionLine = src.fusionObj.getAsLines()
+        return self.fullFile[:pointerFile] + fusionLine + self.fullFile[pointerFile + 24:]
+
+    def __setMenuData(self, src):
+        # type: (CharacterUnkParser) -> bytes
         filesConst = Constants.FilesConst()
         startOfMenuFile = filesConst.startOfMenuFile
         endOfMenuFile = filesConst.endOfMenuFile
-        transformCode = filesConst.transformCode
-
-        pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
-        
-        if src:
-            transLines = src.transObj.getAsLines()
-            fusionLine = src.fusionObj.getAsLines()
-        else:
-            transLines = self.transObj.getAsLines()
-            fusionLine = self.fusionObj.getAsLines()
-        
-        self.fullFile = setTransformData(self.fullFile, pointerFile, transLines)
-
-        self.fullFile = setFusionData(self.fullFile, pointerFile+30, fusionLine)
 
         starts = Constants.findDataPos(self.fullFile, startOfMenuFile, 8)
         ends = Constants.findDataPos(self.fullFile, endOfMenuFile, 8)
 
         newFile = self.fullFile[:starts[0]]
         pointer = 0
-        while pointer < len(starts)-1:
-            if src:
-                newMenu = src.menusList[pointer].getAsLine()
-            else:
-                newMenu = self.menusList[pointer].getAsLine()
-            newFile += newMenu + self.fullFile[ends[pointer]+4:starts[pointer+1]]
-            pointer += 1
-        if src:
+        while pointer < len(starts) - 1:
             newMenu = src.menusList[pointer].getAsLine()
-        else:
-            newMenu = self.menusList[pointer].getAsLine()
-        newFile += newMenu + self.fullFile[ends[pointer]+4:]
+            newFile += newMenu + self.fullFile[ends[pointer] + 4:starts[pointer + 1]]
+            pointer += 1
 
-        self.fullFile = newFile
+        newMenu = src.menusList[pointer].getAsLine()
+        newFile += newMenu + self.fullFile[ends[pointer] + 4:]
+        return newFile
+
+    def updateFileData(self, src):
+        # type: (CharacterUnkParser) -> None
+        if not src:
+            src = self
+        self.fullFile = self.__setTransformData(src)
+        self.fullFile = self.__setFusionData(src)
+        self.fullFile = self.__setMenuData(src)
         return
 
     def saveFile(self, filename=None, src=None):
-        # type: (unicode, CharacterUnkParser) -> None
+        # type: (str, CharacterUnkParser) -> None
         if not filename:
             filename = self.filename
 
         self.updateFileData(src)
 
-        archivo = open(filename, "wb")
-        archivo.write(self.fullFile)
-        archivo.close()
+        finalFile = open(filename, "wb")
+        finalFile.write(self.fullFile)
+        finalFile.close()
+        return
 
     def __str__(self):
         # type: () -> str

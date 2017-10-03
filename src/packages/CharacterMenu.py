@@ -1,12 +1,10 @@
 from __future__ import absolute_import
-
-import packages.SubMenu as SubMenu
-import packages.Constants as Constants
+from . import SubMenu, Constants
 
 
 class CharacterMenu:
     def __init__(self, menuData):
-        # type: (str) -> None
+        # type: (bytes) -> None
         self.subMenus = []
         self.unknow = False
 
@@ -29,7 +27,7 @@ class CharacterMenu:
         return not self.unknow
 
     def getAsLine(self):
-        # type: () -> str
+        # type: () -> bytes
         line = b""
         filesConst = Constants.FilesConst()
         startOfutf16Text = filesConst.startOfutf16Text

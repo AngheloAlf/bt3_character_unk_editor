@@ -1,21 +1,14 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
-
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import functools
 import os
 import sys
 
-import packages.GuiManager as GM
-import packages.CharacterUnkParser as CharacterUnkParser
-import packages.SubMenu as SubMenu
-import packages.StatMenu as StatMenu
-import packages.LanguageManager as LanguageManager
-import packages.Constants as Constants
-import packages.UnkGuiGenerator as UnkGuiGenerator
-import packages.OptionsManager as OptionsManager
+from . import GuiManager as GM
+from . import CharacterUnkParser, SubMenu, StatMenu, LanguageManager, Constants, UnkGuiGenerator, OptionsManager
 
 try:
     import Tkinter as tk
@@ -23,7 +16,6 @@ try:
 except ImportError:
     import tkinter as tk
     from tkinter import ttk
-
     unicode = str
 
 
@@ -37,27 +29,27 @@ def updateTransObject():
     language = LanguageManager.LanguageManager(conf[u"language"])
     for i in range(4):
         a = gui.comboboxs["trans"][i].get()
-        a = language.getCharactersNamesID(unicode(a))
+        a = language.getCharactersNamesID(a)
 
         b = gui.comboboxs["barras"][i].current()
 
         c = gui.comboboxs["ani"][i].get()
-        c = language.getAnimationsID(unicode(c))
+        c = language.getAnimationsID(c)
 
         d = gui.comboboxs["aura"][i].get()
-        d = language.getAurasID(unicode(d))
+        d = language.getAurasID(d)
 
         e = gui.comboboxs["absor"][i].get()
-        e = language.getCharactersNamesID(unicode(e))
+        e = language.getCharactersNamesID(e)
 
         character.data.transObj.setTransformData(i, [a, b, c, d, e])
 
     r3 = gui.comboboxs["R3"][0].get()
-    r3 = language.getR3CommandID(unicode(r3))
+    r3 = language.getR3CommandID(r3)
     character.data.transObj.setR3Command(r3)
 
     bonus = gui.comboboxs["bonus"][0].get()
-    bonus = language.getTransformationBonusID(unicode(bonus))
+    bonus = language.getTransformationBonusID(bonus)
     character.data.transObj.setBonus(bonus)
 
     language.close()
@@ -98,12 +90,10 @@ def updateMenusObject():
         subMenuLoop = character.data.menusList[i].subMenus
         for j in range(Constants.AmountConst().menusAmount):
             if gui.checkbuttons["menuOn"][i][j].is_checked():
-                # if j < len(subMenuLoop):
                 nombreMenu = unicode(gui.entries["nombreMenu"][i][j].get())
 
                 if j < len(subMenuLoop) and subMenuLoop[j].isNone():
-                    raise
-                # if not subMenuLoop[j].isNone():
+                    raise TypeError("NoneType found")
 
                 if j >= len(subMenuLoop):
                     nuevoSubMenu = SubMenu.SubMenu("")
@@ -392,7 +382,7 @@ def updateMultiplesUnkFiles(archivos):
     updateMenusObject()
     try:
         for arch in archivos:
-            print( (arch, ) )
+            print((arch, ))
             personaje = CharacterUnkParser.CharacterUnkParser(arch)
             personaje.parse()
             personaje.saveFile(src=character.data)
@@ -408,7 +398,7 @@ def updateMultiplesUnkFilesCaller():
     # type: () -> None
     if character.data:
         GM.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes,
-                                        updateMultiplesUnkFiles)
+                                updateMultiplesUnkFiles)
     else:
         GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
 

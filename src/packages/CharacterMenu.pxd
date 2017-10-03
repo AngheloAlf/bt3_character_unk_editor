@@ -9,5 +9,5 @@ cdef class CharacterMenu:
         # type: () -> bool
 
     cpdef bytes getAsLine(self)
-        # type: () -> str
+        # type: () -> bytes
     

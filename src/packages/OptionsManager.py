@@ -1,9 +1,4 @@
-try:
-    unicode("a")
-except NameError:
-    unicode = str
-
-defaults = {"language": "spanish.db"}
+defaults = {u"language": u"spanish.db"}
 
 
 def writeDefaultOptions(openFile):
@@ -15,7 +10,7 @@ def writeDefaultOptions(openFile):
 
 class OptionsManager:
     def __init__(self, name):
-        # type: (unicode) -> None
+        # type: (str) -> None
         self.name = name
         self.options = dict()
         try:
@@ -27,7 +22,7 @@ class OptionsManager:
             opt = open(self.name)
         for line in opt:
             data = line.strip().split("=")
-            self.options[unicode(data[0])] = unicode(data[1])
+            self.options[data[0]] = data[1]
         opt.close()
         if self.checkOptions():
             self.updateFile()
@@ -37,9 +32,8 @@ class OptionsManager:
         # type: () -> bool
         dif = False
         for key, value in defaults.items():
-            key = unicode(key)
             if key not in self.options:
-                self.options[key] = unicode(value)
+                self.options[key] = value
                 dif = True
         return dif
 
@@ -52,16 +46,16 @@ class OptionsManager:
         return
 
     def __getitem__(self, option):
-        # type: (unicode) -> unicode
-        if unicode != type(option):
+        # type: (str) -> str
+        if str != type(option):
             raise TypeError("Bad type for option", (option, type(option)))
         if option not in self.options:
             raise ValueError("There is no option '"+option+"'", option)
         return self.options[option]
 
     def __setitem__(self, key, value):
-        # type: (unicode, unicode) -> None
-        if unicode != type(key) or unicode != type(value):
+        # type: (str, str) -> None
+        if str != type(key) or str != type(value):
             raise TypeError("Bad type for option", (key, type(key)), (value, type(value)))
         else:
             self.options[key] = value

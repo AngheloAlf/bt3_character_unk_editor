@@ -10,26 +10,24 @@ except ImportError:
     from tkinter import filedialog as tkFileDialog
     from tkinter import messagebox as tkMessageBox
 
-    unicode = str
-
 
 def popupInfo(title, text):
-    # type: (unicode, unicode) -> None
+    # type: (str, str) -> None
     tkMessageBox.showinfo(title, text)
 
 
 def popupWarning(title, text):
-    # type: (unicode, unicode) -> None
+    # type: (str, str) -> None
     tkMessageBox.showwarning(title, text)
 
 
 def popupError(title, text):
-    # type: (unicode, unicode) -> None
+    # type: (str, str) -> None
     tkMessageBox.showerror(title, text)
 
 
 def popupYesNo(title, text):
-    # type: (unicode, unicode) -> bool
+    # type: (str, str) -> bool
     return tkMessageBox.askyesno(title, text)
 
 
@@ -51,8 +49,8 @@ def addMsgToText(txtWid, msg):
 
 
 def openFile(title, fileTypes, callback=None):
-    # type: (unicode, tuple, (unicode, )) -> unicode
-    archivo = unicode(tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes))
+    # type: (str, tuple, (str, )) -> str
+    archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)
     try:
         print(archivo)
     except UnicodeEncodeError:
@@ -63,8 +61,8 @@ def openFile(title, fileTypes, callback=None):
 
 
 def saveFile(title, fileTypes, callback=None):
-    # type: (unicode, tuple, (unicode, )) -> unicode
-    archivo = unicode(tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes))
+    # type: (str, tuple, (str, )) -> str
+    archivo = tkFileDialog.asksaveasfilename(initialdir="/", title=title, filetypes=fileTypes)
     try:
         print(archivo)
     except UnicodeEncodeError:
@@ -75,11 +73,10 @@ def saveFile(title, fileTypes, callback=None):
 
 
 def selectMultiplesFiles(title, fileTypes, callback=None):
-    # type: (unicode, tuple, (unicode, )) -> list[unicode]
+    # type: (str, tuple, (str, )) -> list[str]
     archivos = tkFileDialog.askopenfilenames(initialdir="/", title=title, filetypes=fileTypes)
     if type(archivos) != tuple:
         return list()
-    archivos = list(map(unicode, archivos))
     try:
         print(archivos)
     except UnicodeEncodeError:
@@ -90,8 +87,8 @@ def selectMultiplesFiles(title, fileTypes, callback=None):
 
 
 def selectFolder(title=None, callback=None):
-    # type: (unicode, (unicode, )) -> unicode
-    carpeta = unicode(tkFileDialog.askdirectory(title=title))
+    # type: (str, (str, )) -> str
+    carpeta = tkFileDialog.askdirectory(title=title)
     try:
         print(carpeta)
     except UnicodeEncodeError:
@@ -102,7 +99,7 @@ def selectFolder(title=None, callback=None):
 
 
 def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, current=None, command=None, **kwargs):
-    # type: (unicode, ttk.Frame|ttk.LabelFrame, unicode, int, int, list, int, int, (), **kwargs) -> None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
+    # type: (str, ttk.Frame|ttk.LabelFrame, str, int, int, list, int, int, (), **kwargs) -> None|ttk.Label|ttk.Combobox|ttk.Entry|ttk.Button|CheckButton
     if wtype == u"Label":
         widget = ttk.Label(master, **kwargs)
     elif wtype == u"Combobox":
@@ -223,7 +220,7 @@ def enableData(dictData):
 
 class GuiManager:
     def __init__(self, title=u"Tk", icon=None):
-        # type: (unicode, unicode) -> None
+        # type: (str, str) -> None
         self.gui = tk.Tk()
         self.tabsWidth = 0
         self.tabsHeight = 0
@@ -241,7 +238,7 @@ class GuiManager:
         self.closeOverrided = False
 
     def addTab(self, tabName, tabCallback):
-        # type: (unicode, (GuiManager, ttk.Frame)) -> None
+        # type: (str, (GuiManager, ttk.Frame)) -> None
         tab = ttk.Frame(self.tabs)  # , width = self.tabsWidth, height = self.tabsHeight)
         self.tabs.add(tab, text=tabName)
         self.tabsData[tabName] = tab
@@ -278,7 +275,7 @@ class GuiManager:
         self.gui.config(menu=menuVar)
 
     def start(self, title=None, icon=None):
-        # type: (unicode, unicode) -> None
+        # type: (str, str) -> None
         if icon:
             self.icon = icon
         if self.icon:
@@ -308,8 +305,6 @@ class GuiManager:
         if self.running:
             self.clean()
             self.gui.destroy()
-        # del self.gui
-        # self.entries = dict()
         self.closeOverrided = False
         self.tabsData = dict()
         self.gui = tk.Tk()

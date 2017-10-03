@@ -4,7 +4,7 @@ import os
 
 class LanguageManager:
     def __init__(self, dbname):
-        # type: (unicode) -> None
+        # type: (str) -> None
         self.dbname = dbname
         dbFolder = os.path.join(os.getcwd(), "lang", dbname)
         dbFolder2 = os.path.join(os.getcwd(), "..", "lang", dbname)
@@ -46,37 +46,35 @@ class LanguageManager:
         self.cursor.execute("SELECT * FROM fusionsTypes")
         return self.cursor.fetchall()
 
-
     def getCharactersNamesID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM charactersNames WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
 
     def getAnimationsID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM animations WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
 
     def getAurasID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM auras WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
 
     def getR3CommandID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM r3Command WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
 
     def getTransformationBonusID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM transformationBonus WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
 
     def getFusionsTypesID(self, name):
-        # type: (unicode) -> int
+        # type: (str) -> int
         self.cursor.execute("SELECT id FROM fusionsTypes WHERE name='" + name + "'")
         return self.cursor.fetchone()[0]
-
 
     def getCharactersNamesPos(self, ide):
         # type: (int) -> int
@@ -132,16 +130,14 @@ class LanguageManager:
             contador += 1
         return 0
 
-
     def getLanguageData(self, key):
-        # type: (unicode) -> unicode
+        # type: (str) -> str
         self.cursor.execute(u"SELECT name FROM languageData WHERE langKey=?", (key, ))
         data = self.cursor.fetchone()
         if data:
             name = data[0]
             return name
         return key
-
 
     def executeScriptsFromFile(self, filename):
         # type: (str) -> None

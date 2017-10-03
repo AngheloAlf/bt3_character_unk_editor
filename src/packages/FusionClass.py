@@ -2,7 +2,7 @@ class FusionClass:
     def __init__(self, datos, printData=False):
         # type: (bytes, bool) -> None
         if len(datos) != 24:
-            print(1 / 0)
+            raise TypeError("data len != 24")
         self.barras = datos[0:3]
         self.tipoFusion = datos[3:6]
         self.resultado = datos[6:9]
