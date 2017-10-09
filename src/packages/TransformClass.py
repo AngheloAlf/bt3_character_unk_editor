@@ -35,9 +35,11 @@ class TransformClass:
         if command < 0 or command > 255:
             return False
 
-        if type(self.command) != int:
-            command = chr(command)
-
+        if type(command) == int:
+            if type(b"") == str:  # py2
+                command = chr(command)
+            else:  # py3
+                command = bytes([command])
         self.command = command
 
         return True
@@ -89,8 +91,11 @@ class TransformClass:
         if bonus < 0 or bonus > 255:
             return False
 
-        if type(self.bonus) != int:
-            bonus = chr(bonus)
+        if type(bonus) == int:
+            if type(b"") == str:  # py2
+                bonus = chr(bonus)
+            else:  # py3
+                bonus = bytes([bonus])
 
         self.bonus = bonus
         return True
@@ -101,15 +106,11 @@ class TransformClass:
         line1 += self.trans
         line1 += self.barras
 
-        line2 = self.aniCam + self.aura + self.abs
-        if type(self.command) == int:
-            line2 += bytes([self.command])
-        else:
-            line2 += self.command
-        if type(self.bonus) == int:
-            line2 += bytes([self.bonus])
-        else:
-            line2 += self.bonus
+        line2 = self.aniCam
+        line2 += self.aura
+        line2 += self.abs
+        line2 += self.command
+        line2 += self.bonus
 
         return [line1, line2]
 

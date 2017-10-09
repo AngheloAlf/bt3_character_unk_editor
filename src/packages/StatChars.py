@@ -6,14 +6,22 @@ from . import Constants
 
 
 class StatChars:
-    def __init__(self, chars):
-        # type: (list) -> None
-        self.type = chars[0]
-        self.textType = chars[1][:2]
+    def __init__(self, data, printData=False):
+        # type: (bytes, bool) -> None
+        self.type = data[:6]
+        rest = data[6:]
+        self.textType = rest[:2]
         if self.type == Constants.CharsTypes().text:
-            self.text = chars[1][2:]
+            self.text = rest[2:]
         else:
-            self.text = chars[1]
+            self.text = rest
+        self.printData = printData
+        if self.printData:
+            print("\n\t\t\tStatChars:")
+            print("\t\t\t\ttype:", self.type, self.type.decode("utf-16"))
+            print("\t\t\t\ttextType:", self.textType, self.textType.decode("utf-16"))
+            print("\t\t\t\ttext:", self.text, self.text.decode("utf-16"))
+        return
 
     def getUnicodeList(self):
         # type: () -> list
@@ -26,12 +34,9 @@ class StatChars:
 
     def getAsLine(self):
         # type: () -> bytes
-        filesConst = Constants.FilesConst()
-        endOfLine = filesConst.endOfLine
         line = self.type
         if self.type == Constants.CharsTypes().text:
             line += self.textType + self.text
         else:
             line += self.text
-        line += endOfLine
         return line

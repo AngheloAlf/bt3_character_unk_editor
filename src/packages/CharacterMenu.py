@@ -22,13 +22,12 @@ class CharacterMenu:
                 subMenu = menuData[indices[i]:]
             else:
                 subMenu = menuData[indices[i]:indices[i+1]]
-            self.subMenus.append(SubMenu.SubMenu(subMenu))
+            self.subMenus.append(SubMenu.SubMenu(subMenu, self.printData))
 
         if len(self.subMenus) <= 2:
             self.unknow = True
 
-        if self.printData:
-            print("\n\tCharacterMenu: \n\tunknow: ", self.unknow)
+        return
 
     def isKnow(self):
         # type: () -> bool

@@ -4,42 +4,6 @@ from __future__ import print_function
 from . import StatMenu, Constants
 
 
-def getStat(submenuData, i):
-    # type: (bytes, int) -> StatMenu.StatMenu
-    i += 6
-    filesConst = Constants.FilesConst()
-    endOfLine = filesConst.endOfLine
-    statCode = filesConst.statCode
-
-    statNumbers = [submenuData[i:i + 2], submenuData[i + 2:i + 4], submenuData[i + 4:i + 6]]
-    i += 6
-    pos = submenuData.find(endOfLine, i)
-
-    statName = submenuData[i:pos]
-    i = pos + 2
-
-    tope = submenuData.find(statCode, i)
-    ends = Constants.findDataPos(submenuData, endOfLine, inicio=i, tope=tope)
-
-    statChars = []
-    if len(ends) > 0:
-        subStatFirst = submenuData[i:i+6]
-        subStatFirstList1 = [subStatFirst]
-        description = submenuData[i+6:ends[0]]
-        statChars.append([subStatFirst, description])
-        for endI in range(len(ends[:-1])):
-            end = ends[endI]
-            end += 2
-            subStatFirst = submenuData[end:end+6]
-            subStatFirstList1.append(subStatFirst)
-            end += 6
-
-            description = submenuData[end:ends[endI+1]]
-            statChars.append([subStatFirst, description])
-
-    return StatMenu.StatMenu([statNumbers, statName], statChars)
-
-
 class SubMenu:
     def __init__(self, submenuData, printData=False):
         # type: (bytes, bool) -> None
@@ -51,15 +15,11 @@ class SubMenu:
             print("\nsubMenu ")
 
         if submenuData != b"":
-            filesConst = Constants.FilesConst()
-            statCode = filesConst.statCode
-
             # Nombre del menu
             self.__searchMenuName(submenuData)
 
             # Cada stat
-            for i in Constants.findDataPos(submenuData, statCode):
-                self.stats.append(getStat(submenuData, i))
+            self.__searchAllStats(submenuData)
         return
 
     def __searchMenuName(self, submenuData):
@@ -69,12 +29,26 @@ class SubMenu:
         pos = submenuData.find(menuNameCode) + 6
         self.menuNum = submenuData[pos:pos + 2]
         end = submenuData.find(filesConst.endOfLine, pos+2)
-        self.menuName = submenuData[pos:end]
+        self.menuName = submenuData[pos+2:end]
         if self.printData:
             print("\n\tsubMenu: ")
-            print("\t\tmenuNum: ", self.menuNum)
-            print("\t\t", self.menuName)
+            print("\t\tmenuNum: ", self.menuNum, self.menuNum.decode("utf-16"))
+            print("\t\tmenuName", self.menuName, self.menuName.decode("utf-16"))
         return [self.menuNum, self.menuName]
+
+    def __searchAllStats(self, submenuData):
+        # type: (bytes) -> list
+        filesConst = Constants.FilesConst()
+        statCode = filesConst.statCode
+
+        start = submenuData.find(self.menuName) + len(self.menuName)
+        ends = Constants.findDataPos(submenuData, statCode, inicio=start) + [len(submenuData)]
+        start = ends[0]+6
+        for tope in ends[1:]:
+            statmenu = StatMenu.StatMenu(submenuData[start:tope], self.printData)
+            self.stats.append(statmenu)
+            start = tope+6
+        return self.stats
 
     def isNone(self):
         # type: () -> bool
@@ -102,16 +76,12 @@ class SubMenu:
         return
 
     def getAsLine(self):
-        # type: () -> str
+        # type: () -> bytes
         filesConst = Constants.FilesConst()
         menuNameCode = filesConst.menuNameCode
         endOfLine = filesConst.endOfLine
         line = b""
-        if len(self.menuName) == 2:
-            line += menuNameCode + self.menuName[0] + self.menuName[1] + endOfLine
-        else:
-            print(self.menuName)
-            print(len(self.stats))
+        line += menuNameCode + self.menuNum + self.menuName + endOfLine
         for i in self.stats:
             line += i.getAsLine()
         return line

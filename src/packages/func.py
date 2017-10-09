@@ -110,10 +110,7 @@ def updateMenusObject():
                         reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
 
                         if k >= len(stats):
-                            statName = [[b'', b'', b''], b'']
-                            # statChars = [["", ""]]
-                            statChars = []
-                            nuevoStat = StatMenu.StatMenu(statName, statChars)
+                            nuevoStat = StatMenu.StatMenu(b"")
                             stats.append(nuevoStat)
 
                         stats[k0].setName(nombrestat)
@@ -132,42 +129,46 @@ def parseUnkFile(fileName):
     # type: (str) -> None
     if not fileName:
         return
-    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=True)
+    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=False)
     gui.clean()
 
     try:
         character.data.parse()
+    except Exception as err:
+        print(err)
+        character.data = None
+        GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
+        raise
+    else:
         try:
             updateTransTab()
             updateFusionsTab()
             updateMenusTab()
         except Exception as err:
             print(err)
-
-            log = open(os.path.join("logs", "transObj.log"), "wb")
-            dataLog = character.data.transObj.getAsLines()
-            log.write(dataLog[0]+dataLog[1])
-            log.close()
-
-            log = open(os.path.join("logs", "fusionObj.log"), "wb")
-            dataLog = character.data.fusionObj.getAsLines()
-            log.write(dataLog)
-            log.close()
-
-            for i in range(len(character.data.menusList)):
-                iMenu = character.data.menusList[i]
-                dataLog = iMenu.getAsLine()
-                log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
-                log.write(dataLog)
-                log.close()
-
+            # logData()
             GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
             raise
-    except Exception as err:
-        print(err)
-        character.data = None
-        GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
-        raise
+    return
+
+
+def logData():
+    log = open(os.path.join("logs", "transObj.log"), "wb")
+    dataLog = character.data.transObj.getAsLines()
+    log.write(dataLog[0] + dataLog[1])
+    log.close()
+
+    log = open(os.path.join("logs", "fusionObj.log"), "wb")
+    dataLog = character.data.fusionObj.getAsLines()
+    log.write(dataLog)
+    log.close()
+
+    for i in range(len(character.data.menusList)):
+        iMenu = character.data.menusList[i]
+        dataLog = iMenu.getAsLine()
+        log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
+        log.write(dataLog)
+        log.close()
 
 
 def popData(data):
@@ -519,10 +520,8 @@ def onMainClose():
 
 
 def debugMain():
-    rest = gui.isRestart()
-    print(u"Modo:", rest)
-    print(u"Seteando:", not rest)
-    gui.setRestart(not rest)
+    print("log")
+    logData()
     return
 
 
@@ -600,7 +599,7 @@ def main():
 
         gui.overrideClose(onMainClose)
 
-        print(u"Iniciando interfaz")
+        print(u"Iniciando interfaz.\n")
         gui.start()
 
         if not gui.isRestart():

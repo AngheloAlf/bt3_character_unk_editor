@@ -2,8 +2,11 @@ from . cimport StatChars
 from . cimport Constants
 
 cdef class StatMenu:
+    cdef bint printData
+    cdef bytes maxPower
+    cdef bytes usedBars
+    cdef bytes usedKi
     cdef bytes name
-    cdef list data  #MaxPower, BarrasKiOcupa, KiOcupa
     cdef list statChars
 
     cpdef unicode getName(self)
