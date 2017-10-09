@@ -264,7 +264,7 @@ def addMenusTab(gui, tab, conf):
     newTabs = ttk.Notebook(tab)
 
     xPoss = [5, 20, 180, 240, 440, 40, 240, 440, 640]
-    yPoss = [0, 20, 50, 100, 200]
+    yPoss = [0, 20, 50, 100, 200, 260]
 
     gui.entries["nombreMenu"] = list()
 
@@ -281,7 +281,7 @@ def addMenusTab(gui, tab, conf):
     commandCombo = functools.partial(comboMenusUpdate, gui)
 
     for i in range(Constants.AmountConst().languagesAmount):
-        subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
+        subTab = ttk.Frame(newTabs, width=900, height=yPoss[-1])
 
         newTabs.add(subTab, text=language.getLanguageData(u"menus_lang_"+str(i+1)))
 
@@ -299,7 +299,7 @@ def addMenusTab(gui, tab, conf):
         gui.buttons["showData"].append(list())
 
         for j in range(Constants.AmountConst().menusAmount):
-            menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1] + 60)
+            menuTab = ttk.Frame(newTabs, width=900, height=yPoss[-1])
             menuNameTab.add(menuTab, text=language.getLanguageData(u"menus_menu_" + str(j+1)))
 
             nameTab = ttk.LabelFrame(menuTab, width=880, height=70)
@@ -325,7 +325,7 @@ def addMenusTab(gui, tab, conf):
 
             gui.buttons["showData"][-1].append(list())
 
-            myframe = ttk.Frame(menuTab, width=880, height=200)
+            myframe = ttk.LabelFrame(menuTab, width=880, height=yPoss[-1])
             myframe.place(x=10, y=80)
 
             canvas = tk.Canvas(myframe)
@@ -367,7 +367,7 @@ def addMenusTab(gui, tab, conf):
                                                         text=u"[WIP]" + menus_data + u" " + str(k + 1))
                 gui.buttons["showData"][-1][-1].append(showData)
 
-            frame.bind("<Configure>", functools.partial(updateScrollbar, canvas, width=860, height=160))
+            frame.bind("<Configure>", functools.partial(updateScrollbar, canvas, width=860, height=yPoss[-1]-100))
 
         menuNameTab.grid(column=0, row=0)
 
@@ -375,7 +375,7 @@ def addMenusTab(gui, tab, conf):
 
     language.close()
 
-    return 900, yPoss[-1] + 60
+    return 900, yPoss[-1]
 
 
 def optionsTab(gui, tab, conf):
