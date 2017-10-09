@@ -1,11 +1,12 @@
 #! python3
+from __future__ import print_function
 import os
 import shutil
 from distutils import sysconfig
 import sys
 from subprocess import Popen, PIPE
 import zipfile
-import py_compile
+# import py_compile
 
 
 def runProcess(proc, showCommand=False):
@@ -105,7 +106,11 @@ def getPYLIBRARY():
 
 def getPythonDll():
     # type: () -> list
-    import win32process
+    try:
+        import win32process
+    except ImportError:
+        print("No module. Install: https://sourceforge.net/projects/pywin32/files/pywin32/")
+        raise
     dll = list()
 
     for process in win32process.EnumProcessModules(-1):

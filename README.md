@@ -47,4 +47,4 @@ BT3 character 'unk' editor
 * make
      * [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm)
      
-* [win32process](http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/)
+* [win32process](https://sourceforge.net/projects/pywin32/files/pywin32/)
