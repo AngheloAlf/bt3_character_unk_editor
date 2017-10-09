@@ -3,15 +3,20 @@ from . import SubMenu, Constants
 
 
 class CharacterMenu:
-    def __init__(self, menuData):
-        # type: (bytes) -> None
+    def __init__(self, menuData, printData=False):
+        # type: (bytes, bool) -> None
         self.subMenus = []
         self.unknow = False
+        self.printData = printData
 
         filesConst = Constants.FilesConst()
         menuNameCode = filesConst.menuNameCode
 
         indices = Constants.findDataPos(menuData, menuNameCode)
+
+        if self.printData:
+            print("\nCharacterMenu: \n\tindices: ", indices)
+
         for i in range(len(indices)):
             if i+1 == len(indices):
                 subMenu = menuData[indices[i]:]
@@ -21,6 +26,9 @@ class CharacterMenu:
 
         if len(self.subMenus) <= 2:
             self.unknow = True
+
+        if self.printData:
+            print("\n\tCharacterMenu: \n\tunknow: ", self.unknow)
 
     def isKnow(self):
         # type: () -> bool

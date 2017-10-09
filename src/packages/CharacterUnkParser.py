@@ -50,7 +50,7 @@ class CharacterUnkParser:
             pointerFile = starts[pointer]-2
             pos = self.fullFile.find(endOfMenuFile, pointerFile)
             menu = self.fullFile[pointerFile:pos]
-            self.menusList.append(CharacterMenu.CharacterMenu(menu))
+            self.menusList.append(CharacterMenu.CharacterMenu(menu, self.printData))
             pointer += 1
 
         return self.menusList
@@ -91,14 +91,12 @@ class CharacterUnkParser:
         ends = Constants.findDataPos(self.fullFile, endOfMenuFile, 8)
 
         newFile = self.fullFile[:starts[0]]
-        pointer = 0
-        while pointer < len(starts) - 1:
-            newMenu = src.menusList[pointer].getAsLine()
-            newFile += newMenu + self.fullFile[ends[pointer] + 4:starts[pointer + 1]]
-            pointer += 1
-
-        newMenu = src.menusList[pointer].getAsLine()
-        newFile += newMenu + self.fullFile[ends[pointer] + 4:]
+        for pointer in range(len(starts)):
+            newFile += src.menusList[pointer].getAsLine()
+            if pointer + 1 == len(starts):
+                newFile += self.fullFile[ends[pointer] + 4:]
+            else:
+                newFile += self.fullFile[ends[pointer] + 4:starts[pointer + 1]]
         return newFile
 
     def updateFileData(self, src):

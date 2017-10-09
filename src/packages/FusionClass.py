@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 class FusionClass:
     def __init__(self, datos, printData=False):
         # type: (bytes, bool) -> None

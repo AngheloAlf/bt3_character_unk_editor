@@ -350,7 +350,7 @@ def copyPythonDependencies():
     # tcl85 = ["encoding/"]
     # tk85 = ["ttk/"]
     # folders = ["DLLs", "tcl", os.path.join("tcl", "tcl8.5"), os.path.join("tcl", "tk8.5")]
-    folders = ["DLLs", "tcl"]
+    folders = ["DLLs", "tcl", "logs"]
 
     # [runProcess(["mkdir", os.path.join("out", x)]) for x in folders]
     for x in folders:

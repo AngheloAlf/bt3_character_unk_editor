@@ -4,17 +4,6 @@ from __future__ import print_function
 from . import StatMenu, Constants
 
 
-def getMenuName(submenuData, i):
-    # type: (bytes, int) -> list
-    i += 6
-    nameData = [submenuData[i:i + 2]]
-    i += 2
-    filesConst = Constants.FilesConst()
-    name = submenuData.find(filesConst.endOfLine, i)
-    nameData.append(submenuData[i:name])
-    return nameData
-
-
 def getStat(submenuData, i):
     # type: (bytes, int) -> StatMenu.StatMenu
     i += 6
@@ -48,33 +37,44 @@ def getStat(submenuData, i):
             description = submenuData[end:ends[endI+1]]
             statChars.append([subStatFirst, description])
 
-        return StatMenu.StatMenu([statNumbers, statName], statChars)
-    else:
-        return StatMenu.StatMenu([statNumbers, statName], statChars)
+    return StatMenu.StatMenu([statNumbers, statName], statChars)
 
 
 class SubMenu:
-    def __init__(self, submenuData):
-        # type: (bytes) -> None
-        self.menuName = []
+    def __init__(self, submenuData, printData=False):
+        # type: (bytes, bool) -> None
+        self.menuNum = b''
+        self.menuName = b''
         self.stats = []
+        self.printData = printData
+        if self.printData:
+            print("\nsubMenu ")
 
         if submenuData != b"":
             filesConst = Constants.FilesConst()
-            menuNameCode = filesConst.menuNameCode
             statCode = filesConst.statCode
 
             # Nombre del menu
-            menuNamePos = submenuData.find(menuNameCode)
-            self.menuName = getMenuName(submenuData, menuNamePos)
+            self.__searchMenuName(submenuData)
 
             # Cada stat
-            eachStatPos = Constants.findDataPos(submenuData, statCode) + [len(submenuData)]
-            for i in range(len(eachStatPos) - 1):
-                j = eachStatPos[i]
-                self.stats.append(getStat(submenuData, j))
-        else:
-            self.menuName = [b"", b""]
+            for i in Constants.findDataPos(submenuData, statCode):
+                self.stats.append(getStat(submenuData, i))
+        return
+
+    def __searchMenuName(self, submenuData):
+        # type: (bytes) -> list[bytes]
+        filesConst = Constants.FilesConst()
+        menuNameCode = filesConst.menuNameCode
+        pos = submenuData.find(menuNameCode) + 6
+        self.menuNum = submenuData[pos:pos + 2]
+        end = submenuData.find(filesConst.endOfLine, pos+2)
+        self.menuName = submenuData[pos:end]
+        if self.printData:
+            print("\n\tsubMenu: ")
+            print("\t\tmenuNum: ", self.menuNum)
+            print("\t\t", self.menuName)
+        return [self.menuNum, self.menuName]
 
     def isNone(self):
         # type: () -> bool
@@ -82,22 +82,23 @@ class SubMenu:
 
     def getMenuNum(self):
         # type: () -> int
-        return int(self.menuName[0].decode("utf-16"))
+        return int(self.menuNum.decode("utf-16"))
 
     def setMenuNum(self, num):
         # type: (int) -> None
-        self.menuName[0] = str(num).encode("utf-16")[2:]
+        self.menuNum = str(num).encode("utf-16")[2:]
+        return
 
     def getMenuName(self):
         # type: () -> str
-        return self.menuName[1].decode("utf-16")
+        return self.menuName.decode("utf-16")
 
     def setMenuName(self, name):
         # type: (str) -> None
-        if self.menuName[1] != name.encode("utf-16")[2:]:
+        if self.menuName != name.encode("utf-16")[2:]:
             print(u"Cambiando:")
-            print("\t" + self.menuName[1].decode("utf-16") + "->" + name.encode("utf-16").decode("utf-16"))
-        self.menuName[1] = name.encode("utf-16")[2:]
+            print("\t" + self.menuName.decode("utf-16") + "->" + name.encode("utf-16").decode("utf-16"))
+        self.menuName = name.encode("utf-16")[2:]
         return
 
     def getAsLine(self):
@@ -116,7 +117,10 @@ class SubMenu:
         return line
 
     def __str__(self):
-        if len(self.menuName) >= 2:
-            return "SubMenu <" + self.menuName[1].decode("utf-16") + ">"
+        if self.menuName != b"":
+            if type(self.menuName) != str:  # py3
+                return "SubMenu <" + self.menuName.decode("utf-16") + ">"
+            else:  # py2
+                return b"SubMenu <" + self.menuName[::2] + b">"
         else:
             return "SubMenu <None>"

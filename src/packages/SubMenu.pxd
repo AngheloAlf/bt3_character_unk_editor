@@ -2,9 +2,6 @@ from . cimport StatMenu
 from . cimport Constants
 
 
-cdef list getMenuName(bytes submenuData, int i)
-    # type: (str, int) -> list
-
 cdef StatMenu.StatMenu getStat(bytes submenuData, int i)
     # type: (str, int) -> StatMenu.StatMenu
 
@@ -12,6 +9,10 @@ cdef StatMenu.StatMenu getStat(bytes submenuData, int i)
 cdef class SubMenu:
     cdef list menuName
     cpdef public list stats
+    cdef bint printData
+
+    cdef list __searchMenuName(self, bytes submenuData)
+        # type: (bytes) -> list[bytes]
 
     cpdef bint isNone(self)
         # type: () -> bool

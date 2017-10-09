@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 class TransformClass:
     def __init__(self, line1, line2, printData=False):
         # type: (bytes, bytes, bool) -> None

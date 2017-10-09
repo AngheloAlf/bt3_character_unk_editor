@@ -143,6 +143,24 @@ def parseUnkFile(fileName):
             updateMenusTab()
         except Exception as err:
             print(err)
+
+            log = open(os.path.join("logs", "transObj.log"), "wb")
+            dataLog = character.data.transObj.getAsLines()
+            log.write(dataLog[0]+dataLog[1])
+            log.close()
+
+            log = open(os.path.join("logs", "fusionObj.log"), "wb")
+            dataLog = character.data.fusionObj.getAsLines()
+            log.write(dataLog)
+            log.close()
+
+            for i in range(len(character.data.menusList)):
+                iMenu = character.data.menusList[i]
+                dataLog = iMenu.getAsLine()
+                log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
+                log.write(dataLog)
+                log.close()
+
             GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
             raise
     except Exception as err:
