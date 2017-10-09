@@ -1,7 +1,7 @@
 cdef class TransformClass:
     cdef bytes unknowFirst
     cdef bytes trans, barras, aniCam, aura, abs
-    cdef int command, bonus
+    cdef bytes command, bonus
 
     cpdef int getR3Command(self)
         # type: () -> int

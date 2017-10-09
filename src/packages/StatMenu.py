@@ -62,4 +62,6 @@ class StatMenu:
 
     def __str__(self):
         # type: () -> str
+        if type(b"") == bytes:
+            return "StatMenu <" + self.name.decode('utf-16') + ">"
         return "StatMenu <" + self.name[::2] + ">"

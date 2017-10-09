@@ -16,7 +16,6 @@ try:
 except ImportError:
     import tkinter as tk
     from tkinter import ttk
-    unicode = str
 
 
 class CharacterData:
@@ -26,7 +25,7 @@ class CharacterData:
 
 def updateTransObject():
     # type: () -> None
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     for i in range(4):
         a = gui.comboboxs["trans"][i].get()
         a = language.getCharactersNamesID(a)
@@ -58,24 +57,24 @@ def updateTransObject():
 
 def updateFusObject():
     # type: () -> None
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
 
     for i in range(3):
         fusBarras = gui.comboboxs["fusBarras"][i].current()
 
         fusTypeSelected = gui.comboboxs["fusType"][i].get()
-        fusTypeID = language.getFusionsTypesID(unicode(fusTypeSelected))
+        fusTypeID = language.getFusionsTypesID(fusTypeSelected)
 
         fusResulSelected = gui.comboboxs["fusResul"][i].get()
-        fusResulID = language.getCharactersNamesID(unicode(fusResulSelected))
+        fusResulID = language.getCharactersNamesID(fusResulSelected)
 
         fusCompaSelected = gui.comboboxs["fusCompa"][i].get()
-        fusCompaID = language.getCharactersNamesID(unicode(fusCompaSelected))
+        fusCompaID = language.getCharactersNamesID(fusCompaSelected)
 
         fusionData = [fusBarras, fusTypeID, fusResulID, fusCompaID]
 
         for j in gui.comboboxs["fusEquipo"][i]:
-            fusionData.append(language.getCharactersNamesID(unicode(j.get())))
+            fusionData.append(language.getCharactersNamesID(j.get()))
 
         character.data.fusionObj.setFusionData(i, fusionData)
 
@@ -90,13 +89,13 @@ def updateMenusObject():
         subMenuLoop = character.data.menusList[i].subMenus
         for j in range(Constants.AmountConst().menusAmount):
             if gui.checkbuttons["menuOn"][i][j].is_checked():
-                nombreMenu = unicode(gui.entries["nombreMenu"][i][j].get())
+                nombreMenu = gui.entries["nombreMenu"][i][j].get()
 
                 if j < len(subMenuLoop) and subMenuLoop[j].isNone():
                     raise TypeError("NoneType found")
 
                 if j >= len(subMenuLoop):
-                    nuevoSubMenu = SubMenu.SubMenu("")
+                    nuevoSubMenu = SubMenu.SubMenu(b"")
                     subMenuLoop.append(nuevoSubMenu)
 
                 subMenuLoop[j0].setMenuName(nombreMenu)
@@ -105,13 +104,13 @@ def updateMenusObject():
                 k0 = 0
                 for k in range(Constants.AmountConst().statsAmount):
                     if gui.checkbuttons["addStat"][i][j][k].is_checked():
-                        nombrestat = unicode(gui.entries["nombreStat"][i][j][k].get())
+                        nombrestat = gui.entries["nombreStat"][i][j][k].get()
                         maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
                         barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
                         reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
 
                         if k >= len(stats):
-                            statName = [['', '', ''], '']
+                            statName = [[b'', b'', b''], b'']
                             # statChars = [["", ""]]
                             statChars = []
                             nuevoStat = StatMenu.StatMenu(statName, statChars)
@@ -130,10 +129,10 @@ def updateMenusObject():
 
 
 def parseUnkFile(fileName):
-    # type: (unicode) -> None
+    # type: (str) -> None
     if not fileName:
         return
-    character.data = CharacterUnkParser.CharacterUnkParser(fileName)
+    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=True)
     gui.clean()
 
     try:
@@ -175,7 +174,7 @@ def popData(data):
 
 def updateTransTab():
     # type: () -> None
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     for i in range(4):
         transformData = character.data.transObj.getTransformData(i)
 
@@ -216,7 +215,7 @@ def updateTransTab():
 
 
 def updateFusionsTab():
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     for i in range(3):
         fusionData = character.data.fusionObj.getFusionData(i)
 
@@ -295,8 +294,8 @@ def updateMenusTab():
                         gui.comboboxs["reservaKi"][i][j][k].current(int(stat.getReservaKi()))
                         gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
 
-                        gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
-                        gui.buttons["showData"][i][j][k]["state"] = "normal"
+                        # gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
+                        # gui.buttons["showData"][i][j][k]["state"] = "normal"
 
                         k += 1
                         k0 += 1
@@ -325,6 +324,7 @@ def updateMenusTab():
 
 def openFileCaller():
     GM.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes, parseUnkFile)
+    return
 
 
 def saveFile():
@@ -348,7 +348,7 @@ def saveFile():
 
 
 def saveAsUnkFile(fileName):
-    # type: (unicode) -> None
+    # type: (str) -> None
     if not fileName:
         return
     if not fileName.lower().endswith(u".unk"):
@@ -418,7 +418,7 @@ def undoOptionsChange():
     # type: () -> None
     languagesFiles = subGui[0].comboboxs["lang"][0]["values"]
     languagesFiles = [x.lower() for x in languagesFiles]
-    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
+    langIndex = languagesFiles.index(".".join(conf["language"].split(".")[:-1]))
     subGui[0].comboboxs["lang"][0].current(langIndex)
     return
 
@@ -431,7 +431,7 @@ def acceptOptionsChange():
         print(u"\n")
         langSelected = subGui[0].comboboxs["lang"][0].get() + u".db"
         print(u"Idioma: " + langSelected)
-        conf[u"language"] = unicode(langSelected.lower())
+        conf["language"] = langSelected.lower()
         # subGui[0].quit()
         gui.setRestart(True)
         # gui.quit()
@@ -455,7 +455,7 @@ def onOptionsOpen():
     languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
                       if os.path.isfile(os.path.join(langFolder, f))]
 
-    langIndex = languagesFiles.index(".".join(conf[u"language"].split(".")[:-1]))
+    langIndex = languagesFiles.index(".".join(conf["language"].split(".")[:-1]))
     languagesFiles = [x.capitalize() for x in languagesFiles]
 
     subGui[0].comboboxs["lang"][0]["state"] = "readonly"
@@ -521,7 +521,7 @@ subGui = [None]
 
 def main():
     while True:
-        language = LanguageManager.LanguageManager(conf[u"language"])
+        language = LanguageManager.LanguageManager(conf["language"])
 
         print(u"Cargando idioma...")
         # languageData
@@ -575,7 +575,7 @@ def main():
         print(u"Pestañas listas!")
 
         if len(sys.argv) > 1:
-            archivito = unicode(sys.argv[1])
+            archivito = sys.argv[1]
             print(u"\nAbriendo " + archivito + u" ...")
             parseUnkFile(archivito)
             print(u"Archivo abierto correctamente.\n")

@@ -1,4 +1,4 @@
-defaults = {u"language": u"spanish.db"}
+defaults = {"language": "spanish.db"}
 
 
 def writeDefaultOptions(openFile):

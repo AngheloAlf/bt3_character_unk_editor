@@ -8,8 +8,8 @@ class TransformClass:
         self.aniCam = line2[:4]
         self.aura = line2[4:8]
         self.abs = line2[8:12]
-        self.command = line2[12]
-        self.bonus = line2[13]
+        self.command = line2[12:13]
+        self.bonus = line2[13:14]
         if printData:
             print(u"Transform:")
             print(u"unknowFirst:", list(self.unknowFirst))

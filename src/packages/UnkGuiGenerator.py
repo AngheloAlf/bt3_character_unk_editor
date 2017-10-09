@@ -28,7 +28,7 @@ def comboTransUpdate(gui, event):
 def addTrans(gui, tab, conf):
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
     barras = list(range(8))  # [x[1] for x in language.get()]
     animations = [x[1] for x in language.getAnimations()]
@@ -114,7 +114,7 @@ def addFusion(gui, tab, conf):
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
     newTabs = ttk.Notebook(tab)
 
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     charactersNames = [x[1] for x in language.getCharactersNames()]
     barrasKi = list(range(8))
     fusionsTypes = [x[1] for x in language.getFusionsTypes()]
@@ -249,7 +249,7 @@ def comboMenusUpdate(gui, event):
 def addMenusTab(gui, tab, conf):
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
 
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
 
     # languageData
     menus_name = language.getLanguageData(u"menus_name")
@@ -381,7 +381,7 @@ def addMenusTab(gui, tab, conf):
 def optionsTab(gui, tab, conf):
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
     # TODO: Quitar textos hardcodeados
-    language = LanguageManager.LanguageManager(conf[u"language"])
+    language = LanguageManager.LanguageManager(conf["language"])
     language.close()
 
     xPoss = [x*150 + 30 for x in range(0, 10)]

@@ -7,9 +7,9 @@ from . cimport Constants
 cdef class CharacterUnkParser:
     cdef unicode filename
     cdef bytes fullFile
-    cdef public list menusList
-    cdef public TransformClass.TransformClass transObj
-    cdef public FusionClass.FusionClass fusionObj
+    cpdef public list menusList
+    cpdef public TransformClass.TransformClass transObj
+    cpdef public FusionClass.FusionClass fusionObj
     cdef bint printData
 
     cdef TransformClass.TransformClass __getTransformData(self)
