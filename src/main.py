@@ -1,3 +1,3 @@
 #! python3
 import packages.func
-packages.func.main()
+packages.func.UnkEditor().startLoop()

@@ -10,422 +10,6 @@ import sys
 from . import GuiManager as GM
 from . import CharacterUnkParser, SubMenu, StatMenu, LanguageManager, Constants, UnkGuiGenerator, OptionsManager
 
-try:
-    import Tkinter as tk
-    import ttk
-except ImportError:
-    import tkinter as tk
-    from tkinter import ttk
-
-
-class CharacterData:
-    def __init__(self):
-        self.data = None
-
-
-def updateTransObject():
-    # type: () -> None
-    language = LanguageManager.LanguageManager(conf["language"])
-    for i in range(4):
-        a = gui.comboboxs["trans"][i].get()
-        a = language.getCharactersNamesID(a)
-
-        b = gui.comboboxs["barras"][i].current()
-
-        c = gui.comboboxs["ani"][i].get()
-        c = language.getAnimationsID(c)
-
-        d = gui.comboboxs["aura"][i].get()
-        d = language.getAurasID(d)
-
-        e = gui.comboboxs["absor"][i].get()
-        e = language.getCharactersNamesID(e)
-
-        character.data.transObj.setTransformData(i, [a, b, c, d, e])
-
-    r3 = gui.comboboxs["R3"][0].get()
-    r3 = language.getR3CommandID(r3)
-    character.data.transObj.setR3Command(r3)
-
-    bonus = gui.comboboxs["bonus"][0].get()
-    bonus = language.getTransformationBonusID(bonus)
-    character.data.transObj.setBonus(bonus)
-
-    language.close()
-    return
-
-
-def updateFusObject():
-    # type: () -> None
-    language = LanguageManager.LanguageManager(conf["language"])
-
-    for i in range(3):
-        fusBarras = gui.comboboxs["fusBarras"][i].current()
-
-        fusTypeSelected = gui.comboboxs["fusType"][i].get()
-        fusTypeID = language.getFusionsTypesID(fusTypeSelected)
-
-        fusResulSelected = gui.comboboxs["fusResul"][i].get()
-        fusResulID = language.getCharactersNamesID(fusResulSelected)
-
-        fusCompaSelected = gui.comboboxs["fusCompa"][i].get()
-        fusCompaID = language.getCharactersNamesID(fusCompaSelected)
-
-        fusionData = [fusBarras, fusTypeID, fusResulID, fusCompaID]
-
-        for j in gui.comboboxs["fusEquipo"][i]:
-            fusionData.append(language.getCharactersNamesID(j.get()))
-
-        character.data.fusionObj.setFusionData(i, fusionData)
-
-    language.close()
-    return
-
-
-def updateMenusObject():
-    # type: () -> None
-    for i in range(Constants.AmountConst().languagesAmount):
-        j0 = 0
-        subMenuLoop = character.data.menusList[i].subMenus
-        for j in range(Constants.AmountConst().menusAmount):
-            if gui.checkbuttons["menuOn"][i][j].is_checked():
-                nombreMenu = gui.entries["nombreMenu"][i][j].get()
-
-                if j < len(subMenuLoop) and subMenuLoop[j].isNone():
-                    raise TypeError("NoneType found")
-
-                if j >= len(subMenuLoop):
-                    nuevoSubMenu = SubMenu.SubMenu(b"")
-                    subMenuLoop.append(nuevoSubMenu)
-
-                subMenuLoop[j0].setMenuName(nombreMenu)
-                subMenuLoop[j0].setMenuNum(j0)
-                stats = subMenuLoop[j0].stats
-                k0 = 0
-                for k in range(Constants.AmountConst().statsAmount):
-                    if gui.checkbuttons["addStat"][i][j][k].is_checked():
-                        nombrestat = gui.entries["nombreStat"][i][j][k].get()
-                        maxPower = gui.checkbuttons["maxPower"][i][j][k].is_checked()
-                        barrasKi = gui.comboboxs["barrasKiMenus"][i][j][k].get()
-                        reservaKi = gui.comboboxs["reservaKi"][i][j][k].get()
-
-                        if k >= len(stats):
-                            nuevoStat = StatMenu.StatMenu(b"")
-                            stats.append(nuevoStat)
-
-                        stats[k0].setName(nombrestat)
-                        stats[k0].setMaxPower(maxPower)
-                        stats[k0].setBarrasKi(barrasKi)
-                        stats[k0].setReservaKi(reservaKi)
-                        k0 += 1
-                del stats[k0:]
-
-                j0 += 1
-        del subMenuLoop[j0:]
-    return
-
-
-def parseUnkFile(fileName):
-    # type: (str) -> None
-    if not fileName:
-        return
-    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=conf["printData"].capitalize() == "True")
-    gui.clean()
-
-    try:
-        character.data.parse()
-    except Exception as err:
-        print(err)
-        character.data = None
-        GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
-        raise
-    else:
-        try:
-            updateTransTab()
-            updateFusionsTab()
-            updateMenusTab()
-        except Exception as err:
-            print(err)
-            # logData()
-            GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
-            raise
-    return
-
-
-def logData():
-    log = open(os.path.join("logs", "transObj.log"), "wb")
-    dataLog = character.data.transObj.getAsLines()
-    log.write(dataLog[0] + dataLog[1])
-    log.close()
-
-    log = open(os.path.join("logs", "fusionObj.log"), "wb")
-    dataLog = character.data.fusionObj.getAsLines()
-    log.write(dataLog)
-    log.close()
-
-    for i in range(len(character.data.menusList)):
-        iMenu = character.data.menusList[i]
-        dataLog = iMenu.getAsLine()
-        log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
-        log.write(dataLog)
-        log.close()
-
-
-def popData(data):
-    # type: (list) -> None
-    pop = tk.Toplevel()
-    for i in range(8):
-
-        entry1 = ttk.Entry(pop)
-        entry1.grid(row=i, column=0)
-        entry2 = ttk.Entry(pop, width=50)
-        entry2.grid(row=i, column=1)
-        if i < len(data):
-            if data[i][0] == u'!F%':
-                entry1.insert("end", data[i][0] + data[i][1][0])
-                entry2.insert("end", data[i][1][1:])
-            else:
-                entry1.insert("end", data[i][0])
-                entry2.insert("end", data[i][1])
-        entry1["state"] = "disabled"
-        entry2["state"] = "disabled"
-
-
-def updateTransTab():
-    # type: () -> None
-    language = LanguageManager.LanguageManager(conf["language"])
-    for i in range(4):
-        transformData = character.data.transObj.getTransformData(i)
-
-        char = language.getCharactersNamesPos(transformData[0])
-        gui.comboboxs["trans"][i].current(char)
-        gui.comboboxs["trans"][i]["state"] = "readonly"
-
-        gui.comboboxs["barras"][i].current(transformData[1])
-        gui.comboboxs["barras"][i]["state"] = "readonly"
-
-        ani = language.getAnimationsPos(transformData[2])
-        gui.comboboxs["ani"][i].current(ani)
-        gui.comboboxs["ani"][i]["state"] = "readonly"
-
-        aura = language.getAurasPos(transformData[3])
-        gui.comboboxs["aura"][i].current(aura)
-        gui.comboboxs["aura"][i]["state"] = "readonly"
-
-        absor = language.getCharactersNamesPos(transformData[4])
-        gui.comboboxs["absor"][i].current(absor)
-        if transformData[2] == 3:
-            gui.comboboxs["absor"][i]["state"] = "readonly"
-        else:
-            gui.comboboxs["absor"][i]["state"] = "disabled"
-
-    r3 = character.data.transObj.getR3Command()
-    r3 = language.getR3CommandPos(r3)
-    gui.comboboxs["R3"][0].current(r3)
-    gui.comboboxs["R3"][0]["state"] = "readonly"
-
-    bonus = character.data.transObj.getBonus()
-    bonus = language.getTransformationBonusPos(bonus)
-    gui.comboboxs["bonus"][0].current(bonus)
-    gui.comboboxs["bonus"][0]["state"] = "readonly"
-    language.close()
-    print(u"Datos de pestaña 'Transformaciones' lista")
-    return
-
-
-def updateFusionsTab():
-    language = LanguageManager.LanguageManager(conf["language"])
-    for i in range(3):
-        fusionData = character.data.fusionObj.getFusionData(i)
-
-        gui.comboboxs["fusBarras"][i].current(fusionData[0])
-        gui.comboboxs["fusBarras"][i]["state"] = "readonly"
-
-        fusType = language.getFusionsTypesPos(fusionData[1])
-        gui.comboboxs["fusType"][i].current(fusType)
-        gui.comboboxs["fusType"][i]["state"] = "readonly"
-
-        fusResul = language.getCharactersNamesPos(fusionData[2])
-        gui.comboboxs["fusResul"][i].current(fusResul)
-        gui.comboboxs["fusResul"][i]["state"] = "readonly"
-
-        fusCompa = language.getCharactersNamesPos(fusionData[3])
-        gui.comboboxs["fusCompa"][i].current(fusCompa)
-        gui.comboboxs["fusCompa"][i]["state"] = "readonly"
-
-        for j in range(4):
-            fusEquipo = language.getCharactersNamesPos(fusionData[4 + j])
-            gui.comboboxs["fusEquipo"][i][j].current(fusEquipo)
-            gui.comboboxs["fusEquipo"][i][j]["state"] = "readonly"
-    language.close()
-    print(u"Datos de pestaña 'Fusiones' lista")
-
-
-def updateMenusTab():
-    i = 0
-    for menu in character.data.menusList:
-        if menu.isKnow():
-            if i >= len(gui.entries["nombreMenu"]):
-                print(u"ERROR: Mas idiomas de lo esperado")
-                break
-
-            j = 0
-            for submenu in menu.subMenus:
-                if not submenu.isNone():
-                    if j >= len(gui.entries["nombreMenu"][i]):
-                        print(u"ERROR: Mas menus de lo esperado")
-                        break
-
-                    menuName = submenu.getMenuName()
-
-                    gui.entries["nombreMenu"][i][j]["state"] = "normal"
-                    gui.entries["nombreMenu"][i][j].delete(0, "end")
-                    gui.entries["nombreMenu"][i][j].insert("end", menuName)
-
-                    gui.checkbuttons["menuOn"][i][j].select()
-
-                    k, k0 = 0, 0
-                    statsInesperados = False
-                    for stat in submenu.stats:
-                        if k >= len(gui.entries["nombreStat"][i][j]):
-                            statsInesperados = True
-                            k += 1
-                            continue
-                        statName = stat.getName()
-
-                        gui.entries["nombreStat"][i][j][k]["state"] = "normal"
-                        gui.entries["nombreStat"][i][j][k].delete(0, "end")
-                        gui.entries["nombreStat"][i][j][k].insert("end", statName)
-                        # entries["nombreStat"][i][j][k]["state"] = "disabled"
-
-                        gui.checkbuttons["addStat"][i][j][k].select()
-                        # gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
-
-                        if stat.getMaxPower():
-                            gui.checkbuttons["maxPower"][i][j][k].select()
-                        else:
-                            gui.checkbuttons["maxPower"][i][j][k].deselect()
-                        gui.checkbuttons["maxPower"][i][j][k]["state"] = "normal"
-
-                        gui.comboboxs["barrasKiMenus"][i][j][k].current(int(stat.getBarrasKi()))
-                        gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "readonly"
-
-                        gui.comboboxs["reservaKi"][i][j][k].current(int(stat.getReservaKi()))
-                        gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
-
-                        # gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
-                        # gui.buttons["showData"][i][j][k]["state"] = "normal"
-
-                        k += 1
-                        k0 += 1
-                    while k0 < Constants.AmountConst().statsAmount:
-                        # gui.checkbuttons["addStat"][i][j][k0]["state"] = "normal"
-                        gui.checkbuttons["addStat"][i][j][k0].deselect()
-                        gui.checkbuttons["maxPower"][i][j][k0].deselect()
-                        gui.buttons["showData"][i][j][k0]["state"] = "disabled"
-                        gui.checkbuttons["maxPower"][i][j][k0]["state"] = "disabled"
-                        gui.buttons["showData"][i][j][k0]["command"] = functools.partial(popData, list())
-                        gui.buttons["showData"][i][j][k0]["state"] = "disabled"
-                        k0 += 1
-                    if statsInesperados:
-                        print(u"Error: Mas stats que los esperados:", k)
-                    j += 1
-            i += 1
-    for i in range(Constants.AmountConst().languagesAmount):
-        for j in range(Constants.AmountConst().menusAmount):
-            gui.checkbuttons["menuOn"][i][j]["state"] = "normal"
-            for k in range(Constants.AmountConst().statsAmount):
-                gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
-
-    print(u"Datos de pestaña 'Menús' lista")
-    return
-
-
-def openFileCaller():
-    GM.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes, parseUnkFile)
-    return
-
-
-def saveFile():
-    # type () -> None
-    if character.data:
-        updateTransObject()
-        updateFusObject()
-        updateMenusObject()
-        try:
-            character.data.saveFile()
-            GM.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
-        except Exception as err:
-            print(err)
-            text1 = u"Acción fallida."
-            text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
-            GM.popupError(text1, text2)
-            raise
-    else:
-        GM.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
-    return
-
-
-def saveAsUnkFile(fileName):
-    # type: (str) -> None
-    if not fileName:
-        return
-    if not fileName.lower().endswith(u".unk"):
-        fileName = fileName + u".unk"
-    try:
-        updateTransObject()
-        updateFusObject()
-        updateMenusObject()
-        character.data.saveFile(fileName)
-        GM.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
-    except Exception as err:
-        print(err)
-        GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
-        raise
-    return
-
-
-def saveAsUnkFileCaller():
-    if character.data:
-        GM.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes, saveAsUnkFile)
-    else:
-        GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
-
-
-def updateMultiplesUnkFiles(archivos):
-    # type: (list) -> None
-    if not archivos:
-        return
-    updateTransObject()
-    updateFusObject()
-    updateMenusObject()
-    try:
-        for arch in archivos:
-            print((arch, ))
-            personaje = CharacterUnkParser.CharacterUnkParser(arch)
-            personaje.parse()
-            personaje.saveFile(src=character.data)
-        GM.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
-    except Exception as err:
-        print(err)
-        texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
-        GM.popupError(u"Acción fallida", texto)
-        # raise
-
-
-def updateMultiplesUnkFilesCaller():
-    # type: () -> None
-    if character.data:
-        GM.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes,
-                                updateMultiplesUnkFiles)
-    else:
-        GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
-
-
-def openFolderCaller():
-    # type: () -> None
-    GM.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
-
 
 def WIP():
     # type: () -> None
@@ -433,112 +17,25 @@ def WIP():
     return
 
 
-def undoOptionsChange():
-    # type: () -> None
-    languagesFiles = subGui[0].comboboxs["lang"][0]["values"]
-    languagesFiles = [x.lower() for x in languagesFiles]
-    langIndex = languagesFiles.index(".".join(conf["language"].split(".")[:-1]))
-    subGui[0].comboboxs["lang"][0].current(langIndex)
-    return
+class UnkEditor:
+    def __init__(self, confName=u"options.ini"):
+        # type: (str) -> None
+        self.title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Version
+        print(self.title)
+        self.unkData = None
 
+        print(u"Cargando opciones...")
+        self.conf = OptionsManager.OptionsManager(confName)
 
-def acceptOptionsChange():
-    # type: () -> None
-    subGui[0].disableAll()
-    restart = GM.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
-    if restart:
-        print(u"\n")
-        langSelected = subGui[0].comboboxs["lang"][0].get() + u".db"
-        print(u"Idioma: " + langSelected)
-        conf["language"] = langSelected.lower()
-        # subGui[0].quit()
-        gui.setRestart(True)
-        # gui.quit()
-        conf.updateFile()
-        print(u"\n")
-        onMainClose()
-    else:
-        subGui[0].enableAll()
-    return
+        print(u"Inicializando interfaz...")
+        self.icon = os.path.join(u"resources", u"icon.ico")
+        self.gui = GM.GuiManager(self.title, icon=self.icon)
+        self.subGui = None
+        return
 
-
-def onOptionsOpen():
-    # type: () -> None
-    try:
-        langFolder = os.path.join(os.getcwd(), "lang")
-        os.listdir(langFolder)
-    except OSError:
-        langFolder = os.path.join(os.getcwd(), "..", "lang")
-        os.listdir(langFolder)
-
-    languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
-                      if os.path.isfile(os.path.join(langFolder, f))]
-
-    langIndex = languagesFiles.index(".".join(conf["language"].split(".")[:-1]))
-    languagesFiles = [x.capitalize() for x in languagesFiles]
-
-    subGui[0].comboboxs["lang"][0]["state"] = "readonly"
-    subGui[0].comboboxs["lang"][0]["values"] = languagesFiles
-    subGui[0].comboboxs["lang"][0].current(langIndex)
-
-    # Accept button
-    subGui[0].buttons["optionsConfirm"][0]["command"] = acceptOptionsChange
-    # Cancel button
-    subGui[0].buttons["optionsConfirm"][1]["command"] = subGui[0].quit
-    # Redo button
-    subGui[0].buttons["optionsConfirm"][2]["command"] = undoOptionsChange
-    return
-
-
-def optionsCaller():
-    # type: () -> None
-    if subGui[0] and subGui[0].isRunning():
-        subGui[0].stop()
-    else:
-        subGui[0] = GM.GuiManager(u"Opciones", icon)
-    subGui[0].addTab(u"Opciones", functools.partial(UnkGuiGenerator.optionsTab, conf=conf))
-    onOptionsOpen()
-    subGui[0].start(u"Opciones")
-    return
-
-
-def about():
-    # type: () -> None
-    titulo = u"Acerca de"
-    texto = u"BT3 Character 'unk' Editor v" + Constants.ProgramConst().Version + u".\nCreado por AngheloAlf"
-    GM.popupInfo(titulo, texto)
-    return
-
-
-def onMainClose():
-    # type: () -> None
-    if subGui[0] and subGui[0].isRunning():
-        subGui[0].quit()
-    print(u"\nCerrando...\n")
-    gui.quit()
-    return
-
-
-def debugMain():
-    print("log")
-    logData()
-    return
-
-
-title = Constants.ProgramConst().Title + u" v" + Constants.ProgramConst().Version
-print(title)
-character = CharacterData()
-print(u"Cargando opciones...")
-conf = OptionsManager.OptionsManager(u"options.ini")
-print(u"Inicializando interfaz...")
-icon = os.path.join(u"resources", u"icon.ico")
-gui = GM.GuiManager(title, icon=icon)
-subGui = [None]
-
-
-def main():
-    while True:
-        language = LanguageManager.LanguageManager(conf["language"])
+    def start(self):
+        # type: () -> bool
+        language = LanguageManager.LanguageManager(self.conf["language"])
 
         print(u"Cargando idioma...")
         # languageData
@@ -563,50 +60,516 @@ def main():
         cascadeNames = [mainmenu_file, mainmenu_options, mainmenu_help]
         cascadeData = [
             [
-                (mainmenu_open, openFileCaller),
-                (mainmenu_save, saveFile),
-                (mainmenu_save_as, saveAsUnkFileCaller),
-                (mainmenu_select_unks, updateMultiplesUnkFilesCaller),
-                (u"[WIP]"+mainmenu_select_unks_folder, openFolderCaller),
+                (mainmenu_open, self.openFileCaller),
+                (mainmenu_save, self.saveFile),
+                (mainmenu_save_as, self.saveAsUnkFileCaller),
+                (mainmenu_select_unks, self.updateMultiplesUnkFilesCaller),
+                (u"[WIP]" + mainmenu_select_unks_folder, self.openFolderCaller),
                 (None, None),
-                (mainmenu_quit, onMainClose)
+                (mainmenu_quit, self.onMainClose)
             ],
             [
-                (u"[WIP]"+mainmenu_options, optionsCaller),
-                (u"[WIP]Debug", debugMain)
+                (u"[WIP]" + mainmenu_options, self.optionsCaller),
+                (u"[WIP]Debug", self.debugMain)
             ],
-            [(mainmenu_about, about)]
+            [(mainmenu_about, self.about)]
         ]
-        gui.addMenu(cascadeNames, cascadeData)
+        self.gui.addMenu(cascadeNames, cascadeData)
 
         print(u"Preparando pestañas...")
-        gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, conf=conf))
-        # gui.addTab(tab_transformations, UnkGuiGenerator.addTrans)
+        self.gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, conf=self.conf))
         print(u"'Transformaciones' lista.")
-        gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, conf=conf))
-        # gui.addTab(tab_fusions, UnkGuiGenerator.addFusion)
+        self.gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, conf=self.conf))
         print(u"'Fusiones' lista.")
-        gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, conf=conf))
-        # gui.addTab(tab_menus, UnkGuiGenerator.addMenusTab)
+        self.gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, conf=self.conf))
         print(u"'Menús' lista")
         print(u"Pestañas listas!")
 
         if len(sys.argv) > 1:
             archivito = sys.argv[1]
             print(u"\nAbriendo " + archivito + u" ...")
-            parseUnkFile(archivito)
+            self.parseUnkFile(archivito)
             print(u"Archivo abierto correctamente.\n")
 
-        gui.overrideClose(onMainClose)
+        self.gui.overrideClose(self.onMainClose)
 
         print(u"Iniciando interfaz.\n")
-        gui.start()
+        self.gui.start()
 
-        if not gui.isRestart():
-            break
-            # return
+        return self.gui.isRestart()
 
-        print(u"\nReiniciando...\n")
-        gui.stop()
+    def startLoop(self):
+        # type: () -> None
+        while self.start():
+            print(u"\nReiniciando...\n")
+            self.gui.stop()
+        return
 
-    return
+    def updateTransTab(self):
+        # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        for i in range(4):
+            transformData = self.unkData.transObj.getTransformData(i)
+
+            char = language.getCharactersNamesPos(transformData[0])
+            self.gui.comboboxs["trans"][i].current(char)
+            self.gui.comboboxs["trans"][i]["state"] = "readonly"
+
+            self.gui.comboboxs["barras"][i].current(transformData[1])
+            self.gui.comboboxs["barras"][i]["state"] = "readonly"
+
+            ani = language.getAnimationsPos(transformData[2])
+            self.gui.comboboxs["ani"][i].current(ani)
+            self.gui.comboboxs["ani"][i]["state"] = "readonly"
+
+            aura = language.getAurasPos(transformData[3])
+            self.gui.comboboxs["aura"][i].current(aura)
+            self.gui.comboboxs["aura"][i]["state"] = "readonly"
+
+            absor = language.getCharactersNamesPos(transformData[4])
+            self.gui.comboboxs["absor"][i].current(absor)
+            if transformData[2] == 3:
+                self.gui.comboboxs["absor"][i]["state"] = "readonly"
+            else:
+                self.gui.comboboxs["absor"][i]["state"] = "disabled"
+
+        r3 = self.unkData.transObj.getR3Command()
+        r3 = language.getR3CommandPos(r3)
+        self.gui.comboboxs["R3"][0].current(r3)
+        self.gui.comboboxs["R3"][0]["state"] = "readonly"
+
+        bonus = self.unkData.transObj.getBonus()
+        bonus = language.getTransformationBonusPos(bonus)
+        self.gui.comboboxs["bonus"][0].current(bonus)
+        self.gui.comboboxs["bonus"][0]["state"] = "readonly"
+        language.close()
+        print(u"Datos de pestaña 'Transformaciones' lista")
+        return
+
+    def updateFusionsTab(self):
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        for i in range(3):
+            fusionData = self.unkData.fusionObj.getFusionData(i)
+
+            self.gui.comboboxs["fusBarras"][i].current(fusionData[0])
+            self.gui.comboboxs["fusBarras"][i]["state"] = "readonly"
+
+            fusType = language.getFusionsTypesPos(fusionData[1])
+            self.gui.comboboxs["fusType"][i].current(fusType)
+            self.gui.comboboxs["fusType"][i]["state"] = "readonly"
+
+            fusResul = language.getCharactersNamesPos(fusionData[2])
+            self.gui.comboboxs["fusResul"][i].current(fusResul)
+            self.gui.comboboxs["fusResul"][i]["state"] = "readonly"
+
+            fusCompa = language.getCharactersNamesPos(fusionData[3])
+            self.gui.comboboxs["fusCompa"][i].current(fusCompa)
+            self.gui.comboboxs["fusCompa"][i]["state"] = "readonly"
+
+            for j in range(4):
+                fusEquipo = language.getCharactersNamesPos(fusionData[4 + j])
+                self.gui.comboboxs["fusEquipo"][i][j].current(fusEquipo)
+                self.gui.comboboxs["fusEquipo"][i][j]["state"] = "readonly"
+        language.close()
+        print(u"Datos de pestaña 'Fusiones' lista")
+        return
+
+    def updateMenusTab(self):
+        i = 0
+        amountConst = Constants.AmountConst()
+        languagesAmount = amountConst.languagesAmount
+        menusAmount = amountConst.menusAmount
+        statsAmount = amountConst.statsAmount
+        for menu in self.unkData.menusList:
+            if menu.isKnow():
+                if i >= languagesAmount:
+                    print(u"ERROR: Mas idiomas de lo esperado")
+                    break
+
+                j = 0
+                for submenu in menu.subMenus:
+                    if not submenu.isNone():
+                        if j >= menusAmount:
+                            print(u"ERROR: Mas menus de lo esperado")
+                            break
+
+                        menuName = submenu.getMenuName()
+
+                        self.gui.entries["nombreMenu"][i][j]["state"] = "normal"
+                        self.gui.entries["nombreMenu"][i][j].delete(0, "end")
+                        self.gui.entries["nombreMenu"][i][j].insert("end", menuName)
+
+                        self.gui.checkbuttons["menuOn"][i][j].select()
+
+                        k, k0 = 0, 0
+                        statsInesperados = False
+                        for stat in submenu.stats:
+                            if k >= statsAmount:
+                                statsInesperados = True
+                                k += 1
+                                continue
+                            statName = stat.getName()
+
+                            self.gui.entries["nombreStat"][i][j][k]["state"] = "normal"
+                            self.gui.entries["nombreStat"][i][j][k].delete(0, "end")
+                            self.gui.entries["nombreStat"][i][j][k].insert("end", statName)
+
+                            self.gui.checkbuttons["addStat"][i][j][k].select()
+
+                            if stat.getMaxPower():
+                                self.gui.checkbuttons["maxPower"][i][j][k].select()
+                            else:
+                                self.gui.checkbuttons["maxPower"][i][j][k].deselect()
+                            self.gui.checkbuttons["maxPower"][i][j][k]["state"] = "normal"
+
+                            self.gui.comboboxs["barrasKiMenus"][i][j][k].current(int(stat.getBarrasKi()))
+                            self.gui.comboboxs["barrasKiMenus"][i][j][k]["state"] = "readonly"
+
+                            self.gui.comboboxs["reservaKi"][i][j][k].current(int(stat.getReservaKi()))
+                            self.gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
+
+                            # TODO: rehacer
+                            # gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
+                            # gui.buttons["showData"][i][j][k]["state"] = "normal"
+
+                            k += 1
+                            k0 += 1
+                        while k0 < statsAmount:
+                            self.gui.checkbuttons["addStat"][i][j][k0].deselect()
+                            self.gui.checkbuttons["maxPower"][i][j][k0].deselect()
+                            self.gui.buttons["showData"][i][j][k0]["state"] = "disabled"
+                            self.gui.checkbuttons["maxPower"][i][j][k0]["state"] = "disabled"
+                            # self.gui.buttons["showData"][i][j][k0]["command"] = functools.partial(popData, list())
+                            self.gui.buttons["showData"][i][j][k0]["state"] = "disabled"
+                            k0 += 1
+                        if statsInesperados:
+                            print(u"Error: Mas stats que los esperados:", k)
+                        j += 1
+                i += 1
+        for i in range(languagesAmount):
+            for j in range(menusAmount):
+                self.gui.checkbuttons["menuOn"][i][j]["state"] = "normal"
+                for k in range(statsAmount):
+                    self.gui.checkbuttons["addStat"][i][j][k]["state"] = "normal"
+
+        print(u"Datos de pestaña 'Menús' lista")
+        return
+
+    def updateTransObject(self):
+        # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        for i in range(4):
+            a = self.gui.comboboxs["trans"][i].get()
+            a = language.getCharactersNamesID(a)
+
+            b = self.gui.comboboxs["barras"][i].current()
+
+            c = self.gui.comboboxs["ani"][i].get()
+            c = language.getAnimationsID(c)
+
+            d = self.gui.comboboxs["aura"][i].get()
+            d = language.getAurasID(d)
+
+            e = self.gui.comboboxs["absor"][i].get()
+            e = language.getCharactersNamesID(e)
+
+            self.unkData.transObj.setTransformData(i, [a, b, c, d, e])
+
+        r3 = self.gui.comboboxs["R3"][0].get()
+        r3 = language.getR3CommandID(r3)
+        self.unkData.transObj.setR3Command(r3)
+
+        bonus = self.gui.comboboxs["bonus"][0].get()
+        bonus = language.getTransformationBonusID(bonus)
+        self.unkData.transObj.setBonus(bonus)
+
+        language.close()
+        return
+
+    def updateFusObject(self):
+        # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+
+        for i in range(3):
+            fusBarras = self.gui.comboboxs["fusBarras"][i].current()
+
+            fusTypeSelected = self.gui.comboboxs["fusType"][i].get()
+            fusTypeID = language.getFusionsTypesID(fusTypeSelected)
+
+            fusResulSelected = self.gui.comboboxs["fusResul"][i].get()
+            fusResulID = language.getCharactersNamesID(fusResulSelected)
+
+            fusCompaSelected = self.gui.comboboxs["fusCompa"][i].get()
+            fusCompaID = language.getCharactersNamesID(fusCompaSelected)
+
+            fusionData = [fusBarras, fusTypeID, fusResulID, fusCompaID]
+
+            for j in self.gui.comboboxs["fusEquipo"][i]:
+                fusionData.append(language.getCharactersNamesID(j.get()))
+
+            self.unkData.fusionObj.setFusionData(i, fusionData)
+
+        language.close()
+        return
+
+    def updateMenusObject(self):
+        # type: () -> None
+        amountConst = Constants.AmountConst()
+        for i in range(amountConst.languagesAmount):
+            j0 = 0
+            subMenuLoop = self.unkData.menusList[i].subMenus
+            for j in range(amountConst.menusAmount):
+                if self.gui.checkbuttons["menuOn"][i][j].is_checked():
+                    nombreMenu = self.gui.entries["nombreMenu"][i][j].get()
+
+                    if j < len(subMenuLoop) and subMenuLoop[j].isNone():
+                        raise TypeError("NoneType found")
+
+                    if j >= len(subMenuLoop):
+                        subMenuLoop.append(SubMenu.SubMenu(b""))
+
+                    subMenuLoop[j0].setMenuName(nombreMenu)
+                    subMenuLoop[j0].setMenuNum(j0)
+                    stats = subMenuLoop[j0].stats
+                    k0 = 0
+                    for k in range(amountConst.statsAmount):
+                        if self.gui.checkbuttons["addStat"][i][j][k].is_checked():
+                            nombrestat = self.gui.entries["nombreStat"][i][j][k].get()
+                            maxPower = self.gui.checkbuttons["maxPower"][i][j][k].is_checked()
+                            barrasKi = self.gui.comboboxs["barrasKiMenus"][i][j][k].get()
+                            reservaKi = self.gui.comboboxs["reservaKi"][i][j][k].get()
+
+                            if k >= len(stats):
+                                stats.append(StatMenu.StatMenu(b""))
+
+                            stats[k0].setName(nombrestat)
+                            stats[k0].setMaxPower(maxPower)
+                            stats[k0].setBarrasKi(barrasKi)
+                            stats[k0].setReservaKi(reservaKi)
+                            k0 += 1
+                    del stats[k0:]
+
+                    j0 += 1
+            del subMenuLoop[j0:]
+        return
+
+    def parseUnkFile(self, fileName):
+        # type: (str) -> None
+        if not fileName:
+            return
+        self.unkData = CharacterUnkParser.CharacterUnkParser(fileName,
+                                                             printData=self.conf["printData"].capitalize() == "True")
+        self.gui.clean()
+
+        try:
+            self.unkData.parse()
+        except Exception as err:
+            print(err)
+            self.unkData = None
+            GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
+            raise
+        else:
+            try:
+                self.updateTransTab()
+                self.updateFusionsTab()
+                self.updateMenusTab()
+            except Exception as err:
+                print(err)
+                GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
+                raise
+        return
+
+    def saveFile(self):
+        # type () -> None
+        if self.unkData is not None:
+            self.updateTransObject()
+            self.updateFusObject()
+            self.updateMenusObject()
+            try:
+                self.unkData.saveFile()
+                GM.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
+            except Exception as err:
+                print(err)
+                text1 = u"Acción fallida."
+                text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
+                GM.popupError(text1, text2)
+                raise
+        else:
+            GM.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
+        return
+
+    def saveAsUnkFile(self, fileName):
+        # type: (str) -> None
+        if not fileName:
+            return
+        if not fileName.lower().endswith(u".unk"):
+            fileName = fileName + u".unk"
+        try:
+            self.updateTransObject()
+            self.updateFusObject()
+            self.updateMenusObject()
+            self.unkData.saveFile(fileName)
+            GM.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
+        except Exception as err:
+            print(err)
+            GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
+            raise
+        return
+
+    def updateMultiplesUnkFiles(self, archivos):
+        # type: (list) -> None
+        if not archivos:
+            return
+        self.updateTransObject()
+        self.updateFusObject()
+        self.updateMenusObject()
+        try:
+            for arch in archivos:
+                print((arch,))
+                personaje = CharacterUnkParser.CharacterUnkParser(arch)
+                personaje.parse()
+                personaje.saveFile(src=self.unkData)
+            GM.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
+        except Exception as err:
+            print(err)
+            texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
+            GM.popupError(u"Acción fallida", texto)
+            raise
+        return
+
+    # TODO: Make this a class
+    def logData(self):
+        log = open(os.path.join("logs", "transObj.log"), "wb")
+        dataLog = self.unkData.transObj.getAsLines()
+        log.write(dataLog[0] + dataLog[1])
+        log.close()
+
+        log = open(os.path.join("logs", "fusionObj.log"), "wb")
+        dataLog = self.unkData.fusionObj.getAsLines()
+        log.write(dataLog)
+        log.close()
+
+        for i in range(len(self.unkData.menusList)):
+            iMenu = self.unkData.menusList[i]
+            dataLog = iMenu.getAsLine()
+            log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
+            log.write(dataLog)
+            log.close()
+
+    def openFileCaller(self):
+        # type: () -> None
+        nombre = GM.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes)
+        self.parseUnkFile(nombre)
+        return
+
+    def saveAsUnkFileCaller(self):
+        # type: () -> None
+        if self.unkData is not None:
+            nombre = GM.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes)
+            self.saveAsUnkFile(nombre)
+        else:
+            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+        return
+
+    def updateMultiplesUnkFilesCaller(self):
+        # type: () -> None
+        if self.unkData is not None:
+            nombre = GM.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes)
+            self.updateMultiplesUnkFiles(nombre)
+        else:
+            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+        return
+
+    def openFolderCaller(self):
+        # type: () -> None
+        if self.unkData is not None:
+            GM.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
+        else:
+            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+        return
+
+    def undoOptionsChange(self):
+        # type: () -> None
+        languagesFiles = self.subGui.comboboxs["lang"][0]["values"]
+        languagesFiles = [x.lower() for x in languagesFiles]
+        langIndex = languagesFiles.index(".".join(self.conf["language"].split(".")[:-1]))
+        self.subGui.comboboxs["lang"][0].current(langIndex)
+        return
+
+    def acceptOptionsChange(self):
+        # type: () -> None
+        self.subGui.disableAll()
+        restart = GM.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
+        if restart:
+            print(u"\n")
+            langSelected = self.subGui.comboboxs["lang"][0].get() + u".db"
+            print(u"Idioma: " + langSelected)
+            self.conf["language"] = langSelected.lower()
+            # subGui[0].quit()
+            self.gui.setRestart(True)
+            # gui.quit()
+            self.conf.updateFile()
+            print(u"\n")
+            self.onMainClose()
+        else:
+            self.subGui.enableAll()
+        return
+
+    def onOptionsOpen(self):
+        # type: () -> None
+        try:
+            langFolder = os.path.join(os.getcwd(), "lang")
+            os.listdir(langFolder)
+        except OSError:
+            langFolder = os.path.join(os.getcwd(), "..", "lang")
+            os.listdir(langFolder)
+
+        languagesFiles = [".".join(f.split(".")[:-1]) for f in os.listdir(langFolder)
+                          if os.path.isfile(os.path.join(langFolder, f))]
+
+        langIndex = languagesFiles.index(".".join(self.conf["language"].split(".")[:-1]))
+        languagesFiles = [x.capitalize() for x in languagesFiles]
+
+        self.subGui.comboboxs["lang"][0]["state"] = "readonly"
+        self.subGui.comboboxs["lang"][0]["values"] = languagesFiles
+        self.subGui.comboboxs["lang"][0].current(langIndex)
+
+        # Accept button
+        self.subGui.buttons["optionsConfirm"][0]["command"] = self.acceptOptionsChange
+        # Cancel button
+        self.subGui.buttons["optionsConfirm"][1]["command"] = self.subGui.quit
+        # Redo button
+        self.subGui.buttons["optionsConfirm"][2]["command"] = self.undoOptionsChange
+        return
+
+    def optionsCaller(self):
+        # type: () -> None
+        if self.subGui is not None and self.subGui.isRunning():
+            self.subGui.stop()
+        else:
+            self.subGui = GM.GuiManager(u"Opciones", self.icon)
+        self.subGui.addTab(u"Opciones generales", functools.partial(UnkGuiGenerator.optionsTab, conf=self.conf))
+        self.onOptionsOpen()
+        self.subGui.start(u"Opciones")
+        return
+
+    def about(self):
+        # type: () -> None
+        titulo = u"Acerca de"
+        texto = self.title + u".\nCreado por AngheloAlf"
+        GM.popupInfo(titulo, texto)
+        return
+
+    def onMainClose(self):
+        # type: () -> None
+        if self.subGui is not None and self.subGui.isRunning():
+            self.subGui.quit()
+        print(u"\nCerrando...\n")
+        self.gui.quit()
+        return
+
+    def debugMain(self):
+        print("\n\t[DEBUG] log\n")
+        self.logData()
+        print("\n\t[DEBUG] log\n")
+        return
