@@ -7,13 +7,19 @@ import functools
 import os
 import sys
 
-from . import GuiManager as GM
-from . import CharacterUnkParser, SubMenu, StatMenu, LanguageManager, Constants, UnkGuiGenerator, OptionsManager
+from . import GuiManager
+from . import CharacterUnkParser
+from . import SubMenu
+from . import StatMenu
+from . import LanguageManager
+from . import Constants
+from . import UnkGuiGenerator
+from . import OptionsManager
 
 
 def WIP():
     # type: () -> None
-    GM.popupInfo(u"WIP", u"Work in progress.")
+    GuiManager.popupInfo(u"WIP", u"Work in progress.")
     return
 
 
@@ -29,7 +35,7 @@ class UnkEditor:
 
         print(u"Inicializando interfaz...")
         self.icon = os.path.join(u"resources", u"icon.ico")
-        self.gui = GM.GuiManager(self.title, icon=self.icon)
+        self.gui = GuiManager.GuiManager(self.title, icon=self.icon)
         self.subGui = None
         return
 
@@ -147,6 +153,7 @@ class UnkEditor:
         return
 
     def updateFusionsTab(self):
+        # type: () -> None
         language = LanguageManager.LanguageManager(self.conf["language"])
         for i in range(3):
             fusionData = self.unkData.fusionObj.getFusionData(i)
@@ -175,6 +182,7 @@ class UnkEditor:
         return
 
     def updateMenusTab(self):
+        # type: () -> None
         i = 0
         amountConst = Constants.AmountConst()
         languagesAmount = amountConst.languagesAmount
@@ -366,7 +374,7 @@ class UnkEditor:
         except Exception as err:
             print(err)
             self.unkData = None
-            GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
+            GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
             raise
         else:
             try:
@@ -375,7 +383,7 @@ class UnkEditor:
                 self.updateMenusTab()
             except Exception as err:
                 print(err)
-                GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
+                GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
                 raise
         return
 
@@ -387,15 +395,15 @@ class UnkEditor:
             self.updateMenusObject()
             try:
                 self.unkData.saveFile()
-                GM.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
+                GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
             except Exception as err:
                 print(err)
                 text1 = u"Acción fallida."
                 text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
-                GM.popupError(text1, text2)
+                GuiManager.popupError(text1, text2)
                 raise
         else:
-            GM.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
         return
 
     def saveAsUnkFile(self, fileName):
@@ -409,10 +417,10 @@ class UnkEditor:
             self.updateFusObject()
             self.updateMenusObject()
             self.unkData.saveFile(fileName)
-            GM.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
+            GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
         except Exception as err:
             print(err)
-            GM.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
+            GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
             raise
         return
 
@@ -429,11 +437,11 @@ class UnkEditor:
                 personaje = CharacterUnkParser.CharacterUnkParser(arch)
                 personaje.parse()
                 personaje.saveFile(src=self.unkData)
-            GM.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
+            GuiManager.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
         except Exception as err:
             print(err)
             texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
-            GM.popupError(u"Acción fallida", texto)
+            GuiManager.popupError(u"Acción fallida", texto)
             raise
         return
 
@@ -458,34 +466,34 @@ class UnkEditor:
 
     def openFileCaller(self):
         # type: () -> None
-        nombre = GM.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes)
+        nombre = GuiManager.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes)
         self.parseUnkFile(nombre)
         return
 
     def saveAsUnkFileCaller(self):
         # type: () -> None
         if self.unkData is not None:
-            nombre = GM.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes)
+            nombre = GuiManager.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes)
             self.saveAsUnkFile(nombre)
         else:
-            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
         return
 
     def updateMultiplesUnkFilesCaller(self):
         # type: () -> None
         if self.unkData is not None:
-            nombre = GM.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes)
+            nombre = GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes)
             self.updateMultiplesUnkFiles(nombre)
         else:
-            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
         return
 
     def openFolderCaller(self):
         # type: () -> None
         if self.unkData is not None:
-            GM.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
+            GuiManager.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
         else:
-            GM.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
         return
 
     def undoOptionsChange(self):
@@ -499,7 +507,7 @@ class UnkEditor:
     def acceptOptionsChange(self):
         # type: () -> None
         self.subGui.disableAll()
-        restart = GM.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
+        restart = GuiManager.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
         if restart:
             print(u"\n")
             langSelected = self.subGui.comboboxs["lang"][0].get() + u".db"
@@ -547,7 +555,7 @@ class UnkEditor:
         if self.subGui is not None and self.subGui.isRunning():
             self.subGui.stop()
         else:
-            self.subGui = GM.GuiManager(u"Opciones", self.icon)
+            self.subGui = GuiManager.GuiManager(u"Opciones", self.icon)
         self.subGui.addTab(u"Opciones generales", functools.partial(UnkGuiGenerator.optionsTab, conf=self.conf))
         self.onOptionsOpen()
         self.subGui.start(u"Opciones")
@@ -557,7 +565,7 @@ class UnkEditor:
         # type: () -> None
         titulo = u"Acerca de"
         texto = self.title + u".\nCreado por AngheloAlf"
-        GM.popupInfo(titulo, texto)
+        GuiManager.popupInfo(titulo, texto)
         return
 
     def onMainClose(self):
@@ -569,6 +577,7 @@ class UnkEditor:
         return
 
     def debugMain(self):
+        # type: () -> None
         print("\n\t[DEBUG] log\n")
         self.logData()
         print("\n\t[DEBUG] log\n")
