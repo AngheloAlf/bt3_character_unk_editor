@@ -264,7 +264,7 @@ def addMenusTab(gui, tab, conf):
     newTabs = ttk.Notebook(tab)
 
     xPoss = [5, 20, 180, 240, 440, 40, 240, 440, 640]
-    yPoss = [0, 20, 50, 100, 200, 260]
+    yPoss = [0, 20, 50, 100, 200, 270]
 
     gui.entries["nombreMenu"] = list()
 
