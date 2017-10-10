@@ -35,13 +35,12 @@ class TransformClass:
         if command < 0 or command > 255:
             return False
 
-        if type(command) == int:
-            if type(b"") == str:  # py2
-                command = chr(command)
-            else:  # py3
-                command = bytes([command])
-        self.command = command
-
+        aux = b""
+        if type(b"") == str:  # py2
+            aux = chr(command)
+        else:  # py3
+            aux = bytes([command])
+        self.command = aux
         return True
 
     def getTransformData(self, charNumb):
@@ -91,13 +90,12 @@ class TransformClass:
         if bonus < 0 or bonus > 255:
             return False
 
-        if type(bonus) == int:
-            if type(b"") == str:  # py2
-                bonus = chr(bonus)
-            else:  # py3
-                bonus = bytes([bonus])
-
-        self.bonus = bonus
+        aux = b""
+        if type(b"") == str:  # py2
+            aux = chr(bonus)
+        else:  # py3
+            aux = bytes([bonus])
+        self.bonus = aux
         return True
 
     def getAsLines(self):
