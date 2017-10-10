@@ -129,7 +129,7 @@ def parseUnkFile(fileName):
     # type: (str) -> None
     if not fileName:
         return
-    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=False)
+    character.data = CharacterUnkParser.CharacterUnkParser(fileName, printData=conf["printData"].capitalize() == "True")
     gui.clean()
 
     try:
