@@ -365,16 +365,23 @@ class UnkEditor:
         # type: (str) -> None
         if not fileName:
             return
-        self.unkData = CharacterUnkParser.CharacterUnkParser(fileName,
-                                                             printData=self.conf["printData"].capitalize() == "True")
+        printData = self.conf["printData"].capitalize() == "True"
+        self.unkData = CharacterUnkParser.CharacterUnkParser(fileName, printData=printData)
         self.gui.clean()
+
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_errorreading = language.getLanguageData("popup_errorreading")
+        popup_errorshowing = language.getLanguageData("popup_errorshowing")
+        language.close()
 
         try:
             self.unkData.parse()
         except Exception as err:
             print(err)
             self.unkData = None
-            GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
+            # GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado leyendo el archivo.")
+            GuiManager.popupError(popup_actionfail, popup_errorreading)
             raise
         else:
             try:
@@ -383,27 +390,38 @@ class UnkEditor:
                 self.updateMenusTab()
             except Exception as err:
                 print(err)
-                GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
+                # GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado al mostrar los datos.")
+                GuiManager.popupError(popup_actionfail, popup_errorshowing)
                 raise
         return
 
     def saveFile(self):
         # type () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_actioncompleted = language.getLanguageData("popup_actioncompleted")
+        popup_filesaved = language.getLanguageData("popup_filesaved")
+        popup_filenotsaved = language.getLanguageData("popup_filenotsaved")
+        popup_mustopenfile = language.getLanguageData("popup_mustopenfile")
+        language.close()
+
         if self.unkData is not None:
             self.updateTransObject()
             self.updateFusObject()
             self.updateMenusObject()
             try:
                 self.unkData.saveFile()
-                GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
+                # GuiManager.popupInfo(u"Accion completada.", u"Archivo actualizado correctamente.")
+                GuiManager.popupInfo(popup_actioncompleted, popup_filesaved)
             except Exception as err:
                 print(err)
-                text1 = u"Acción fallida."
-                text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
-                GuiManager.popupError(text1, text2)
+                # text1 = u"Acción fallida."
+                # text2 = u"Ha ocurrido un error inesperado. Su archivo no ha sido modificado."
+                GuiManager.popupError(popup_actionfail, popup_filenotsaved)
                 raise
         else:
-            GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
+            # GuiManager.popupWarning(u"Acción fallida.", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
         return
 
     def saveAsUnkFile(self, fileName):
@@ -412,15 +430,29 @@ class UnkEditor:
             return
         if not fileName.lower().endswith(u".unk"):
             fileName = fileName + u".unk"
+
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_actioncompleted = language.getLanguageData("popup_actioncompleted")
+        popup_filenotsaved = language.getLanguageData("popup_filenotsaved")
+        popup_mustopenfile = language.getLanguageData("popup_mustopenfile")
+        popup_namesaved = language.getLanguageData("popup_namesaved").format(filename=fileName)
+        language.close()
+
+        if self.unkData is None:
+            GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
+
         try:
             self.updateTransObject()
             self.updateFusObject()
             self.updateMenusObject()
             self.unkData.saveFile(fileName)
-            GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
+            # GuiManager.popupInfo(u"Accion completada", u"Archivo " + fileName + u" guardado satisfactoriamente")
+            GuiManager.popupInfo(popup_actioncompleted, popup_namesaved)
         except Exception as err:
             print(err)
-            GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
+            # GuiManager.popupError(u"Acción fallida", u"Ha ocurrido un error inesperado.\nSu archivo no ha sido guardado.")
+            GuiManager.popupError(popup_actionfail, popup_filenotsaved)
             raise
         return
 
@@ -428,20 +460,29 @@ class UnkEditor:
         # type: (list) -> None
         if not archivos:
             return
-        self.updateTransObject()
-        self.updateFusObject()
-        self.updateMenusObject()
+
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_actioncompleted = language.getLanguageData("popup_actioncompleted")
+        popup_filessaved = language.getLanguageData("popup_filessaved")
+        popup_errornotcharacter = language.getLanguageData("popup_errornotcharacter")
+        language.close()
+
         try:
+            self.updateTransObject()
+            self.updateFusObject()
+            self.updateMenusObject()
             for arch in archivos:
                 print((arch,))
                 personaje = CharacterUnkParser.CharacterUnkParser(arch)
                 personaje.parse()
                 personaje.saveFile(src=self.unkData)
-            GuiManager.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
+            # GuiManager.popupInfo(u"Acción completada", u"Archivos actualizados satisfactoriamente")
+            GuiManager.popupInfo(popup_actioncompleted, popup_filessaved)
         except Exception as err:
             print(err)
             texto = u"Ha ocurrido un error inesperado.\nQuizas intentaste actualizar un archivo que no es de personaje."
-            GuiManager.popupError(u"Acción fallida", texto)
+            GuiManager.popupError(popup_actionfail, popup_errornotcharacter)
             raise
         return
 
@@ -463,37 +504,68 @@ class UnkEditor:
             log = open(os.path.join("logs", "menusListObj" + str(i) + ".log"), "wb")
             log.write(dataLog)
             log.close()
+        return
 
     def openFileCaller(self):
         # type: () -> None
-        nombre = GuiManager.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes)
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_openfile = language.getLanguageData("popup_openfile")
+        language.close()
+
+        # nombre = GuiManager.openFile(u"Abrir archivo", Constants.ProgramConst().FileTypes)
+        nombre = GuiManager.openFile(popup_openfile, Constants.ProgramConst().FileTypes)
         self.parseUnkFile(nombre)
         return
 
     def saveAsUnkFileCaller(self):
         # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_savefile = language.getLanguageData("popup_savefile")
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_mustopenfile = language.getLanguageData("popup_mustopenfile")
+        language.close()
+
         if self.unkData is not None:
-            nombre = GuiManager.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes)
+            # nombre = GuiManager.saveFile(u"Guardar archivo", Constants.ProgramConst().FileTypes)
+            nombre = GuiManager.saveFile(popup_savefile, Constants.ProgramConst().FileTypes)
             self.saveAsUnkFile(nombre)
         else:
-            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            # GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
         return
 
     def updateMultiplesUnkFilesCaller(self):
         # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_selectfiles = language.getLanguageData("popup_selectfiles")
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_mustopenfile = language.getLanguageData("popup_mustopenfile")
+        language.close()
+
         if self.unkData is not None:
-            nombre = GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes)
+            # nombre = GuiManager.selectMultiplesFiles(u"Seleccionar archivos", Constants.ProgramConst().FileTypes)
+            nombre = GuiManager.selectMultiplesFiles(popup_selectfiles, Constants.ProgramConst().FileTypes)
             self.updateMultiplesUnkFiles(nombre)
         else:
-            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            # GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
         return
 
     def openFolderCaller(self):
         # type: () -> None
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_selectunkfolder = language.getLanguageData("popup_selectunkfolder")
+        popup_actionfail = language.getLanguageData("popup_actionfail")
+        popup_mustopenfile = language.getLanguageData("popup_mustopenfile")
+        language.close()
+
         if self.unkData is not None:
-            GuiManager.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes.")
+            # if GuiManager.selectFolder(u"Selecciona carpeta de archivos 'unk' de personajes."):
+            if GuiManager.selectFolder(popup_selectunkfolder):
+                WIP()
         else:
-            GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            # GuiManager.popupWarning(u"Acción fallida", u"Debe abrir un archivo primero.")
+            GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
         return
 
     def undoOptionsChange(self):
@@ -507,15 +579,20 @@ class UnkEditor:
     def acceptOptionsChange(self):
         # type: () -> None
         self.subGui.disableAll()
-        restart = GuiManager.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
+
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        popup_restart = language.getLanguageData("popup_restart")
+        popup_askrestart = language.getLanguageData("popup_askrestart")
+        language.close()
+
+        # restart = GuiManager.popupYesNo(u"Reiniciar.", u"Para aplicar los cambios se necesita reinicar.\n¿Quiere reiniciar?")
+        restart = GuiManager.popupYesNo(popup_restart, popup_askrestart)
         if restart:
             print(u"\n")
             langSelected = self.subGui.comboboxs["lang"][0].get() + u".db"
             print(u"Idioma: " + langSelected)
             self.conf["language"] = langSelected.lower()
-            # subGui[0].quit()
             self.gui.setRestart(True)
-            # gui.quit()
             self.conf.updateFile()
             print(u"\n")
             self.onMainClose()
@@ -556,9 +633,16 @@ class UnkEditor:
             self.subGui.stop()
         else:
             self.subGui = GuiManager.GuiManager(u"Opciones", self.icon)
-        self.subGui.addTab(u"Opciones generales", functools.partial(UnkGuiGenerator.optionsTab, conf=self.conf))
+
+        language = LanguageManager.LanguageManager(self.conf["language"])
+        tab_generaloptions = language.getLanguageData("tab_generaloptions")
+        options_title = language.getLanguageData("options_title")
+        language.close()
+
+        self.subGui.addTab(tab_generaloptions, functools.partial(UnkGuiGenerator.optionsTab, conf=self.conf))
         self.onOptionsOpen()
-        self.subGui.start(u"Opciones")
+
+        self.subGui.start(options_title)
         return
 
     def about(self):

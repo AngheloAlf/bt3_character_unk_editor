@@ -380,8 +380,12 @@ def addMenusTab(gui, tab, conf):
 
 def optionsTab(gui, tab, conf):
     # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
-    # TODO: Quitar textos hardcodeados
+
     language = LanguageManager.LanguageManager(conf["language"])
+    general_language = language.getLanguageData("general_language")
+    general_confirm = language.getLanguageData("general_confirm")
+    general_cancel = language.getLanguageData("general_cancel")
+    general_undo = language.getLanguageData("general_undo")
     language.close()
 
     xPoss = [x*150 + 30 for x in range(0, 10)]
@@ -390,23 +394,23 @@ def optionsTab(gui, tab, conf):
     gui.comboboxs["lang"] = list()
     gui.buttons["optionsConfirm"] = list()
 
-    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[0], text=u"Idioma")
+    GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[0], text=general_language)
 
     langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[1], width=150)
     gui.comboboxs["lang"].append(langCombo)
 
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], text=u"Confirmar",
-                                                  width=150)
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], width=150,
+                                                  text=general_confirm)
     confirmOptions["state"] = "normal"
     gui.buttons["optionsConfirm"].append(confirmOptions)
 
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[5], text=u"Cancelar",
-                                                  width=150)
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[5], width=150,
+                                                  text=general_cancel)
     confirmOptions["state"] = "normal"
     gui.buttons["optionsConfirm"].append(confirmOptions)
 
-    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[6],
-                                                  text=u"Deshacer cambios", width=150)
+    confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[6], width=150,
+                                                  text=general_undo)
     confirmOptions["state"] = "normal"
     gui.buttons["optionsConfirm"].append(confirmOptions)
 

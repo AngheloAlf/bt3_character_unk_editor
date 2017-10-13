@@ -137,7 +137,7 @@ class LanguageManager:
         if data:
             name = data[0]
             return name
-        return key
+        return "["+key+"]"
 
     def executeScriptsFromFile(self, filename):
         # type: (str) -> None
