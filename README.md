@@ -30,7 +30,7 @@ BT3 character 'unk' editor
 
 ## Dependencies:
 
-* [Python 2.7](https://www.python.org/downloads/)
+* [Python 3.6](https://www.python.org/downloads/)
 
 	
 * [python-tk](https://wiki.python.org/moin/TkInter)
