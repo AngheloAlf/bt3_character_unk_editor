@@ -127,7 +127,6 @@ def generateTtkWidget(wtype, master, posT, x, y, values=None, width=None, curren
             widget.place(x=x, y=y, width=width)
         else:
             widget.place(x=x, y=y)
-        widget.place(x=x, y=y)
     elif posT == u"grid":
         if width:
             widget["width"] = width
@@ -232,6 +231,7 @@ class GuiManager:
         self.entries = dict()
         self.checkbuttons = dict()
         self.buttons = dict()
+        self.radios = dict()
         # self.progressBar = list()
         self.restart = False
         self.icon = icon
@@ -384,11 +384,41 @@ class GuiManager:
 
 
 class CheckButton(tk.Checkbutton):
-    def __init__(self, *args, **kwargs):
-        self.var = kwargs.get('variable', tk.IntVar())
+    def __init__(self, master, *args, **kwargs):
+        self.var = kwargs.get('variable', tk.IntVar(master))
         kwargs['variable'] = self.var
-        tk.Checkbutton.__init__(self, *args, **kwargs)
+        tk.Checkbutton.__init__(self, master, *args, **kwargs)
 
     def is_checked(self):
         # type: () -> int
         return self.var.get()
+
+
+class Radiobuttons:
+    def __init__(self, master, texts, x, y, **kwargs):
+        # type: (ttk.Frame|ttk.LabelFrame, list, list, list, **kwargs) -> None
+        length = len(texts)
+        if length > len(x) or length > len(y):
+            raise ValueError("Len of 'x' or y' is less than 'texts' arg.")
+
+        self.var = kwargs.get('variable', tk.IntVar(master))
+        kwargs['variable'] = self.var
+        self.radios = list()
+        for i in range(len(texts)):
+            widget = tk.Radiobutton(master, text=texts[i], value=i, state="disabled",  **kwargs)
+            self.radios.append(widget)
+            widget.pack()
+            widget.place(x=x[i], y=y[i])
+        self.radios[0].select()
+        return
+
+    def getSelected(self):
+        # type: () -> int
+        return self.var.get()
+
+    def __setitem__(self, key, value):
+        if type(key) != str:
+            raise TypeError("Expected 'str', got " + str(type(key)).strip("<class ").strip(">"))
+        for i in self.radios:
+            i[key] = value
+        return
