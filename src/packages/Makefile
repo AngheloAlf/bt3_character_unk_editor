@@ -13,10 +13,17 @@ WINDCC          := $(shell python -c "import makeAux;print(makeAux.getWindResCom
 
 FINAL_NAME      := $(shell python -c "import makeAux;print(makeAux.getFinalName())")
 
-all: main
+all: packages
 
-main:
-	cython --embed -o main.c main.py -3
-	python -c "import makeAux;makeAux.fixWinMain('main.c')"
-	$(WIND)
-	$(CC) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o ../out/$(FINAL_NAME) main.c $(WINDCC) $(PY_LIBS) -l$(PY_LIBRARY_M)
+packages: $(OBJS)
+	 @echo $(OBJS)
+
+%.pyd: %.c
+	$(CC) $(SHARED) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $@ $< $(PY_LIBS)
+	rm $<
+	@echo
+
+%.c: %.py
+	@echo
+	cython $< -3
+	@echo

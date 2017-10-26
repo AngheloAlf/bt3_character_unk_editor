@@ -177,11 +177,6 @@ def compilePyPackages(arguments):
             print("Error 'cythonize " + py[1] + "'")
             exit(exit_code)
 
-        # compileCommand = ["gcc", "-shared", "-fwrapv", "-fno-strict-aliasing", "-I", pythonInclude, "-L", LIBPL, "-o",
-        #                   soName, cName] + LIBS
-        # compileCommand = ["gcc", "-shared", "-fPIC", "-fno-strict-aliasing", "-I", pythonInclude, "-L", LIBPL, "-o",
-        #                   soName, cName] + LIBS
-
         compileCommand[9] = soName
         compileCommand[10] = cName
 
