@@ -494,7 +494,7 @@ class UnkEditor:
         log.close()
 
         log = open(os.path.join("logs", "fusionObj.log"), "wb")
-        dataLog = self.unkData.fusionObj.getAsLines()
+        dataLog = self.unkData.fusionObj.getAsLine()
         log.write(dataLog)
         log.close()
 

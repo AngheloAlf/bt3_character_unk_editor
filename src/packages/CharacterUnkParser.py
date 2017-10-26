@@ -78,7 +78,7 @@ class CharacterUnkParser:
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
         pointerFile += 30
 
-        fusionLine = src.fusionObj.getAsLines()
+        fusionLine = src.fusionObj.getAsLine()
         return self.fullFile[:pointerFile] + fusionLine + self.fullFile[pointerFile + 24:]
 
     def __setMenuData(self, src):

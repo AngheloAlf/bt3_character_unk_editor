@@ -103,9 +103,13 @@ ENV/
 .idea/
 
 /out/
-*.c
 *.unk
 /packages/
 *.html
 *.res
 options.ini
+
+CMakeLists.txt
+cmake-build-debug/
+/src/packages/*.c
+/src/*.c

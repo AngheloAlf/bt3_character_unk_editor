@@ -22,7 +22,7 @@ class FusionClass:
             print(u"\n")
 
     def getFusionData(self, fusionNumb):
-        # type: (int) -> list
+        # type: (int) -> list[int]
         if fusionNumb < 0 or fusionNumb > 2:
             return list()
 
@@ -35,7 +35,7 @@ class FusionClass:
         return list(map(ord, data))
 
     def setFusionData(self, fusionNumb, data):
-        # type: (int, list) -> bool
+        # type: (int, list[int]) -> bool
         if fusionNumb < 0 or fusionNumb > 3 or len(data) != 8:
             return False
 
@@ -58,7 +58,7 @@ class FusionClass:
 
         return True
 
-    def getAsLines(self):
+    def getAsLine(self):
         # type: () -> bytes
         line = self.barras + self.tipoFusion + self.resultado + self.compaAni
         line += b"".join(self.compaEquipo)
