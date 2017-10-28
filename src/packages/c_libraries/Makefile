@@ -15,9 +15,19 @@ packages: ${EXES} ${OBJS}
 	@echo
 	@echo Success
 
-%.pyd: %.c
-	$(CC) $(SHARED) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $@ $< $(PY_LIBS)
-	## $(EXES) $@.UnitTest.py
+%.pyd: %.o Py3_%.o
+	@echo
+	$(CC) $(SHARED) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $@ Py3_$< $< $(PY_LIBS)
+	@echo
+
+%.o: %.c
+	@echo
+	@echo $<
+	$(CC) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -c $< $(PY_LIBS)
+	@echo
 
 %.exe: %.c
 	$(CC) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $@ $< $(PY_LIBS)
+
+clean:
+	rm *.pyd *.o

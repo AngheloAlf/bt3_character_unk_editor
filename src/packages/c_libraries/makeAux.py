@@ -68,7 +68,8 @@ def getLIBS():
 def getObjects():
     cFiles = [f[:-2]+".pyd"
               for f in os.listdir(os.getcwd())
-              if os.path.isfile(os.path.join(os.getcwd(), f)) and f.lower().endswith(".c") and f != "main.c"]
+              if os.path.isfile(os.path.join(os.getcwd(), f)) and f.lower().endswith(".c")
+              and f != "main.c" and not f.startswith("Py3_")]
     return " ".join(cFiles)
 
 
