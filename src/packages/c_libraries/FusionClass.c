@@ -34,9 +34,7 @@ static FusionData *FusionData_new(){
     return self;
 }
 
-static int FusionData_init(FusionData *self, unsigned char *fusionLine){
-    int buffer_size;
-
+static void FusionData_init(FusionData *self, unsigned char *fusionLine){
     int i;
 
     //printf("for(i = 0; i<3; i++)\n");
@@ -73,7 +71,7 @@ static int FusionData_init(FusionData *self, unsigned char *fusionLine){
         }
     }
 
-    return 0;
+    return;
 }
 
 static int *FusionData_getFusionData(FusionData *self, int fusionNumb){

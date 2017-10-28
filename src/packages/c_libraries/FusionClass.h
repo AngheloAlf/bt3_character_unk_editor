@@ -16,7 +16,7 @@ static void FusionData_dealloc(FusionData* self);
 
 static FusionData *FusionData_new();
 
-static int FusionData_init(FusionData *self, unsigned char *fusionLine);
+static void FusionData_init(FusionData *self, unsigned char *fusionLine);
 
 static int *FusionData_getFusionData(FusionData *self, int fusionNumb);
 
