@@ -19,4 +19,7 @@ main:
 	cython --embed -o main.c main.py -3
 	python -c "import makeAux;makeAux.fixWinMain('main.c')"
 	$(WIND)
-	$(CC) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o ../out/$(FINAL_NAME) main.c $(WINDCC) $(PY_LIBS) -l$(PY_LIBRARY_M)
+	$(CC) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $(FINAL_NAME) main.c $(WINDCC) $(PY_LIBS) -l$(PY_LIBRARY_M)
+
+clean:
+	rm main.c winRC.res

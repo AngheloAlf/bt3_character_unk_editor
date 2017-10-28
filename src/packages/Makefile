@@ -27,3 +27,6 @@ packages: $(OBJS)
 	@echo
 	cython $< -3
 	@echo
+
+clean:
+	rm *.pyd
