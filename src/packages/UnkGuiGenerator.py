@@ -2,7 +2,11 @@ from __future__ import absolute_import
 
 import functools
 
-from . import LanguageManager, GuiManager, Constants, OptionsManager
+from . import LanguageManager
+from . import GuiManager
+from . import Constants
+from . import OptionsManager
+
 
 try:
     import Tkinter as tk

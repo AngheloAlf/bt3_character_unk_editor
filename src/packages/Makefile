@@ -20,7 +20,6 @@ packages: $(OBJS)
 
 %.pyd: %.c
 	$(CC) $(SHARED) $(SOME_FLAGS) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $@ $< $(PY_LIBS)
-	rm $<
 	@echo
 
 %.c: %.py

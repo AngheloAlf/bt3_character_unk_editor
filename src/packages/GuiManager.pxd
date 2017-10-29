@@ -116,10 +116,10 @@ cdef class GuiManager:
 #         # type: () -> int
 
 
-cdef class Radiobuttons:
-    cdef var
+# cdef class Radiobuttons:
+#     cdef var
     # self.var = kwargs.get('variable', tk.IntVar())
-    cdef list radios
+#     cdef list radios
 
-    cpdef int getSelected(self)
+#     cpdef int getSelected(self)
         # type: () -> int

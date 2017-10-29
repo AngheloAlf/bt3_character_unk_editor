@@ -83,11 +83,14 @@ class UnkEditor:
         self.gui.addMenu(cascadeNames, cascadeData)
 
         print(u"Preparando pestañas...")
-        self.gui.addTab(tab_transformations, functools.partial(UnkGuiGenerator.addTrans, conf=self.conf))
+        addTrans = UnkGuiGenerator.addTrans
+        self.gui.addTab(tab_transformations, functools.partial(addTrans, conf=self.conf))
         print(u"'Transformaciones' lista.")
-        self.gui.addTab(tab_fusions, functools.partial(UnkGuiGenerator.addFusion, conf=self.conf))
+        addFusion = UnkGuiGenerator.addFusion
+        self.gui.addTab(tab_fusions, functools.partial(addFusion, conf=self.conf))
         print(u"'Fusiones' lista.")
-        self.gui.addTab(tab_menus, functools.partial(UnkGuiGenerator.addMenusTab, conf=self.conf))
+        addMenusTab = UnkGuiGenerator.addMenusTab
+        self.gui.addTab(tab_menus, functools.partial(addMenusTab, conf=self.conf))
         print(u"'Menús' lista")
         print(u"Pestañas listas!")
 

@@ -1,5 +1,5 @@
 from . cimport TransformClass
-from . cimport FusionClass
+# from . cimport FusionClass
 from . cimport CharacterMenu
 from . cimport Constants
 
@@ -9,13 +9,17 @@ cdef class CharacterUnkParser:
     cdef bytes fullFile
     cpdef public list menusList
     cpdef public TransformClass.TransformClass transObj
-    cpdef public FusionClass.FusionClass fusionObj
+    # cpdef public transObj
+    # cpdef public FusionClass.FusionClass fusionObj
+    cpdef public fusionObj
     cdef bint printData
 
     cdef TransformClass.TransformClass __getTransformData(self)
+    # cdef __getTransformData(self)
         # type: () -> TransformClass.TransformClass
 
-    cdef FusionClass.FusionClass __getFusionData(self)
+    # cdef FusionClass.FusionClass __getFusionData(self)
+    cdef __getFusionData(self)
         # type: () -> FusionClass.FusionClass
 
     cdef list __getMenusData(self)

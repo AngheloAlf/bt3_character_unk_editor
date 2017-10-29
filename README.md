@@ -3,30 +3,13 @@ BT3 character 'unk' editor
 
 ## Compilation:
 
-`python setup.py make`
+`make`
 
-* Flag `-a` generates html cython files
+## clean: 
 
-* Flag `-Wall` is passed to `gcc`
+`make clean`
 
-* Flag `-nosite` removes the python dependencie on `nosite.py`
-
-
-## Execution:
-
-`python setup.py exec`
-
-* Executes the compiled file
-
-* Can be combined with `make` flag to compile and exec  the result:
-    * `python setup.py make exec`
-
-## clean:
-
-* `python setup.py clean`
-    * deletes the '.c', '.pyc' and '.html' files.
-* `python setup.py cleanAll`
-    * invokes `clean` and removes the compilated files.
+`make cleanAll`
 
 ## Dependencies:
 

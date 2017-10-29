@@ -8,5 +8,5 @@ cdef class FusionClass:
     cpdef bint setFusionData(self, int fusionNumb, list data)
         # type: (int, list) -> bool
 
-    cpdef bytes getAsLines(self)
+    cpdef bytes getAsLine(self)
         # type: () -> bytes

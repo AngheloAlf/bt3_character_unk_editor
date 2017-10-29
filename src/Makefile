@@ -16,10 +16,13 @@ FINAL_NAME      := $(shell python -c "import makeAux;print(makeAux.getFinalName(
 all: main
 
 main:
-	cython --embed -o main.c main.py -3
+	cython --embed -o main.c main.py
 	python -c "import makeAux;makeAux.fixWinMain('main.c')"
 	$(WIND)
 	$(CC) -I $(PY_INCLUDE) -L $(PY_LIBS_DIR) -o $(FINAL_NAME) main.c $(WINDCC) $(PY_LIBS) -l$(PY_LIBRARY_M)
 
 clean:
-	rm main.c winRC.res
+	rm *.c *.res
+
+cleanAll: clean
+	rm $(FINAL_NAME)

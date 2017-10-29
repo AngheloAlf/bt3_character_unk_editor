@@ -15,7 +15,9 @@ cpdef void WIP()
 cdef class UnkEditor:
     cdef unicode title
     cdef CharacterUnkParser.CharacterUnkParser unkData
+    # cdef unkData
     cdef OptionsManager.OptionsManager conf
+    # cdef conf
     cdef unicode icon
     # cdef GuiManager.GuiManager gui
     cdef gui
