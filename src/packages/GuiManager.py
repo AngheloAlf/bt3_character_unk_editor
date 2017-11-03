@@ -1,14 +1,14 @@
 import os
 try:
-    import Tkinter as tk
-    import ttk
-    import tkFileDialog
-    import tkMessageBox
-except ImportError:
     import tkinter as tk
     from tkinter import ttk
     from tkinter import filedialog as tkFileDialog
     from tkinter import messagebox as tkMessageBox
+except ImportError:
+    import Tkinter as tk
+    import ttk
+    import tkFileDialog
+    import tkMessageBox
 
 
 def popupInfo(title, text):
@@ -282,10 +282,10 @@ class GuiManager:
             # TODO: test on linux
             if os.name == 'nt':
                 try:
-                    self.gui.wm_iconbitmap(bitmap=self.icon)
+                    self.gui.wm_iconbitmap(bitmap=os.path.join(os.getcwd(), self.icon))
                     # img = tk.PhotoImage(file=self.icon)
-                except Exception:
-                    self.gui.wm_iconbitmap(bitmap=os.path.join("..", self.icon))
+                except Exception as err:
+                    self.gui.wm_iconbitmap(bitmap=os.path.join(os.getcwd(), "..", self.icon))
                     # img = tk.PhotoImage(file=os.path.join("..", self.icon))
                 # self.gui.tk.call('wm', 'iconphoto', self.gui._w, img)
 
