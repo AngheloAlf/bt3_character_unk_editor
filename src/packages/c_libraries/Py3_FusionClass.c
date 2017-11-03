@@ -77,6 +77,7 @@ static int FusionClass_init(FusionClass *self, PyObject *args, PyObject *kwds){
         reprChar = PyUnicode_AsUTF8(repr);
         Py_DECREF(repr);
         printf("%s\n", reprChar);
+        free(reprChar);
     }
 
     return 0;
