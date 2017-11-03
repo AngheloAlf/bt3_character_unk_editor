@@ -2,20 +2,42 @@ from __future__ import print_function
 
 
 class TransformClass:
-    def __init__(self, line1, line2, printData=False):
-        # type: (bytes, bytes, bool) -> None
-        self.unknowFirst = line1[:8]
-        self.trans = line1[8:12]
-        self.barras = line1[12:]
+    # def __init__(self, line1, line2, printData=False):
+    #     # type: (bytes, bytes, bool) -> None
+    #     self.unknowFirst = line1[:8]
+    #     self.trans = line1[8:12]
+    #     self.barras = line1[12:]
+    #
+    #     self.aniCam = line2[:4]
+    #     self.aura = line2[4:8]
+    #     self.abs = line2[8:12]
+    #     self.command = line2[12:13]
+    #     self.bonus = line2[13:14]
+    #     if printData:
+    #         print(u"Transform:")
+    #         print(u"unknowFirst:", list(self.unknowFirst))
+    #         print(u"trans:", self.trans)
+    #         print(u"barras:", self.barras)
+    #         print(u"ani:", self.aniCam)
+    #         print(u"abs:", self.abs)
+    #         print(u"r3command:", self.command)
+    #         print(u"bonus:", self.bonus)
+    #         print(u"\n")
+    #
+    def __init__(self, line, printData=False):
+        # type: (bytes, bool) -> None
+        # self.unknowFirst = line1[:8]
+        self.trans = line[:4]
+        self.barras = line[4:8]
 
-        self.aniCam = line2[:4]
-        self.aura = line2[4:8]
-        self.abs = line2[8:12]
-        self.command = line2[12:13]
-        self.bonus = line2[13:14]
+        self.aniCam = line[8:12]
+        self.aura = line[12:16]
+        self.abs = line[16:20]
+        self.command = line[20:21]
+        self.bonus = line[21:22]
         if printData:
             print(u"Transform:")
-            print(u"unknowFirst:", list(self.unknowFirst))
+            # print(u"unknowFirst:", list(self.unknowFirst))
             print(u"trans:", self.trans)
             print(u"barras:", self.barras)
             print(u"ani:", self.aniCam)
@@ -23,6 +45,7 @@ class TransformClass:
             print(u"r3command:", self.command)
             print(u"bonus:", self.bonus)
             print(u"\n")
+        return
 
     def getR3Command(self):
         # type: () -> int
@@ -98,19 +121,19 @@ class TransformClass:
         self.bonus = aux
         return True
 
-    def getAsLines(self):
-        # type: () -> list
-        line1 = self.unknowFirst
-        line1 += self.trans
-        line1 += self.barras
+    def getAsLine(self):
+        # type: () -> bytes
+        # line1 = self.unknowFirst
+        line = self.trans
+        line += self.barras
 
-        line2 = self.aniCam
-        line2 += self.aura
-        line2 += self.abs
-        line2 += self.command
-        line2 += self.bonus
+        line += self.aniCam
+        line += self.aura
+        line += self.abs
+        line += self.command
+        line += self.bonus
 
-        return [line1, line2]
+        return line
 
     def __str__(self):
         # type: () -> str

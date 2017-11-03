@@ -22,10 +22,13 @@ class CharacterUnkParser:
         transformCode = filesConst.transformCode
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
 
-        line1 = self.fullFile[pointerFile:pointerFile + 16]
-        pointerFile += 16
-        line2 = self.fullFile[pointerFile:pointerFile + 14]
-        self.transObj = TransformClass.TransformClass(line1, line2, self.printData)
+        line = self.fullFile[pointerFile+8:pointerFile+30]
+
+        # line1 = self.fullFile[pointerFile:pointerFile + 16]
+        # pointerFile += 16
+        # line2 = self.fullFile[pointerFile:pointerFile + 14]
+        # self.transObj = TransformClass.TransformClass(line1, line2, self.printData)
+        self.transObj = TransformClass.TransformClass(line, self.printData)
         return self.transObj
 
     def __getFusionData(self):
@@ -68,8 +71,8 @@ class CharacterUnkParser:
         transformCode = filesConst.transformCode
         pointerFile = self.fullFile.find(transformCode) + 16 * 7 - 4
 
-        transLines = src.transObj.getAsLines()
-        return self.fullFile[:pointerFile] + transLines[0] + transLines[1] + self.fullFile[pointerFile + 30:]
+        transLines = src.transObj.getAsLine()
+        return self.fullFile[:pointerFile+8] + transLines + self.fullFile[pointerFile + 30:]
 
     def __setFusionData(self, src):
         # type: (CharacterUnkParser) -> bytes

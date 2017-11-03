@@ -21,6 +21,6 @@ cdef class TransformClass:
     cpdef bint setBonus(self, int bonus)
         # type: (int) -> bool
 
-    cpdef list getAsLines(self)
+    cpdef bytes getAsLine(self)
         # type: () -> list
 
