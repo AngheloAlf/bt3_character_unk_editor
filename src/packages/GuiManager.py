@@ -48,6 +48,16 @@ def addMsgToText(txtWid, msg):
     txtWid["state"] = "disabled"
 
 
+def changeEntryText(entry, text):
+    # type: (ttk.Entry, str) -> None
+    oldState = entry["state"]
+    entry["state"] = "normal"
+    entry.delete(0, "end")
+    entry.insert("end", text)
+    entry["state"] = oldState
+    return
+
+
 def openFile(title, fileTypes, callback=None):
     # type: (str, tuple, (str, )) -> str
     archivo = tkFileDialog.askopenfilename(initialdir="/", title=title, filetypes=fileTypes)

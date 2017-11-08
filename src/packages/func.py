@@ -240,8 +240,8 @@ class UnkEditor:
                             self.gui.comboboxs["reservaKi"][i][j][k]["state"] = "readonly"
 
                             # TODO: rehacer
-                            # gui.buttons["showData"][i][j][k]["command"] = functools.partial(popData, stat.getStatChars())
-                            # gui.buttons["showData"][i][j][k]["state"] = "normal"
+                            self.gui.buttons["showData"][i][j][k]["command"] = functools.partial(self.statCharsEditorCaller, i, j, k)
+                            self.gui.buttons["showData"][i][j][k]["state"] = "normal"
 
                             k += 1
                             k0 += 1
@@ -571,6 +571,21 @@ class UnkEditor:
             GuiManager.popupWarning(popup_actionfail, popup_mustopenfile)
         return
 
+    def about(self):
+        # type: () -> None
+        titulo = u"Acerca de"
+        texto = self.title + u".\nCreado por AngheloAlf"
+        GuiManager.popupInfo(titulo, texto)
+        return
+
+    def onMainClose(self):
+        # type: () -> None
+        if self.subGui is not None and self.subGui.isRunning():
+            self.subGui.quit()
+        print(u"\nCerrando...\n")
+        self.gui.quit()
+        return
+
     def undoOptionsChange(self):
         # type: () -> None
         languagesFiles = self.subGui.comboboxs["lang"][0]["values"]
@@ -632,15 +647,15 @@ class UnkEditor:
 
     def optionsCaller(self):
         # type: () -> None
-        if self.subGui is not None and self.subGui.isRunning():
-            self.subGui.stop()
-        else:
-            self.subGui = GuiManager.GuiManager(u"Opciones", self.icon)
-
         language = LanguageManager.LanguageManager(self.conf["language"])
         tab_generaloptions = language.getLanguageData("tab_generaloptions")
         options_title = language.getLanguageData("options_title")
         language.close()
+
+        if self.subGui is not None and self.subGui.isRunning():
+            self.subGui.stop()
+        else:
+            self.subGui = GuiManager.GuiManager(options_title, self.icon)
 
         self.subGui.addTab(tab_generaloptions, functools.partial(UnkGuiGenerator.optionsTab, conf=self.conf))
         self.onOptionsOpen()
@@ -648,24 +663,42 @@ class UnkEditor:
         self.subGui.start(options_title)
         return
 
-    def about(self):
+    def onStatCharsEditorOpen(self, languageNumb, menuNumb, statNumb):
         # type: () -> None
-        titulo = u"Acerca de"
-        texto = self.title + u".\nCreado por AngheloAlf"
-        GuiManager.popupInfo(titulo, texto)
+        statChars = self.unkData.menusList[languageNumb].subMenus[menuNumb].stats[statNumb].statChars
+
+        for i in range(len(statChars)):
+            uniList = statChars[i].getUnicodeList()
+            # print(statChars[i].getAsLine())
+
+            GuiManager.changeEntryText(self.subGui.entries["statChars"][i][0], uniList[0])
+            # self.subGui.entries["statChars"][i][0]["state"] = "normal"
+            # self.subGui.entries["statChars"][i][0].delete(0, "end")
+            # self.subGui.entries["statChars"][i][0].insert("end", uniList[0])
+
+            GuiManager.changeEntryText(self.subGui.entries["statChars"][i][1], uniList[1])
+            # self.subGui.entries["statChars"][i][1]["state"] = "normal"
+            # self.subGui.entries["statChars"][i][1].delete(0, "end")
+            # self.subGui.entries["statChars"][i][1].insert("end", uniList[1])
+
         return
 
-    def onMainClose(self):
+    def statCharsEditorCaller(self, languageNumb, menuNumb, statNumb):
         # type: () -> None
         if self.subGui is not None and self.subGui.isRunning():
-            self.subGui.quit()
-        print(u"\nCerrando...\n")
-        self.gui.quit()
+            self.subGui.stop()
+        else:
+            self.subGui = GuiManager.GuiManager(u"Stat chars editor", self.icon)
+
+        self.subGui.addTab(u"Tab 1", functools.partial(UnkGuiGenerator.statCharsTab, conf=self.conf))
+        self.onStatCharsEditorOpen(languageNumb, menuNumb, statNumb)
+
+        self.subGui.start(u"Stats chars editor")
         return
 
     def debugMain(self):
         # type: () -> None
-        print("\n\t[DEBUG] log\n")
-        self.logData()
-        print("\n\t[DEBUG] log\n")
+        print("\n\t[DEBUG]\n")
+        self.statCharsEditorCaller(1, 4, 3)
+        print("\n\t[DEBUG]\n")
         return

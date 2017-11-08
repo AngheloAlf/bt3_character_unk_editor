@@ -419,3 +419,49 @@ def optionsTab(gui, tab, conf):
     gui.buttons["optionsConfirm"].append(confirmOptions)
 
     return xPoss[1] + 30, yPoss[8]
+
+
+def statCharsTab(gui, tab, conf):
+    # type: (GuiManager.GuiManager, ttk.Frame, OptionsManager.OptionsManager) -> (int, int)
+
+    # language = LanguageManager.LanguageManager(conf["language"])
+    # general_language = language.getLanguageData("general_language")
+    # general_confirm = language.getLanguageData("general_confirm")
+    # general_cancel = language.getLanguageData("general_cancel")
+    # general_undo = language.getLanguageData("general_undo")
+    # language.close()
+
+    xPoss = [x*150 + 30 for x in range(0, 8)]
+    yPoss = [y*30 + 25 for y in range(0, 8)]
+
+    gui.entries["statChars"] = list()
+
+    for i in range(8):
+        entrada1 = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[0], yPoss[i])
+        entrada2 = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[1], yPoss[i])
+        gui.entries["statChars"].append([entrada1, entrada2])
+
+    # gui.comboboxs["lang"] = list()
+    # gui.buttons["optionsConfirm"] = list()
+    #
+    # GuiManager.generateTtkWidget(u"Label", tab, u"place", xPoss[0], yPoss[0], text=general_language)
+    #
+    # langCombo = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[1], width=150)
+    # gui.comboboxs["lang"].append(langCombo)
+    #
+    # confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[4], width=150,
+    #                                               text=general_confirm)
+    # confirmOptions["state"] = "normal"
+    # gui.buttons["optionsConfirm"].append(confirmOptions)
+    #
+    # confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[5], width=150,
+    #                                               text=general_cancel)
+    # confirmOptions["state"] = "normal"
+    # gui.buttons["optionsConfirm"].append(confirmOptions)
+    #
+    # confirmOptions = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[6], width=150,
+    #                                               text=general_undo)
+    # confirmOptions["state"] = "normal"
+    # gui.buttons["optionsConfirm"].append(confirmOptions)
+
+    return xPoss[2], yPoss[-1] + 25 + 25

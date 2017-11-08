@@ -25,7 +25,7 @@ class StatMenu:
             print("\t\t\tusedBars: ", self.usedBars, self.usedBars.decode("utf-16"))
             print("\t\t\tusedKi ", self.usedKi, self.usedKi.decode("utf-16"))
 
-        ends = Constants.findDataPos(statData, endOfLine, inicio=pos)
+        ends = Constants.findDataPos(statData, endOfLine, inicio=pos)[1:]
         for i in ends:
             newStatChars = StatChars.StatChars(statData[pos+2:i+2], self.printData)
             self.statChars.append(newStatChars)
