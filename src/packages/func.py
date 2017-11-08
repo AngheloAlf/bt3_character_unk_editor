@@ -668,7 +668,7 @@ class UnkEditor:
         statChars = self.unkData.menusList[languageNumb].subMenus[menuNumb].stats[statNumb].statChars
 
         for i in range(len(statChars)):
-            uniData = statChars[i].getUnicodeList()[1]
+            uniData = statChars[i].text.decode("utf-16")
             # print(statChars[i].getAsLine())
 
             indice = Constants.CharsTypes().typesList.index(statChars[i].type)
@@ -682,6 +682,9 @@ class UnkEditor:
             GuiManager.changeEntryText(self.subGui.entries["statChars"][i], uniData)
             if statChars[i].type == Constants.CharsTypes().text:
                 self.subGui.entries["statChars"][i]["state"] = "normal"
+                self.subGui.checkbuttons["statChars"][i]["state"] = "normal"
+                if int(statChars[i].textType.decode("utf-16")):
+                    self.subGui.checkbuttons["statChars"][i].select()
             # self.subGui.entries["statChars"][i][1]["state"] = "normal"
             # self.subGui.entries["statChars"][i][1].delete(0, "end")
             # self.subGui.entries["statChars"][i][1].insert("end", uniList[1])
