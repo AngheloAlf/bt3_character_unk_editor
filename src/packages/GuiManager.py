@@ -315,6 +315,7 @@ class GuiManager:
         if self.running:
             self.clean()
             self.gui.destroy()
+        self.tabsWidth, self.tabsHeight = 0, 0
         self.closeOverrided = False
         self.tabsData = dict()
         self.gui = tk.Tk()
