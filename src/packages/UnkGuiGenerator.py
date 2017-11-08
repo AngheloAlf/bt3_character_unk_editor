@@ -429,17 +429,21 @@ def statCharsTab(gui, tab, conf):
     # general_confirm = language.getLanguageData("general_confirm")
     # general_cancel = language.getLanguageData("general_cancel")
     # general_undo = language.getLanguageData("general_undo")
+    statChars_statType = ["Texto", "unknown1", "unknown2", "unknown8", "unknown4", "unknownD"]
     # language.close()
 
-    xPoss = [x*150 + 30 for x in range(0, 8)]
+    xPoss = [x*120 + 30 for x in range(0, 8)]
     yPoss = [y*30 + 25 for y in range(0, 8)]
 
+    gui.comboboxs["statChars"] = list()
     gui.entries["statChars"] = list()
 
     for i in range(8):
-        entrada1 = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[0], yPoss[i])
-        entrada2 = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[1], yPoss[i])
-        gui.entries["statChars"].append([entrada1, entrada2])
+        tipoEntrada = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[i],
+                                                   values=statChars_statType, width=100)
+        gui.comboboxs["statChars"].append(tipoEntrada)
+        entrada = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[1], yPoss[i])
+        gui.entries["statChars"].append(entrada)
 
     # gui.comboboxs["lang"] = list()
     # gui.buttons["optionsConfirm"] = list()

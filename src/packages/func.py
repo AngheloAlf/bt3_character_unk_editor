@@ -668,15 +668,20 @@ class UnkEditor:
         statChars = self.unkData.menusList[languageNumb].subMenus[menuNumb].stats[statNumb].statChars
 
         for i in range(len(statChars)):
-            uniList = statChars[i].getUnicodeList()
+            uniData = statChars[i].getUnicodeList()[1]
             # print(statChars[i].getAsLine())
 
-            GuiManager.changeEntryText(self.subGui.entries["statChars"][i][0], uniList[0])
+            indice = Constants.CharsTypes().typesList.index(statChars[i].type)
+            self.subGui.comboboxs["statChars"][i].current(indice)
+            # self.subGui.comboboxs["statChars"][i]["state"] = "readonly"
+            # GuiManager.changeEntryText(self.subGui.entries["statChars"][i][0], uniList[0])
             # self.subGui.entries["statChars"][i][0]["state"] = "normal"
             # self.subGui.entries["statChars"][i][0].delete(0, "end")
             # self.subGui.entries["statChars"][i][0].insert("end", uniList[0])
 
-            GuiManager.changeEntryText(self.subGui.entries["statChars"][i][1], uniList[1])
+            GuiManager.changeEntryText(self.subGui.entries["statChars"][i], uniData)
+            if statChars[i].type == Constants.CharsTypes().text:
+                self.subGui.entries["statChars"][i]["state"] = "normal"
             # self.subGui.entries["statChars"][i][1]["state"] = "normal"
             # self.subGui.entries["statChars"][i][1].delete(0, "end")
             # self.subGui.entries["statChars"][i][1].insert("end", uniList[1])
@@ -699,6 +704,22 @@ class UnkEditor:
     def debugMain(self):
         # type: () -> None
         print("\n\t[DEBUG]\n")
-        self.statCharsEditorCaller(1, 4, 3)
+        data = set()
+        for i in self.unkData.menusList:
+            for j in i.subMenus:
+                for k in j.stats:
+                    for l in k.statChars:
+                        if b"<\x00" in l.text:
+                            text = l.text.split(b"=\x00")[1]
+                            text = text.split(b">\x00")[0]
+                            if len(text.decode("utf-16")) >= 0:
+                                print(text)
+                                decodedText = text.decode("utf-16")
+                                print(decodedText)
+                                print(len(decodedText))
+                                print("")
+                                data = data | set(decodedText)
+        print(data)
+        print(len(data))
         print("\n\t[DEBUG]\n")
         return

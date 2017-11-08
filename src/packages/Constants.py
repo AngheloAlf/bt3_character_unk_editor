@@ -52,6 +52,8 @@ class CharsTypes:
         self.unknown4 = b"!\x004\x00#\x00"
         self.unknownD = b"!\x00D\x00#\x00"
 
+        self.typesList = [self.text, self.unknown1, self.unknown2, self.unknown8, self.unknown4, self.unknownD]
+
         # u'!1#' <PAD=Ｌ２＋○>
         # u'!2#' <PAD=†上＋†振縦>
         # u'!8#' <PAD=Ｒ１＋○>
