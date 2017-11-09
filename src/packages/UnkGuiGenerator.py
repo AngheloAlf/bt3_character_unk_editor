@@ -429,27 +429,44 @@ def statCharsTab(gui, tab, conf):
     # general_confirm = language.getLanguageData("general_confirm")
     # general_cancel = language.getLanguageData("general_cancel")
     # general_undo = language.getLanguageData("general_undo")
-    statChars_statType = ["Texto", "unknown1", "unknown2", "unknown8", "unknown4", "unknownD"]
+    statChars_enableCheck = "Activar"
+    statChars_statType = ["Texto", '!1#', '!2#', '!8#', '!4#', '!D#']
     statChars_checkText = "Letras rojas"
+    statChars_updateButton = "Actualizar datos"
+    statChars_closeButton = "Cancelar"
     # language.close()
 
-    xPoss = [x*120 + 30 for x in range(8)]
-    yPoss = [y*30 + 25 for y in range(8)]
+    xPoss = [x*120 + 30 for x in range(10)]
+    yPoss = [y*30 + 25 for y in range(10)]
 
+    gui.checkbuttons["statCharsEnable"] = list()
     gui.comboboxs["statChars"] = list()
     gui.checkbuttons["statChars"] = list()
     gui.entries["statChars"] = list()
+    gui.buttons["statChars"] = list()
 
     for i in range(8):
-        tipoEntrada = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[0], yPoss[i],
+        checkActivo = GuiManager.generateTtkWidget(u"CheckButton", tab, u"place", xPoss[0], yPoss[i],
+                                                   text=statChars_enableCheck)
+        gui.checkbuttons["statCharsEnable"].append(checkActivo)
+
+        tipoEntrada = GuiManager.generateTtkWidget(u"Combobox", tab, u"place", xPoss[1], yPoss[i],
                                                    values=statChars_statType, width=100)
         gui.comboboxs["statChars"].append(tipoEntrada)
 
-        checkEntrada = GuiManager.generateTtkWidget(u"CheckButton", tab, u"place", xPoss[1], yPoss[i],
+        checkEntrada = GuiManager.generateTtkWidget(u"CheckButton", tab, u"place", xPoss[2], yPoss[i],
                                                    text=statChars_checkText)
         gui.checkbuttons["statChars"].append(checkEntrada)
 
-        entrada = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[2], yPoss[i], width=200)
+        entrada = GuiManager.generateTtkWidget(u"Entry", tab, u"place", xPoss[3], yPoss[i], width=200)
         gui.entries["statChars"].append(entrada)
 
-    return xPoss[4], yPoss[-1] + 25 + 25
+    acceptButton = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[0], yPoss[8],
+                                                text=statChars_updateButton)
+    gui.buttons["statChars"].append(acceptButton)
+
+    cancelButton = GuiManager.generateTtkWidget(u"Button", tab, u"place", xPoss[2], yPoss[8],
+                                                text=statChars_closeButton)
+    gui.buttons["statChars"].append(cancelButton)
+
+    return xPoss[5], yPoss[-1] + 25

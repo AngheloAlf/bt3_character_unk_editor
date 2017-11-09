@@ -663,8 +663,31 @@ class UnkEditor:
         self.subGui.start(options_title)
         return
 
+    def statCharsUpdate(self, languageNumb, menuNumb, statNumb):
+        # type: (int, int, int) -> None
+        # TODO: hacer para casos generales
+        entries = self.subGui.entries["statChars"]
+        checkbuttons = self.subGui.checkbuttons["statChars"]
+        statChars = self.unkData.menusList[languageNumb].subMenus[menuNumb].stats[statNumb].statChars
+        datosModificados = False
+        for i in range(len(statChars)):
+            if statChars[i].type == Constants.CharsTypes().text:
+                data = entries[i].get().encode("utf-16")[2:]
+                datosModificados = datosModificados or statChars[i].setText(data)
+
+                textType = b"0\x00"
+                if checkbuttons[i].is_checked():
+                    textType = b"1\x00"
+                datosModificados = datosModificados or statChars[i].setTextType(textType)
+
+        if datosModificados:
+            GuiManager.popupInfo("Correcto", "Datos actualizados")
+        self.subGui.quit()
+
+        return
+
     def onStatCharsEditorOpen(self, languageNumb, menuNumb, statNumb):
-        # type: () -> None
+        # type: (int, int, int) -> None
         statChars = self.unkData.menusList[languageNumb].subMenus[menuNumb].stats[statNumb].statChars
 
         for i in range(len(statChars)):
@@ -673,26 +696,36 @@ class UnkEditor:
 
             indice = Constants.CharsTypes().typesList.index(statChars[i].type)
             self.subGui.comboboxs["statChars"][i].current(indice)
-            # self.subGui.comboboxs["statChars"][i]["state"] = "readonly"
-            # GuiManager.changeEntryText(self.subGui.entries["statChars"][i][0], uniList[0])
-            # self.subGui.entries["statChars"][i][0]["state"] = "normal"
-            # self.subGui.entries["statChars"][i][0].delete(0, "end")
-            # self.subGui.entries["statChars"][i][0].insert("end", uniList[0])
 
             GuiManager.changeEntryText(self.subGui.entries["statChars"][i], uniData)
+            self.subGui.checkbuttons["statCharsEnable"][i].select()
             if statChars[i].type == Constants.CharsTypes().text:
+                # TODO: Descomentar cuando funcione
+                # self.subGui.checkbuttons["statCharsEnable"][i]["state"] = "normal"
+
                 self.subGui.entries["statChars"][i]["state"] = "normal"
                 self.subGui.checkbuttons["statChars"][i]["state"] = "normal"
                 if int(statChars[i].textType.decode("utf-16")):
                     self.subGui.checkbuttons["statChars"][i].select()
-            # self.subGui.entries["statChars"][i][1]["state"] = "normal"
-            # self.subGui.entries["statChars"][i][1].delete(0, "end")
-            # self.subGui.entries["statChars"][i][1].insert("end", uniList[1])
+
+                self.subGui.buttons["statChars"][0]["state"] = "normal"
+
+        for i in range(len(statChars), 8):
+            # TODO: Descomentar cuando funcione
+            # self.subGui.comboboxs["statChars"][i]["state"] = "readonly"
+            # self.subGui.checkbuttons["statCharsEnable"][i]["state"] = "normal"
+            break
+
+        self.subGui.buttons["statChars"][0]["command"] = functools.partial(self.statCharsUpdate, languageNumb, menuNumb,
+                                                                           statNumb)
+
+        self.subGui.buttons["statChars"][1]["command"] = self.subGui.quit
+        self.subGui.buttons["statChars"][1]["state"] = "normal"
 
         return
 
     def statCharsEditorCaller(self, languageNumb, menuNumb, statNumb):
-        # type: () -> None
+        # type: (int, int, int) -> None
         if self.subGui is not None and self.subGui.isRunning():
             self.subGui.stop()
         else:

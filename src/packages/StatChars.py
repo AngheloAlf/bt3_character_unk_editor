@@ -35,6 +35,23 @@ class StatChars:
             data.append(self.text.decode("utf-16"))
         return data
 
+    def setTextType(self, textType):
+        # type: (bytes) -> bool
+        if len(textType) == 2:
+            if textType != self.textType:
+                self.textType = textType
+                return True
+        return False
+
+    def setText(self, text):
+        # type: (bytes) -> bool
+        if text != self.text:
+            if text[-2:] != b"\n\x00":
+                text += b"\n\x00"
+            self.text = text
+            return True
+        return False
+
     def getAsLine(self):
         # type: () -> bytes
         line = self.type
